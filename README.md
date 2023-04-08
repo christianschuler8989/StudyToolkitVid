@@ -29,10 +29,10 @@
   <p align="center">
     A toolkit for creating studies to evaluate quality of videos!
     <br />
-    <a href="https://github.com/christianschuler8989/StudyToolkitVid"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/christianschuler8989/StudyToolkitVid/tree/main/docs"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/christianschuler8989/StudyToolkitVid">View Demo</a>
+    <a href="https://github.com/christianschuler8989/StudyToolkitVid">View Demo (TODO)</a>
     ·
     <a href="https://github.com/christianschuler8989/StudyToolkitVid/issues">Report Bug</a>
     ·
@@ -136,9 +136,28 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+### Part 1 - Media Editing
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+Creating data sets for investigating perceived quality of video material
+
+
+
+### Part 2 - Study Setup
+
+Setting up and executing a user study based on these (or other) data sets
+
+
+
+### Part 3 - Statistical Analysis
+
+Running and reporting a statistical analysis following the results from a study
+
+
+
+
+TODO: Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+
+_For more examples, please refer to the [Documentation](https://github.com/christianschuler8989/StudyToolkitVid/tree/main/docs)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -231,7 +250,7 @@ A list of helpful resources we would like to give credit to:
 [issues-shield]: https://img.shields.io/github/issues/christianschuler8989/StudyToolkitVid.svg?style=for-the-badge
 [issues-url]: https://github.com/christianschuler8989/StudyToolkitVid/issues
 [license-shield]: https://img.shields.io/github/license/christianschuler8989/StudyToolkitVid.svg?style=for-the-badge
-[license-url]: https://github.com/christianschuler8989/StudyToolkitVid/blob/master/LICENSE.txt
+[license-url]: https://github.com/christianschuler8989/StudyToolkitVid/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/christian-schuler-59090a177/
 [product-screenshot]: images/screenshot.png
