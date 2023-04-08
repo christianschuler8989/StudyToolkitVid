@@ -250,7 +250,7 @@ A list of helpful resources we would like to give credit to:
 [issues-shield]: https://img.shields.io/github/issues/christianschuler8989/StudyToolkitVid.svg?style=for-the-badge
 [issues-url]: https://github.com/christianschuler8989/StudyToolkitVid/issues
 [license-shield]: https://img.shields.io/github/license/christianschuler8989/StudyToolkitVid.svg?style=for-the-badge
-[license-url]: https://github.com/christianschuler8989/StudyToolkitVid/blob/main/LICENSE.txt
+[license-url]: https://github.com/christianschuler8989/StudyToolkitVid/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/christian-schuler-59090a177/
 [product-screenshot]: images/screenshot.png
