@@ -1,0 +1,261 @@
+#!/bin/bash
+# 
+# Authors: Christian Schuler & Dominik Hauser
+################################################################################
+
+# How to call this script:
+# bash Main-Script.bh -n "User" -m 1 -s 1 -a 1 -i 1 -v 1
+# Parameters: "Studyname" "MediaEdit" "StudySetup" "StatisticalAnalysis"
+
+# Input-Argument flags 
+while getopts n:m:s:a::i:v flag
+do
+  case "${flag}" in
+    n) parameterName=${OPTARG};;
+    m) parameterMedia=${OPTARG};;
+    s) parameterStudy=${OPTARG};;
+    a) parameterStatistical=${OPTARG};;
+    i) parameterInstall=${OPTARG};;
+    v) parameterVerbose=${OPTARG};;
+  esac
+done
+
+# Mainly for debugging purposes
+parameterVerbose=${parameterVerbose:-0}
+parameterInstall=${parameterInstall:-0}
+
+# Installation
+################
+# TODO: Installing moviepy via Requirements.txt lead to: 
+# ERROR: moviepy 1.0.3 has requirement decorator<5.0,>=4.0.2, but you'll have decorator 5.1.1 which is incompatible.
+# Solution: pip install decorator --upgrade and then install requirements again
+# Also: pip install --upgrade pip
+
+if [ ${parameterInstall} = 1 ] 
+then
+  echo "  Setup pythons venv in Environment"
+  python3 -m venv Environment
+  
+  echo "  Starting pythons venv"
+  source Environment/bin/activate
+
+  echo "  Installing requirements inside pythons venv"
+  pip install -r Scripts/Main/Requirements.txt
+
+  echo "  Deactivating pythons venv"
+  deactivate
+fi
+
+
+# Step 1: Introduction
+# TODO: Introduction-Script
+# Optional parameter to determine if "Example"-Case
+parameterName=${parameterName:-"Example"};
+parameterFile="./Parameter/Parameters-${parameterName}.json"
+parameterMedia=${parameterMedia:-1};
+parameterStudy=${parameterStudy:-1};
+parameterStatistical=${parameterStatistical:-1};
+
+################
+# Read parameters from json-file
+PARAMTERS=($(jq . "${parameterFile}"))
+# Entire "parameters" from json-file
+#echo "${PARAMTERS[@]}"
+
+
+################
+# Step 2: User Input
+NAME=$(cat ${parameterFile} | jq -r ".parameters.name")
+ID=$(cat ${parameterFile} | jq -r ".parameters.id")
+EDITINGINPUT=$(cat ${parameterFile} | jq -r ".parameters.mediaediting.inputdataDir")
+EDITINGINTERMEDIATE=$(cat ${parameterFile} | jq -r ".parameters.mediaediting.intermediatedataDir")
+EDITINGTESTDATA=$(cat ${parameterFile} | jq -r ".parameters.mediaediting.testdataDir")
+STUDYTESTDATA=$(cat ${parameterFile} | jq -r ".parameters.studysetup.testdataDir")
+STUDYSTUDIES=$(cat ${parameterFile} | jq -r ".parameters.studysetup.studiesDir")
+STUDYRESULTS=$(cat ${parameterFile} | jq -r ".parameters.studysetup.studyresultsDir")
+ANALYSISSTUDYRESULTS=$(cat ${parameterFile} | jq -r ".parameters.statisticalanalysis.studyresultsDir")
+ANALYSISTIDYDATA=$(cat ${parameterFile} | jq -r ".parameters.statisticalanalysis.tidydataDir")
+ANALYSISRESULTS=$(cat ${parameterFile} | jq -r ".parameters.statisticalanalysis.analysisresultsDir")
+ANALYSISVISUALISATIONS=$(cat ${parameterFile} | jq -r ".parameters.statisticalanalysis.resultvisualisationsDir")
+EDITINGPROCESS=$(cat ${parameterFile} | jq -r ".parameters.mediaediting.editingProcess")
+STUDYPROCESS=$(cat ${parameterFile} | jq -r ".parameters.studysetup.studyProcess")
+ANALYSISPROCESS=$(cat ${parameterFile} | jq -r ".parameters.statisticalanalysis.analysisProcess")
+
+# TODO: User-Input-Script
+#if $parameterVerbose ; then
+if [ $parameterVerbose = 1 ] 
+then
+  # echo the provided parameters 
+  echo "#==== Meta data ====#"
+  echo "  Name of study: ${NAME}"
+  echo "  Id of study: ${ID}"
+  echo ""
+  echo "#==== Directories ====#"
+  echo "  Media Editing:"
+  echo "    Input(Data) directory: ${EDITINGINPUT}"
+  echo "    Intermediate(Data) directory: ${EDITINGINTERMEDIATE}"
+  echo "    Test(Data) directory: ${EDITINGTESTDATA}"
+  echo ""
+  echo "  Study Setup:"
+  echo "    Test(Data) directory: ${STUDYTESTDATA}"
+  echo "    Studies directory: ${STUDYSTUDIES}"
+  echo "    Results directory: ${STUDYRESULTS}"
+  echo ""
+  echo "  Statistical Analysis:"
+  echo "    Study results directory: ${ANALYSISSTUDYRESULTS}"
+  echo "    Tidy(Data) directory: ${ANALYSISTIDYDATA}"
+  echo "    Results directory: ${ANALYSISRESULTS}"
+  echo "    Visualisations directory: ${ANALYSISVISUALISATIONS}"
+  echo ""
+  echo "#==== Media Editing Information ====#"
+  echo "Editing Process: ${EDITINGPROCESS}"
+  echo ""
+  echo "#==== Study Setup Information ====#"
+  echo "Study Process: ${STUDYPROCESS}"
+  echo ""
+  echo "#==== Statistical Analysis Information ====#"
+  echo "Analysis Process: ${ANALYSISPROCESS}"
+fi
+
+################
+# Create directories for the currently provided parameters
+mkdir -p "./Data/MediaEditing/InputData/${EDITINGINPUT}";
+mkdir -p "./Data/MediaEditing/IntermediateData/${EDITINGINTERMEDIATE}";
+mkdir -p "./Data/MediaEditing/TestData/${EDITINGTESTDATA}";
+
+mkdir -p "./Data/StudySetup/TestData/${STUDYTESTDATA}";
+mkdir -p "./Data/StudySetup/Studies/${STUDYSTUDIES}";
+mkdir -p "./Data/StudySetup/StudyResults/${STUDYRESULTS}";
+
+mkdir -p "./Data/StatisticalAnalysis/StudyResults/${ANALYSISSTUDYRESULTS}";
+mkdir -p "./Data/StatisticalAnalysis/TidyData/${ANALYSISTIDYDATA}";
+mkdir -p "./Data/StatisticalAnalysis/AnalysisResults/${ANALYSISRESULTS}";
+mkdir -p "./Data/StatisticalAnalysis/ResultVisualiations/${ANALYSISVISUALISATIONS}";
+
+
+################
+# Example-Case
+if [ ${parameterName} == "Example" ]
+then
+  echo ""
+  echo "#==== Preparing Examples since no Name was provided ====#"
+  # Media Editing Examples
+  cp "./Introduction/Examples/MediaEditingExample/Example-Media-Video-Merkel.mp4" "./Data/MediaEditing/InputData/${EDITINGINPUT}"
+  # Study Setup Examples
+  cp -r "./Introduction/Examples/StudyCreationExample/Fiction" "./Data/StudySetup/TestData/${STUDYTESTDATA}"
+  cp -r "./Introduction/Examples/StudyCreationExample/Impfangebot" "./Data/StudySetup/TestData/${STUDYTESTDATA}"
+  cp -r "./Introduction/Examples/StudyCreationExample/Paar" "./Data/StudySetup/TestData/${STUDYTESTDATA}"
+  cp -r "./Introduction/Examples/StudyCreationExample/Real" "./Data/StudySetup/TestData/${STUDYTESTDATA}"
+  cp -r "./Introduction/Examples/StudyCreationExample/Tempo" "./Data/StudySetup/TestData/${STUDYTESTDATA}"
+  # Statistical Analysis Examples
+  # TODO
+fi
+
+
+################
+# Media Editing
+if [ ${parameterMedia} = 1 ]
+then
+  echo ""
+  echo "#==== Media Editing Start ====#"
+  # Step 3: Editing Process
+  # TODO: Video-Editing-Script
+  # python editing.py -name mork_slowStart.mp4 -path C:\Users\do_34\Desktop\DDLitLab\Editing\ -speedUp 0 1 15
+  # python editing.py -name mork_slowStart.mp4 -path C:\Users\do_34\Desktop\DDLitLab\Editing\ -cut 0 1
+  # erster parameter: wann soll der speedUp starten
+  # zweiter parameter: wann soll er enden
+  # dritter parameter: beschleunigung * 10 (wenn du 1.1x beschleunigung willst, dann steht da 11)
+  echo "  Starting pythons venv"
+  source Environment/bin/activate
+  
+  echo "  Starting Video-Editing-Script"
+  # Variables for ease of calling and TODO: later automation
+  EDITSCRIPT="./Scripts/MediaEditing/Video-Editing-Script.py"
+
+  ################
+  # Cut video into excerpts (Input => Intermediate) 
+  INPUTPATH="/home/christianschuler/Dropbox/Crazy-StudyToolkidVid/StudyToolkitVid/Data/MediaEditing/InputData/Example/"
+  INPUTNAME="Example-Media-Video-Merkel.mp4"
+
+  INTERMEDIATEPATH="/home/christianschuler/Dropbox/Crazy-StudyToolkidVid/StudyToolkitVid/Data/MediaEditing/IntermediateData/Example/"
+  INTERMEDIATENAME1="Example-Media-Video-Merkel-Paar.mp4"
+  INTERMEDIATENAME2="Example-Media-Video-Merkel-Impfangebot.mp4"
+  INTERMEDIATENAME3="Example-Media-Video-Merkel-Tempo.mp4"
+ 
+  python "${EDITSCRIPT}" -pathInput "${INPUTPATH}" -nameInput "${INPUTNAME}" -pathOutput "${INTERMEDIATEPATH}" -nameOutput "${INTERMEDIATENAME1}" -cut 174 177
+  python "${EDITSCRIPT}" -pathInput "${INPUTPATH}" -nameInput "${INPUTNAME}" -pathOutput "${INTERMEDIATEPATH}" -nameOutput "${INTERMEDIATENAME2}" -cut 191 195
+  python "${EDITSCRIPT}"  -pathInput "${INPUTPATH}" -nameInput "${INPUTNAME}" -pathOutput "${INTERMEDIATEPATH}" -nameOutput "${INTERMEDIATENAME3}" -cut 179 182
+ 
+  ################
+  # Modify each excerpt in different ways (Intermediate => Test)
+  TESTPATH1="/home/christianschuler/Dropbox/Crazy-StudyToolkidVid/StudyToolkitVid/Data/MediaEditing/TestData/Example/Paar/"
+  mkdir -p "${TESTPATH1}";
+  TESTPATH2="/home/christianschuler/Dropbox/Crazy-StudyToolkidVid/StudyToolkitVid/Data/MediaEditing/TestData/Example/Impfangebot/"
+  mkdir -p "${TESTPATH2}";
+  TESTPATH3="/home/christianschuler/Dropbox/Crazy-StudyToolkidVid/StudyToolkitVid/Data/MediaEditing/TestData/Example/Tempo/"
+  mkdir -p "${TESTPATH3}";
+ 
+  TESTNAME1="Example-Media-Video-Merkel-Paar"
+  TESTNAME2="Example-Media-Video-Merkel-Impfangebot"
+  TESTNAME3="Example-Media-Video-Merkel-Tempo"
+ 
+  python "${EDITSCRIPT}" -pathInput "${INTERMEDIATEPATH}" -nameInput "${INTERMEDIATENAME1}" -pathOutput "${TESTPATH1}" -nameOutput "${TESTNAME1}-fast-12.mp4" -speedUp 1 3 12
+  python "${EDITSCRIPT}" -pathInput "${INTERMEDIATEPATH}" -nameInput "${INTERMEDIATENAME1}" -pathOutput "${TESTPATH1}" -nameOutput "${TESTNAME1}-fast-15.mp4" -speedUp 1 3 15
+  
+  python "${EDITSCRIPT}" -pathInput "${INTERMEDIATEPATH}" -nameInput "${INTERMEDIATENAME2}" -pathOutput "${TESTPATH2}" -nameOutput "${TESTNAME2}-fast-12.mp4" -speedUp 1 3 12
+  python "${EDITSCRIPT}" -pathInput "${INTERMEDIATEPATH}" -nameInput "${INTERMEDIATENAME2}" -pathOutput "${TESTPATH2}" -nameOutput "${TESTNAME2}-fast-15.mp4" -speedUp 1 3 15
+  
+  python "${EDITSCRIPT}" -pathInput "${INTERMEDIATEPATH}" -nameInput "${INTERMEDIATENAME3}" -pathOutput "${TESTPATH3}" -nameOutput "${TESTNAME3}-fast-12.mp4" -speedUp 1 3 12
+  python "${EDITSCRIPT}" -pathInput "${INTERMEDIATEPATH}" -nameInput "${INTERMEDIATENAME3}" -pathOutput "${TESTPATH3}" -nameOutput "${TESTNAME3}-fast-15.mp4" -speedUp 1 3 15
+  
+  echo "  Deactivating pythons venv"
+  deactivate
+  
+  echo "#==== Media Editing End ====#"
+fi
+
+
+################
+# Study Setup
+if [ ${parameterStudy} = 1 ]
+then
+  echo ""
+  echo "#==== Study Setup Start ====#"
+  STUDYRUN=$(cat ${parameterFile} | jq -r ".parameters.studysetup.studyProcess[0].studyrun")
+  echo "  Studyrun is: ${STUDYRUN}"
+  # Step 4: Study Creation
+  # TODO: Study-Creation-Script "StudyName" "StudyId" "StudyrunName" 
+  bash "./Scripts/StudySetup/Study-Creation-Script.bh" "${NAME}" "${ID}" "${STUDYRUN}" "${STUDYTESTDATA}" "${STUDYSTUDIES}" "${STUDYRESULTS}" 
+  
+  
+  
+  # Step 5: Study Execution
+  # TODO:
+  
+  # Step 6: Result Aggregation
+  # TODO: Study-Aggregation-Script
+  
+  echo "#==== Study Setup End ====#"
+fi
+
+
+################
+# Statistical Analysis
+if [ ${parameterStatistical} = 1 ]
+then
+  echo ""
+  echo "#==== Statistical Analysis Start ====#"
+  # Step 7: Data Cleaning
+  # TODO: Preprocessing-Script
+  
+  # Step 8: Data Analysis
+  # TODO: Statistical-Analysis-Script
+  
+  # Step 9: Data Visualisation
+  # TODO: Result-Visualisation-Script
+  
+  echo "#==== Statistical Analysis End ====#"
+fi
+
+
+

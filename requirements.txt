@@ -1,0 +1,7 @@
+ffmpeg==1.4
+ffmpeg_python==0.2.0
+imageio==2.27.0
+moviepy==1.0.3
+numpy==1.23.5
+pydub==0.25.1
+TextGrid==1.5

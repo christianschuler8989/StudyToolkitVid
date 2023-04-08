@@ -1,0 +1,89 @@
+Examples for functions using the Video StrongTogether.mp4 or dummy-video-merkel.mp4
+-> if no -path is given, the local path (where the editing script is located) ./ is assumed
+
+
+#Cuts a video at a certain time and saves it
+cut (start_time, end_time, path_to_save):
+python editing.py -name StrongTogether.mp4 -cut "0" "1" ./
+python editing.py -name StrongTogether.mp4 -cut "0.525" "1.351" ./
+
+
+#Saves all frames of a video to one folder
+saveAllFrames (path_to_save):
+python editing.py -name StrongTogether.mp4 -saveAllFrames ./testFrames/
+
+
+#Changes the speed of the whole video
+speedChange (start_time, end_time, speedChange, path_to_save):
+python editing.py -name StrongTogether.mp4 -speedChange "0.5" "1.5" "1.5" ./
+
+
+#Deletes a frame and makes it synchronous again by fusing the frame before and after two one intermediate frame
+deleteFrameSync (frame_time):
+python editing.py -name StrongTogether.mp4 -deleteFrameSync "0.35"
+
+
+#Extracts occasions where a text_to_extract appears in the audio of a video according to a textgrid
+extractTextGridOccasions (text_to_extract, path_of_textgrid, path_to_save_occasions)
+python editing.py -name dummy-video-merkel.wav -extractTextGridOccasions es ./dummy-video-merkel-speech.TextGrid ./occasions/ 
+
+
+#Creates one audio from many audios by concatenating them. Audios in the folder need to be numerarized by haven one number in front
+# of their name.
+makeAudioFromAudios (name_of_audio_with_file_ending, path_to_audios, path_to_save_new_audio)
+python editing.py -makeAudioFromAudios TestAudio.wav ./audioFromGrid/ ./ 
+
+
+#starting item is the index of the item in the text grid; same for ending item
+saveAudioFromGrid (row_of_textgrid, path_of_textgrid, path_to_save_audios, starting_item [optional], ending_item[optional]
+python editing.py -name dummy-video-merkel.mp4 -saveAudioFromGrid 0 ./dummy-video-merkel-speech.TextGrid ./ 0 50 
+
+
+#Saves a frame at a certain time in the video
+saveFrame (frame_time, path_to_save)
+python editing.py -name StrongTogether.mp4 -saveFrame 1.1 ./ 
+
+
+#Removes a frame at a certain time in the video
+removeFrame (frame_time, path_to_save)
+python editing.py -name StrongTogether.mp4 -removeFrame "1.1" ./ 
+
+
+# Inserts a frame at a certain time of the video (without changing the audio)
+insertFrame (frame_time, path_to_frame, path_to_save)
+python editing.py -name StrongTogether.mp4 -insertFrame "1.1" ./frame0.png ./ 
+
+
+#Makes a video from many frames. Frames need to be numerized by having a number in front of their name.
+makeVideoFromFrames (path_of_frames, frames_per_second, path_to_save)
+python editing.py -name StrongTogether.mp4 -makeVideoFromFrames ./testFrames/ "30" ./
+
+
+#Mirrors a video at the x-axis
+mirrorX (path_to_save)
+python editing.py -name dummy-video-merkel.mp4 -mirrorX ./
+
+
+#Mirrors a video at the y-axis
+mirrorY (path_to_save)
+python editing.py -name dummy-video-merkel.mp4 -mirrorY ./
+
+
+#Changes the speed of certain intervales in the video. Requires a TXT file that contains the intervals that 
+# will be changes in speed. File has to look like this: 
+# 	0.2, 0.9
+#	1.2, 1.25
+# 	3.313, 3.403 (and so on)
+changeSpeedSegments (txt_of_intervals, speed, path_to_save)
+python editing.py -name dummy-video-merkel.mp4 -speedChangeSegments ./speedy.txt 1.5 ./ 
+
+
+#Extracts the information contained in the textgrid of a vertain string of text (text_of_interest) and prints
+# it into a txt file
+textGridInformation (text_of_interest, path_to_textgrid, path_to_save_txt)
+python editing.py -name StrongTogether.mp4 -textGridInformation es ./dummy-video-merkel-speech.TextGrid ./  
+
+
+#Sets the audio of a video. When video is longer: muted after audio ends. When audio is longer: video freezes until audio ends.
+setAudio (path_to_audio, path_to_save)
+python editing.py -name StrongTogether.mp4 -setAudio ./TestAudio.wav ./

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+mkdir -p "./Scripts";
+
+mkdir -p "./Scripts/Main";
+mkdir -p "./Scripts/MediaEditing";
+mkdir -p "./Scripts/StudySetup";
+mkdir -p "./Scripts/StatisticalAnalysis";
+
+
+mkdir -p "./Introduction";
+
+mkdir -p "./Introduction/Manual";
+mkdir -p "./Introduction/Examples";
+
+
+mkdir -p "./Data";
+
+mkdir -p "./Data/MediaEditing/";
+mkdir -p "./Data/MediaEditing/InputData";
+mkdir -p "./Data/MediaEditing/IntermediateData";
+mkdir -p "./Data/MediaEditing/TestData";
+
+mkdir -p "./Data/StudySetup";
+mkdir -p "./Data/StudySetup/TestData";
+mkdir -p "./Data/StudySetup/Studies";
+mkdir -p "./Data/StudySetup/StudyResults";
+
+mkdir -p "./Data/StatisticalAnalysis";
+mkdir -p "./Data/StatisticalAnalysis/StudyResults";
+mkdir -p "./Data/StatisticalAnalysis/TidyData";
+mkdir -p "./Data/StatisticalAnalysis/AnalysisResults";
+mkdir -p "./Data/StatisticalAnalysis/ResultVisualiations";
+
