@@ -223,7 +223,7 @@ Christian Schuler - [@christians89898](https://twitter.com/christians89898) - ch
 
 Dominik Hauser - 
 
-Anran Wang - [@AnranW](https://github.com/AnranW) 
+Anran Wang - [@AnranW](https://github.com/AnranW) - echowanng1996(thesignforemails)hotmail.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
