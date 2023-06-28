@@ -101,6 +101,9 @@ class MediaEditWindow(QMainWindow):
 		self.player = QMediaPlayer()
 		self.player.setSource(QUrl.fromLocalFile(self.fname[0]))
 		self.player.setVideoOutput(self.videoWidget)
+		self.audioOutput = QAudioOutput()
+		self.player.setAudioOutput(self.audioOutput)
+		self.audioOutput.setVolume(100)
 
 		if self.player.playbackState() == QMediaPlayer.PlaybackState:
 			self.player.pause()
