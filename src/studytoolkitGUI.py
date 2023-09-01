@@ -1,4 +1,5 @@
 import sys
+from media_editing import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -63,7 +64,7 @@ class MediaEditWindow(QMainWindow):
 		# import file button 
 		mediaImportBtn = QPushButton(self)
 		mediaImportBtn.setText("Import file")
-		mediaImportBtn.clicked.connect(self.open_dialog)
+		mediaImportBtn.clicked.connect(self.importfile)
 
 
 		# media player
@@ -96,8 +97,8 @@ class MediaEditWindow(QMainWindow):
 		# buttons to edit vidwo
 		self.editButton1 = QPushButton()
 		self.editButton1.setEnabled(False)
-		self.editButton1.setText("Option 1")
-		# self.editButton1.clicked.connect(self.itsfunction)
+		self.editButton1.setText("Mirror Horizontally")
+		self.editButton1.clicked.connect(self.mirrorX)
 		self.editButton2 = QPushButton()
 		self.editButton2.setEnabled(False)
 		self.editButton2.setText("Option 2")		
@@ -123,25 +124,26 @@ class MediaEditWindow(QMainWindow):
 		self.setCentralWidget(widget)
 
 	# import file and give to media player
-	def open_dialog(self):
+	def importfile(self):
 		self.fname = QFileDialog.getOpenFileName(
 			self,
 			"Open File",
 			"${HOME}",
 			"All Files (*);; Python Files (*.py);; PNG Files (*.png)",
 		)
+		self.filename = self.fname[0].split("/")[-1]
+		self.filepath = self.fname[0][:-len(self.filename)]
 		self.oldplayButton.setEnabled(True)
 		self.setplayer(self.oldvideoWidget)
 		self.setEditingBtnActive()
 
+	# set buttons for editing active
 	def setEditingBtnActive(self): 
 		self.editButton1.setEnabled(True)
 		self.editButton2.setEnabled(True)
 		self.editButton3.setEnabled(True)
-		
 
-
-	# play video	
+	# give player widgets a player instance 
 	def setplayer(self, widget):
 		self.player = QMediaPlayer()
 		self.player.setSource(QUrl.fromLocalFile(self.fname[0]))
@@ -150,6 +152,7 @@ class MediaEditWindow(QMainWindow):
 		self.player.setAudioOutput(self.audioOutput)
 		self.audioOutput.setVolume(100)
 	
+	# play video	
 	def play(self) : 
 		if self.player.isPlaying():
 			self.player.pause()
@@ -157,7 +160,12 @@ class MediaEditWindow(QMainWindow):
 		else :
 			self.player.play()
 			self.oldplayButton.setText("Pause")
+	
+	# mirror video horizontally 
+	def mirrorX(self) : 
+		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
 
+# window to generate studies
 class StudyGenWindow(QMainWindow):
 
 	def __init__(self):
