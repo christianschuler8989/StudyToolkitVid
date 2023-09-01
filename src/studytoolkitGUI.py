@@ -164,6 +164,9 @@ class MediaEditWindow(QMainWindow):
 	# mirror video horizontally 
 	def mirrorX(self) : 
 		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
+		# to fit media_editing.py 
+		# self.showOutput("MIRROR_X")
+
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):

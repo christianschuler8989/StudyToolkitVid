@@ -98,9 +98,11 @@ def insert_frame(clip, frame_location, frame_time):
         second_clip = clip.subclip(frame_time + 0.5 * 1.0/clip.fps, clip.duration)
         return concatenate_videoclips([first_clip, frame_clip, second_clip])
 
-
-def save_clip(clip, nameOfClip, path_to_save):
-    clip.write_videofile(path_to_save + nameOfClip)
+# rewrite so extension is at the end of file name, hence all its usage has been adjusted - anran
+def save_clip(clip, extension, nameOfClip, path_to_save):
+    filetype = nameOfClip.split(".")[-1]
+    extendedName= nameOfClip[:-(len(filetype)+1)] + "_" + extension + "." + filetype
+    clip.write_videofile(path_to_save + extendedName)
 
 
 def make_video_from_frames(frames_location, frames_per_second):
@@ -328,7 +330,7 @@ def main():
         audioClip = AudioFileClip(path_to_file+args.setAudio[0])
         path_to_save = args.setAudio[1]
         clip = setAudioClip(videoClip, audioClip)
-        save_clip(clip,'NEW_AUDIO' + args.name, path_to_save)
+        save_clip(clip,'NEW_AUDIO', args.name, path_to_save)
         
     if args.speedChangeSegments != None:
         clip = getVideoClipFromParser()
@@ -340,19 +342,19 @@ def main():
             intervals_of_speed_change = [list(map(float, line.strip().split(','))) for line in f.readlines()]
         
         clip = change_speed_segments(clip, intervals_of_speed_change, speed_factor)
-        save_clip(clip, 'SPEED_SEGMENTS' + args.name, path_to_save)    
+        save_clip(clip, 'SPEED_SEGMENTS', args.name, path_to_save)    
         
     if args.mirrorX != None:
         clip = getVideoClipFromParser()
         clip = mirror_at_x(clip)
         path_to_save = args.mirrorX[0]
-        save_clip(clip, 'MIRROR_X' + args.name, path_to_save)
+        save_clip(clip, 'MIRROR_X', args.name, path_to_save)
 
     if args.mirrorY != None:
         clip = getVideoClipFromParser()
         clip = mirror_at_y(clip)
         path_to_save = args.mirrorY[0]
-        save_clip(clip, 'MIRROR_Y' + args.name, path_to_save)    
+        save_clip(clip, 'MIRROR_Y', args.name, path_to_save)    
         
     if args.textGridInformation != None:
         clip = getClipFromParser()
@@ -368,14 +370,14 @@ def main():
         frame_location = args.insertFrame[1]
         path_to_save = args.insertFrame[2]
         clip = insert_frame(clip, frame_location, frame_time)
-        save_clip(clip, 'FRAME_INSERT' + args.name, path_to_save)
+        save_clip(clip, 'FRAME_INSERT', args.name, path_to_save)
 
     if args.makeVideoFromFrames != None:
         frame_location = args.makeVideoFromFrames[0]
         frames_per_second = float(args.makeVideoFromFrames[1])
         path_to_save = args.makeVideoFromFrames[2]
         clip = make_video_from_frames(frame_location, frames_per_second)
-        save_clip(clip, 'VIDEO_FROM_FRAMES' + args.name, path_to_save) 
+        save_clip(clip, 'VIDEO_FROM_FRAMES', args.name, path_to_save) 
     
     
     if args.removeFrame != None:
@@ -383,7 +385,7 @@ def main():
         frame_time = float(args.removeFrame[0])
         path_to_save = args.removeFrame[1]
         clip = remove_frame_time(clip, frame_time)
-        save_clip(clip, 'FRAME_REMOVE' + args.name, path_to_save)
+        save_clip(clip, 'FRAME_REMOVE', args.name, path_to_save)
     
     if args.saveFrame != None:
         clip = getVideoClipFromParser()
@@ -405,7 +407,7 @@ def main():
         end = float(startEnd[1])
         path_to_save = args.cut[2]
         clip = cut(clip, start, end)
-        save_clip(clip, args.name + "-CUT" + str(start) + str(end), path_to_save)
+        save_clip(clip, "-CUT" + str(start) + str(end), args.name, path_to_save)
     
     
     
@@ -417,14 +419,14 @@ def main():
         speed = float(startEndSpeed[2])
         path_to_save = args.speedChange[3]
         clip = change_speed(clip, speed, start, end)
-        save_clip(clip, "SPEED" + args.name, path_to_save)
+        save_clip(clip, "SPEED", args.name, path_to_save)
         
 
     if args.deleteFrameSync != None:
         clip = getVideoClipFromParser()
         frame_time = float(args.deleteFrameSync[0])
         clip = delete_frame_synchronous(clip,frame_time)
-        save_clip(clip, 'frameDeleteSync' + args.name, path_to_file)
+        save_clip(clip, 'frameDeleteSync', args.name, path_to_file)
     
 
     if args.extractTextGridOccasions != None:
