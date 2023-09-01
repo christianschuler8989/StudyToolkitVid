@@ -405,7 +405,7 @@ def main():
         end = float(startEnd[1])
         path_to_save = args.cut[2]
         clip = cut(clip, start, end)
-        save_clip(clip, "CUT" + args.name, path_to_save)
+        save_clip(clip, args.name + "-CUT" + str(start) + str(end), path_to_save)
     
     
     
