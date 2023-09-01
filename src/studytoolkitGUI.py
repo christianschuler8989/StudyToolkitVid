@@ -4,7 +4,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtMultimediaWidgets import *
 from PyQt6.QtMultimedia import *
-
+# Christian joined the chat.
 
 ####### Defining different windows #######
 class Color(QWidget):
@@ -67,22 +67,57 @@ class MediaEditWindow(QMainWindow):
 
 
 		# media player
-		self.videoWidget = QVideoWidget()
-		self.videoWidget.show()
-
+		self.oldvideoWidget = QVideoWidget()
+		self.oldvideoWidget.show()
+		self.newvideoWidget = QVideoWidget()
+		self.newvideoWidget.show()
 		
-		self.playButton = QPushButton()
-		self.playButton.setEnabled(False)
-		self.playButton.setText("Play")
-		self.playButton.clicked.connect(self.play)
 
-		controllayout = QVBoxLayout()
-		controllayout.addWidget(self.videoWidget)
-		controllayout.addWidget(self.playButton)
+		self.oldplayButton = QPushButton()
+		self.oldplayButton.setEnabled(False)
+		self.oldplayButton.setText("Play")
+		self.oldplayButton.clicked.connect(self.play)
+
+		self.newplayButton = QPushButton()
+		self.newplayButton.setEnabled(False)
+		self.newplayButton.setText("Play")
+		self.newplayButton.clicked.connect(self.play)
+
+		# import and display original video
+		oldvideolayout = QVBoxLayout()
+		oldvideolayout.addWidget(mediaImportBtn)
+		oldvideolayout.addWidget(self.oldvideoWidget)
+		oldvideolayout.addWidget(self.oldplayButton)
+		# display new edited video
+		newvideolayout = QVBoxLayout()
+		newvideolayout.addWidget(self.newvideoWidget)
+		newvideolayout.addWidget(self.newplayButton)
+		
+		# buttons to edit vidwo
+		self.editButton1 = QPushButton()
+		self.editButton1.setEnabled(False)
+		self.editButton1.setText("Option 1")
+		# self.editButton1.clicked.connect(self.itsfunction)
+		self.editButton2 = QPushButton()
+		self.editButton2.setEnabled(False)
+		self.editButton2.setText("Option 2")		
+		
+		self.editButton3 = QPushButton()
+		self.editButton3.setEnabled(False)
+		self.editButton3.setText("Option 3")
+		
+		# area to edit vidwo
+		editinglayout = QVBoxLayout()
+		editinglayout.addWidget(self.editButton1)
+		editinglayout.addWidget(self.editButton2)
+		editinglayout.addWidget(self.editButton3)
+
+
 		layout = QHBoxLayout()
+		layout.addLayout(oldvideolayout)
+		layout.addLayout(editinglayout)
+		layout.addLayout(newvideolayout)
 
-		layout.addWidget(mediaImportBtn)
-		layout.addLayout(controllayout)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -95,22 +130,33 @@ class MediaEditWindow(QMainWindow):
 			"${HOME}",
 			"All Files (*);; Python Files (*.py);; PNG Files (*.png)",
 		)
-		self.playButton.setEnabled(True)
+		self.oldplayButton.setEnabled(True)
+		self.setplayer(self.oldvideoWidget)
+		self.setEditingBtnActive()
+
+	def setEditingBtnActive(self): 
+		self.editButton1.setEnabled(True)
+		self.editButton2.setEnabled(True)
+		self.editButton3.setEnabled(True)
+		
+
+
 	# play video	
-	def play(self):
+	def setplayer(self, widget):
 		self.player = QMediaPlayer()
 		self.player.setSource(QUrl.fromLocalFile(self.fname[0]))
-		self.player.setVideoOutput(self.videoWidget)
+		self.player.setVideoOutput(widget)
 		self.audioOutput = QAudioOutput()
 		self.player.setAudioOutput(self.audioOutput)
 		self.audioOutput.setVolume(100)
-
-		if self.player.playbackState() == QMediaPlayer.PlaybackState:
+	
+	def play(self) : 
+		if self.player.isPlaying():
 			self.player.pause()
-		else:
+			self.oldplayButton.setText("Play")
+		else :
 			self.player.play()
-
-
+			self.oldplayButton.setText("Pause")
 
 class StudyGenWindow(QMainWindow):
 
