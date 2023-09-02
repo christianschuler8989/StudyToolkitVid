@@ -283,7 +283,7 @@ def main():
     parser.add_argument('-path', type=str)
     parser.add_argument('-name', type=str)
     parser.add_argument('-cut', nargs=3)
-    parser.add_argument('-speedChange', nargs=3)
+    parser.add_argument('-speedChange', nargs=4)
     parser.add_argument('-saveAudioFromGrid', nargs='+')
     parser.add_argument('-makeAudioFromAudios', nargs = 3)
     parser.add_argument('-saveAllFrames', nargs=1)
