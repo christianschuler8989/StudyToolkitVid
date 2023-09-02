@@ -77,12 +77,12 @@ class MediaEditWindow(QMainWindow):
 		self.oldplayButton = QPushButton()
 		self.oldplayButton.setEnabled(False)
 		self.oldplayButton.setText("Play")
-		self.oldplayButton.clicked.connect(self.play)
+		self.oldplayButton.clicked.connect(self.playold)
 
 		self.newplayButton = QPushButton()
 		self.newplayButton.setEnabled(False)
 		self.newplayButton.setText("Play")
-		self.newplayButton.clicked.connect(self.play)
+		self.newplayButton.clicked.connect(self.playnew)
 
 		# import and display original video
 		oldvideolayout = QVBoxLayout()
@@ -95,22 +95,38 @@ class MediaEditWindow(QMainWindow):
 		newvideolayout.addWidget(self.newplayButton)
 		
 		# buttons to edit vidwo
-		self.editButton1 = QPushButton()
-		self.editButton1.setEnabled(False)
-		self.editButton1.setText("Mirror Horizontally")
-		self.editButton1.clicked.connect(self.mirrorX)
-		self.editButton2 = QPushButton()
-		self.editButton2.setEnabled(False)
-		self.editButton2.setText("Option 2")		
+		# button to mirror horizontally
+		self.mirrorXButton = QPushButton()
+		self.mirrorXButton.setEnabled(False)
+		self.mirrorXButton.setText("Mirror Horizontally")
+		self.mirrorXButton.clicked.connect(self.mirrorX)
+		# container to change video speed
+		self.speedButton = QPushButton()
+		self.speedButton.setEnabled(False)
+		self.speedButton.setText("Change Speed")		
+		self.speedButton.clicked.connect(self.changeSpeed)
+		self.startInput = QLineEdit(placeholderText="start time")
+		self.endInput = QLineEdit(placeholderText="end time")
+		self.speedInput = QLineEdit(placeholderText="speed")
+
+		speedlayout = QHBoxLayout()
+		speedlayout.addWidget(self.startInput)
+		speedlayout.addWidget(self.endInput)
+		speedlayout.addWidget(self.speedInput)
+		speedlayout.addWidget(self.speedButton)
+
+
 		
 		self.editButton3 = QPushButton()
 		self.editButton3.setEnabled(False)
 		self.editButton3.setText("Option 3")
 		
+	
+
 		# area to edit vidwo
 		editinglayout = QVBoxLayout()
-		editinglayout.addWidget(self.editButton1)
-		editinglayout.addWidget(self.editButton2)
+		editinglayout.addWidget(self.mirrorXButton)
+		editinglayout.addLayout(speedlayout)
 		editinglayout.addWidget(self.editButton3)
 
 
@@ -134,39 +150,58 @@ class MediaEditWindow(QMainWindow):
 		self.filename = self.fname[0].split("/")[-1]
 		self.filepath = self.fname[0][:-len(self.filename)]
 		self.oldplayButton.setEnabled(True)
-		self.setplayer(self.oldvideoWidget)
+		self.setplayer(self.oldvideoWidget, self.fname[0])
 		self.setEditingBtnActive()
 
 	# set buttons for editing active
 	def setEditingBtnActive(self): 
-		self.editButton1.setEnabled(True)
-		self.editButton2.setEnabled(True)
+		self.mirrorXButton.setEnabled(True)
+		self.speedButton.setEnabled(True)
 		self.editButton3.setEnabled(True)
 
 	# give player widgets a player instance 
-	def setplayer(self, widget):
+	def setplayer(self, widget, resource):
 		self.player = QMediaPlayer()
-		self.player.setSource(QUrl.fromLocalFile(self.fname[0]))
+		self.player.setSource(QUrl.fromLocalFile(resource))
 		self.player.setVideoOutput(widget)
 		self.audioOutput = QAudioOutput()
 		self.player.setAudioOutput(self.audioOutput)
 		self.audioOutput.setVolume(100)
 	
-	# play video	
-	def play(self) : 
+	# play original video 
+	def playold(self) : 
 		if self.player.isPlaying():
 			self.player.pause()
 			self.oldplayButton.setText("Play")
 		else :
 			self.player.play()
 			self.oldplayButton.setText("Pause")
-	
+	# play edited vidwo
+	def playnew(self) : 
+		if self.player.isPlaying():
+			self.player.pause()
+			self.newplayButton.setText("Play")
+		else :
+			self.player.play()
+			self.newplayButton.setText("Pause")
+	# show edited video
+	def showNewVideo(self, extension) : 
+		filetype = self.filename.split(".")[-1]
+		self.setplayer(self.newvideoWidget, self.filename[:-(len(filetype)+1)] + extension + "." + filetype) 
+		self.newplayButton.setEnabled(True)
+		
 	# mirror video horizontally 
 	def mirrorX(self) : 
-		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
 		# to fit media_editing.py 
-		# self.showOutput("MIRROR_X")
+		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
+		# pass new video to player widget 
+		showNewVideo("_MIRROR_X")
 
+	# change speed of video section
+	def changeSpeed(self) : 
+		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -speedChange " + self.startInput.text() + " " + self.endInput.text() + " " + self.speedInput.text() +  " ./")
+		# pass new video to player widget 
+		self.showNewVideo("_SPEEDx" + self.speedInput.text())
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
