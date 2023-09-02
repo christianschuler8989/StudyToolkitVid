@@ -419,7 +419,7 @@ def main():
         speed = float(startEndSpeed[2])
         path_to_save = args.speedChange[3]
         clip = change_speed(clip, speed, start, end)
-        save_clip(clip, "SPEED", args.name, path_to_save)
+        save_clip(clip, "SPEEDx" + str(speed), args.name, path_to_save)
         
 
     if args.deleteFrameSync != None:

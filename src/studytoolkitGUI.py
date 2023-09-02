@@ -34,12 +34,15 @@ class MainWindow(QMainWindow):
 		studyGenBtn.setText("Study Generation")
 		studyGenBtn.clicked.connect(self.openStudyGenWindow)
 
+		statAnaBtn = QPushButton(self)
+		statAnaBtn.setText("Statistical Analysis")
+		statAnaBtn.clicked.connect(self.openStatAnaWindow)
 
 		layout = QHBoxLayout()
 
 		layout.addWidget(mediaEditBtn)
 		layout.addWidget(studyGenBtn)
-		layout.addWidget(Color('blue'))
+		layout.addWidget(statAnaBtn)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -52,6 +55,9 @@ class MainWindow(QMainWindow):
 		self.w = StudyGenWindow()
 		self.w.show()
 
+	def	openStatAnaWindow(self) : 
+		self.w = StatAnaWindow()
+		self.w.show()
 
 class MediaEditWindow(QMainWindow):
 
@@ -59,7 +65,7 @@ class MediaEditWindow(QMainWindow):
 		super(MediaEditWindow, self).__init__()
 
 		self.setWindowTitle("Media Editing")
-		self.setMinimumSize(QSize(600,400))
+		self.setMinimumSize(QSize(900,600))
 		
 		# import file button 
 		mediaImportBtn = QPushButton(self)
@@ -69,8 +75,10 @@ class MediaEditWindow(QMainWindow):
 
 		# media player
 		self.oldvideoWidget = QVideoWidget()
+		self.oldvideoWidget.setMinimumWidth(300)
 		self.oldvideoWidget.show()
 		self.newvideoWidget = QVideoWidget()
+		self.newvideoWidget.setMinimumWidth(300)
 		self.newvideoWidget.show()
 		
 
@@ -195,7 +203,7 @@ class MediaEditWindow(QMainWindow):
 		# to fit media_editing.py 
 		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
 		# pass new video to player widget 
-		showNewVideo("_MIRROR_X")
+		self.showNewVideo("_MIRROR_X")
 
 	# change speed of video section
 	def changeSpeed(self) : 
@@ -222,6 +230,25 @@ class StudyGenWindow(QMainWindow):
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
 
+
+# window for statistical analysis
+class StatAnaWindow(QMainWindow):
+
+	def __init__(self):
+		super(StatAnaWindow, self).__init__()
+
+		self.setWindowTitle("Statistical Analysis")
+		self.setMinimumSize(QSize(400,600))
+
+		statAnaBtn = QPushButton(self)
+		statAnaBtn.setText("Analyse your data")
+
+		layout = QHBoxLayout()
+
+		layout.addWidget(statAnaBtn)
+		widget = QWidget()
+		widget.setLayout(layout)
+		self.setCentralWidget(widget)
 
 
 
