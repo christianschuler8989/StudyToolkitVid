@@ -14,7 +14,6 @@ import imageio
 #from PIL import Image
 
 
-
 """
 Functions for sorting by numbers. Remove anything than the numbers in a string.
 """
@@ -99,10 +98,14 @@ def insert_frame(clip, frame_location, frame_time):
         return concatenate_videoclips([first_clip, frame_clip, second_clip])
 
 # rewrite so extension is at the end of file name, hence all its usage has been adjusted - anran
+# also, write final name of the edited file into a txt file so it can be used by the gui
 def save_clip(clip, extension, nameOfClip, path_to_save):
     filetype = nameOfClip.split(".")[-1]
-    extendedName= nameOfClip[:-(len(filetype)+1)] + "_" + extension + "." + filetype
-    clip.write_videofile(path_to_save + extendedName)
+    extendedName= nameOfClip[:-(len(filetype)+1)] + "-" + extension + "." + filetype
+    outputfile = path_to_save + extendedName
+    clip.write_videofile(outputfile)
+    with open ("tempFileForSavingEditedVideoName.txt", "w") as f : 
+        f.write(outputfile)
 
 
 def make_video_from_frames(frames_location, frames_per_second):
@@ -459,7 +462,6 @@ def main():
             end = params[4]
             end = int(end) if type(end) is str and end.isdigit() else 0
         save_audio_from_text_grid(clip, row,path_grid, path_save_audio, start, end)
-        
     
   
     

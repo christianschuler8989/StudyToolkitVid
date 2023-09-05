@@ -1,5 +1,5 @@
-import sys
-from media_editing import *
+import sys, os 
+import media_editing 
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -262,7 +262,5 @@ app = QApplication(sys.argv)
 
 window = MainWindow()
 window.show()
-
-
 
 app.exec()
