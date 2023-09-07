@@ -268,7 +268,7 @@ class MediaEditWindow(QMainWindow):
 	def changeSpeed(self) : 
 		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -speedChange " + self.startInput.text() + " " + self.endInput.text() + " " + self.speedInput.text() +  " ./")
 		# pass new video to player widget 
-		self.showNewVideo("-SPEEDx" + float(self.speedInput.text()))
+		self.showNewVideo("-SPEEDx" + str(float(self.speedInput.text())))
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
