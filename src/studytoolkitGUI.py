@@ -65,7 +65,7 @@ class MediaEditWindow(QMainWindow):
 		super(MediaEditWindow, self).__init__()
 
 		self.setWindowTitle("Media Editing")
-		self.setMinimumSize(QSize(900,600))
+		self.setMinimumSize(QSize(1200,600))
 		
 		# import file button 
 		mediaImportBtn = QPushButton(self)
@@ -75,10 +75,10 @@ class MediaEditWindow(QMainWindow):
 
 		# media player
 		self.oldvideoWidget = QVideoWidget()
-		self.oldvideoWidget.setMinimumWidth(300)
+		self.oldvideoWidget.setMinimumWidth(400)
 		self.oldvideoWidget.show()
 		self.newvideoWidget = QVideoWidget()
-		self.newvideoWidget.setMinimumWidth(300)
+		self.newvideoWidget.setMinimumWidth(400)
 		self.newvideoWidget.show()
 		
 
@@ -108,6 +108,12 @@ class MediaEditWindow(QMainWindow):
 		self.mirrorXButton.setEnabled(False)
 		self.mirrorXButton.setText("Mirror Horizontally")
 		self.mirrorXButton.clicked.connect(self.mirrorX)
+
+		# button to mirror vertically
+		self.mirrorYButton = QPushButton()
+		self.mirrorYButton.setEnabled(False)
+		self.mirrorYButton.setText("Mirror Vertically")
+		
 		# container to change video speed
 		self.speedButton = QPushButton()
 		self.speedButton.setEnabled(False)
@@ -124,18 +130,63 @@ class MediaEditWindow(QMainWindow):
 		speedlayout.addWidget(self.speedButton)
 
 
+		# button to save all frames
+		self.saveFrameButton = QPushButton()
+		self.saveFrameButton.setEnabled(False)
+		self.saveFrameButton.setText("Save All Frames")
+
+		# button to delete a frame
+		self.deleteFrameButton = QPushButton()
+		self.deleteFrameButton.setEnabled(False)
+		self.deleteFrameButton.setText("Extract Occasion")
+
+		# button to extract an occasion
+		self.extractOccasionButton = QPushButton()
+		self.extractOccasionButton.setEnabled(False)
+		self.extractOccasionButton.setText("Extract Occasion")
+
+		# button to concatenating audios
+		self.concatAudioButton = QPushButton()
+		self.concatAudioButton.setEnabled(False)
+		self.concatAudioButton.setText("Concatenate Audios")
+
+		# button to save frame at time
+		self.saveFrameAtButton = QPushButton()
+		self.saveFrameAtButton.setEnabled(False)
+		self.saveFrameAtButton.setText("Save Frame At: ")
 		
-		self.editButton3 = QPushButton()
-		self.editButton3.setEnabled(False)
-		self.editButton3.setText("Option 3")
-		
+		# button to delete frame at time
+		self.deleteFrameAtButton = QPushButton()
+		self.deleteFrameAtButton.setEnabled(False)
+		self.deleteFrameAtButton.setText("Delete Frame At: ")
+
+		# button to insert frame at time
+		self.insertFrameAtButton = QPushButton()
+		self.insertFrameAtButton.setEnabled(False)
+		self.insertFrameAtButton.setText("Insert Frame At: ")
+
+		# button to make video from frames
+		self.makeVideoFromFramesButton = QPushButton()
+		self.makeVideoFromFramesButton.setEnabled(False)
+		self.makeVideoFromFramesButton.setText("Make Video From Frames")
+
 	
 
 		# area to edit vidwo
 		editinglayout = QVBoxLayout()
 		editinglayout.addWidget(self.mirrorXButton)
+		editinglayout.addWidget(self.mirrorYButton)
 		editinglayout.addLayout(speedlayout)
-		editinglayout.addWidget(self.editButton3)
+		editinglayout.addWidget(self.saveFrameButton)
+		editinglayout.addWidget(self.deleteFrameButton)
+		editinglayout.addWidget(self.extractOccasionButton)
+		editinglayout.addWidget(self.concatAudioButton)
+		editinglayout.addWidget(self.saveFrameAtButton)
+		editinglayout.addWidget(self.deleteFrameAtButton)
+		editinglayout.addWidget(self.insertFrameAtButton)
+		editinglayout.addWidget(self.makeVideoFromFramesButton)
+		
+
 
 
 		layout = QHBoxLayout()
@@ -164,8 +215,16 @@ class MediaEditWindow(QMainWindow):
 	# set buttons for editing active
 	def setEditingBtnActive(self): 
 		self.mirrorXButton.setEnabled(True)
+		self.mirrorYButton.setEnabled(True)
 		self.speedButton.setEnabled(True)
-		self.editButton3.setEnabled(True)
+		self.saveFrameButton.setEnabled(True)
+		self.deleteFrameButton.setEnabled(True)
+		self.extractOccasionButton.setEnabled(True)
+		self.concatAudioButton.setEnabled(True)
+		self.saveFrameAtButton.setEnabled(True)
+		self.deleteFrameAtButton.setEnabled(True)
+		self.insertFrameAtButton.setEnabled(True)
+		self.makeVideoFromFramesButton.setEnabled(True)
 
 	# give player widgets a player instance 
 	def setplayer(self, widget, resource):
@@ -203,13 +262,13 @@ class MediaEditWindow(QMainWindow):
 		# to fit media_editing.py 
 		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
 		# pass new video to player widget 
-		self.showNewVideo("_MIRROR_X")
+		self.showNewVideo("-MIRROR_X")
 
 	# change speed of video section
 	def changeSpeed(self) : 
 		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -speedChange " + self.startInput.text() + " " + self.endInput.text() + " " + self.speedInput.text() +  " ./")
 		# pass new video to player widget 
-		self.showNewVideo("_SPEEDx" + self.speedInput.text())
+		self.showNewVideo("-SPEEDx" + float(self.speedInput.text()))
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
