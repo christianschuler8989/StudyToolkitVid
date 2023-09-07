@@ -73,7 +73,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][screenshot-pipeline]](https://github.com/christianschuler8989/StudyToolkitVid)
 
 Modular concept of the researchers’ toolkit _StudyToolkitVid_. From the formulated research question to the media editing to acquire test material, executing an online study and subsequently analysing the resulting data using statistical methods.
 
@@ -135,6 +135,10 @@ _Below is an example of how you can instruct your audience on installing and set
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+
+![Product Name Screen Shot][screenshot-naming]
+File naming as part of the pipeline for an automated workflow.
+
 
 ### Part 1 - Media Editing
 
@@ -255,7 +259,7 @@ A list of helpful resources we would like to give credit to:
 [license-url]: https://github.com/christianschuler8989/StudyToolkitVid/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/christian-schuler-59090a177/
-[product-screenshot]: images/screenshot.png
-
-
+# [product-screenshot]: images/screenshot.png
+[screenshot-pipeline]: images/StudyToolKitVid-pipelineFlow.png
+[screenshot-naming]: images/StudyToolKitVid-dataNaming.png
 
