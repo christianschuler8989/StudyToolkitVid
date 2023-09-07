@@ -223,9 +223,9 @@ Distributed under the GNU License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Christian Schuler - [@christians89898](https://twitter.com/christians89898) - christianschuler8989(4T)gmail.com
+Christian Schuler - [Github Page](https://christianschuler8989.github.io/) - christianschuler8989(4T)gmail.com
 
-Dominik Hauser - 
+Dominik Hauser - do_340@hotmail.de
 
 Anran Wang - [@AnranW](https://github.com/AnranW) - echowanng1996(thesymbolforemail)hotmail.com
 
