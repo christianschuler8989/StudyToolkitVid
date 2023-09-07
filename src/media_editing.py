@@ -2,7 +2,6 @@
 # 
 # Authors: Christian Schuler & Dominik Hauser
 ################################################################################
-
 import ffmpeg
 import os.path as path
 from moviepy.editor import *
@@ -13,6 +12,11 @@ import numpy as np
 import imageio
 #from PIL import Image
 
+    
+    
+    
+    
+    
 
 """
 Functions for sorting by numbers. Remove anything than the numbers in a string.
@@ -54,7 +58,7 @@ def save_frame(clip, frame_time, path_to_save):
     imageio.imwrite(path_to_save + 'FRAME' +str(frame_time) +  '.png', get_frame(clip, frame_time))
 
 
-
+#Saves all frames of a video as individual image files.
 def save_all_frames(clip, path_to_save):
     fps = clip.fps
     numberOfFrames = int(fps * clip.duration)
@@ -67,6 +71,7 @@ def save_all_frames(clip, path_to_save):
         #fromarray(frame).save(path_to_save + 'frame'+ str(f) + '.png')
 
 
+#Removes a frame at a specific time from the video.
 def remove_frame_time(clip, frame_time):
     fps = clip.fps
     if(frame_time < 1.0/fps):
@@ -78,7 +83,7 @@ def remove_frame_time(clip, frame_time):
         second_clip = clip.subclip(frame_time + 0.5 * 1.0/fps, clip.duration)
         return concatenate_videoclips([first_clip, second_clip])
 
-
+#Removes a frame at a specific index from the video.
 def remove_frame_index(clip, frame_index):
     fps = clip.fps
     frame_time = frame_index*1.0/fps
@@ -86,6 +91,8 @@ def remove_frame_index(clip, frame_index):
     second_clip = clip.subclip(frame_time + 0.5 * 1.0/fps, clip.duration)
     return concatenate_videoclips([first_clip, second_clip])
 
+
+#Inserts an image frame at a specific time in the video.
 def insert_frame(clip, frame_location, frame_time):
     frame_clip = ImageClip(frame_location).set_duration(1.0/clip.fps)
     if frame_time < 1.0/clip.fps:
@@ -97,17 +104,14 @@ def insert_frame(clip, frame_location, frame_time):
         second_clip = clip.subclip(frame_time + 0.5 * 1.0/clip.fps, clip.duration)
         return concatenate_videoclips([first_clip, frame_clip, second_clip])
 
-# rewrite so extension is at the end of file name, hence all its usage has been adjusted - anran
-# also, write final name of the edited file into a txt file so it can be used by the gui
-def save_clip(clip, extension, nameOfClip, path_to_save):
-    filetype = nameOfClip.split(".")[-1]
-    extendedName= nameOfClip[:-(len(filetype)+1)] + "-" + extension + "." + filetype
-    outputfile = path_to_save + extendedName
-    clip.write_videofile(outputfile)
-    with open ("tempFileForSavingEditedVideoName.txt", "w") as f : 
-        f.write(outputfile)
 
 
+def save_clip(clip, nameOfClip, path_to_save):
+    clip.write_videofile(path_to_save + nameOfClip)
+
+
+
+#Creates a video from a directory of image frames.
 def make_video_from_frames(frames_location, frames_per_second):
     if not os.path.exists(frames_location):
         raise Exception('Directory does not exist')
@@ -126,6 +130,10 @@ def make_video_from_frames(frames_location, frames_per_second):
     concat_clip = concatenate_videoclips(clips)
     return concat_clip.set_fps(frames_per_second)
 
+
+
+#Removes a frame at a specific time and makes the video synchronous again
+# by fusing the two adjecent frames to one
 def delete_frame_synchronous(clip, frame_time):
     fps = clip.fps
     if frame_time >= 0 and frame_time < clip.duration:
@@ -144,12 +152,19 @@ def delete_frame_synchronous(clip, frame_time):
         new_clip.audio = audio
         return new_clip
 
+
+#Flips the video horizontally.
 def mirror_at_x(clip):
     return clip.fx(vfx.mirror_x)
 
+
+#Flips the video vertically.
 def mirror_at_y(clip):
     return clip.fx(vfx.mirror_y)
 
+
+
+#Changes the speed of the video and audio.
 def change_speed(clip, speed, start, end):
     if start < 0:
         start = 0
@@ -179,6 +194,7 @@ def change_speed(clip, speed, start, end):
 
 
 
+#Changes the speed of specified segments in the video.
 def change_speed_segments(clip, intervals, speed_factor):
     clip.audio.write_audiofile("tempAudio.wav")
     stream = ffmpeg.input("tempAudio.wav")
@@ -207,6 +223,8 @@ def change_speed_segments(clip, intervals, speed_factor):
     return new_clip
 
 
+
+#Saves short audio snippets according to the timings from a TextGrid file.
 def save_audio_from_text_grid(clip, row, path_textgrid, path_to_save_audios, start, end):
     checkDirExists(path_to_save_audios)
     tg = textgrid.TextGrid.fromFile(path_textgrid)
@@ -222,6 +240,8 @@ def save_audio_from_text_grid(clip, row, path_textgrid, path_to_save_audios, sta
         audio_short.write_audiofile(path_to_save_audios + name_of_short, logger=None)
 
 
+
+#Combines multiple audio files into a single audio file.
 def create_audio_from_audios(name, path_to_audios, path_to_save):
     checkDirExists(path_to_save)
     all_shorts = []
@@ -239,6 +259,7 @@ def create_audio_from_audios(name, path_to_audios, path_to_save):
     
 
 
+#Extracts timings of a specific text from a TextGrid file and writes it to a text file.
 def get_text_grid_information(clip, text_of_interest, path_textgrid, path_save):
     checkDirExists(path_save)
     tg = textgrid.TextGrid.fromFile(path_textgrid)
@@ -255,6 +276,8 @@ def get_text_grid_information(clip, text_of_interest, path_textgrid, path_save):
         for o in occasions:
             f.write(o)
 
+
+#Extracts audio snippets for a specific text from a TextGrid file and saves them as individual audio files.
 def extract_text_occasions_from_grid(clip, text_of_interest, path_textgrid, path_save):
     checkDirExists(path_save)
     tg = textgrid.TextGrid.fromFile(path_textgrid)
@@ -278,6 +301,93 @@ def extract_text_occasions_from_grid(clip, text_of_interest, path_textgrid, path
 
 
 
+#Removes every occasion of a given text according to timings in the textgrid file. 
+# The functions tries to sync the video again by inserting fusion frames.
+def remove_text_occurrences(clip, text_of_interest, path_to_textgrid):
+    tg = textgrid.TextGrid.fromFile(path_to_textgrid)
+    intervals_to_remove = []
+    if  isinstance(text_of_interest,list):
+        # Find occurrences of the text in the TextGrid
+        for row in range(len(tg)):
+            for column in range(len(tg[row])):
+                if tg[row][column].mark in text_of_interest:
+                    intervals_to_remove.append([tg[row][column].minTime, tg[row][column].maxTime])
+                    
+    else:    
+        # Find occurrences of the text in the TextGrid
+        for row in range(len(tg)):
+            for column in range(len(tg[row])):
+                if tg[row][column].mark == text_of_interest:
+                    intervals_to_remove.append([tg[row][column].minTime, tg[row][column].maxTime])
+
+    # Load the video and audio files
+    video = clip
+    audio = clip.audio
+
+    # Remove audio occurrences
+    audio_segments = []
+    prev_end = 0
+    for interval in intervals_to_remove:
+        prev_end_est = prev_end-prev_end/6000 if prev_end != 0 else 0
+        audio_segments.append(audio.subclip(prev_end_est, interval[0]+interval[0]/6000))
+        prev_end = interval[1]
+
+    audio_segments.append(audio.subclip(prev_end, audio.duration))
+    new_audio = concatenate_audioclips(audio_segments)
+    print(len(audio_segments))
+    
+    # Remove video occurrences
+    video_segments = []
+    prev_end = 0
+    for interval in intervals_to_remove:
+        video_segments.append(video.subclip(prev_end, interval[0]))
+
+        # Merge video frames around the occurrence
+        prev_frame = video.get_frame(interval[0] - 1 / video.fps)
+        next_frame = video.get_frame(interval[1])
+        merged_frame = (prev_frame * 0.5 + next_frame * 0.5).clip(0, 255).astype('uint8')
+        video_segments.append(ImageClip(merged_frame, duration=1 / video.fps))
+
+        prev_end = interval[1]
+
+    video_segments.append(video.subclip(prev_end, video.duration))
+    new_video = concatenate_videoclips(video_segments)
+
+    # Replace the audio of the new video
+    final_video = new_video.set_audio(new_audio)
+
+    return final_video
+
+    
+    
+#Changes the speed of text occurances in the video.
+# The functions tries to sync the video again by inserting fusion frames.
+def speed_text_occurrences(clip, text_of_interest, path_to_textgrid, speed):
+    tg = textgrid.TextGrid.fromFile(path_to_textgrid)
+    intervals_to_speed = []
+    
+    if  isinstance(text_of_interest,list):
+    # Find occurrences of the text in the TextGrid
+        for row in range(len(tg)):
+            for column in range(len(tg[row])):
+                if tg[row][column].mark in text_of_interest:
+                    intervals_to_speed.append([tg[row][column].minTime, tg[row][column].maxTime])
+    else:
+        for row in range(len(tg)):
+            for column in range(len(tg[row])):
+                if tg[row][column].mark == text_of_interest:
+                    intervals_to_speed.append([tg[row][column].minTime, tg[row][column].maxTime])
+    
+
+    # Load the video and audio files
+    video = clip
+    audio = clip.audio
+    
+    clip = change_speed_segments(clip, intervals_to_speed, speed)
+
+    return clip
+
+
 
 
 
@@ -286,7 +396,7 @@ def main():
     parser.add_argument('-path', type=str)
     parser.add_argument('-name', type=str)
     parser.add_argument('-cut', nargs=3)
-    parser.add_argument('-speedChange', nargs=4)
+    parser.add_argument('-speedChange', nargs=3)
     parser.add_argument('-saveAudioFromGrid', nargs='+')
     parser.add_argument('-makeAudioFromAudios', nargs = 3)
     parser.add_argument('-saveAllFrames', nargs=1)
@@ -301,11 +411,12 @@ def main():
     parser.add_argument('-speedChangeSegments', nargs = 3)
     parser.add_argument('-textGridInformation', nargs = 3)
     parser.add_argument('-setAudio', nargs = 2)
+    parser.add_argument('-removeOccurances', nargs = 3)
     args = parser.parse_args()
     
-   
+    
     path_to_file = args.path
-   
+    
     if path_to_file == None:
         path_to_file = "./"
 
@@ -326,14 +437,23 @@ def main():
         try:
             return getAudioClipFromParser()
         except:
-            raise Exception('File is neither a video nor a audio file.')
+            raise Exception('File is neither a video nor an audio file.')
         
+        
+    if args.removeOccurances !=None:
+        clip = getVideoClipFromParser()
+        text_of_interest = args.removeOccurances[0]
+        path_textgrid = args.removeOccurances[1]
+        path_to_save = args.removeOccurances[2]
+        clip = remove_text_occurrences(clip, text_of_interest, path_textgrid)
+        save_clip(clip, 'OCC_RM_' + args.name, path_to_save)
+    
     if args.setAudio != None:
         videoClip = getVideoClipFromParser()
         audioClip = AudioFileClip(path_to_file+args.setAudio[0])
         path_to_save = args.setAudio[1]
         clip = setAudioClip(videoClip, audioClip)
-        save_clip(clip,'NEW_AUDIO', args.name, path_to_save)
+        save_clip(clip,'NEW_AUDIO' + args.name, path_to_save)
         
     if args.speedChangeSegments != None:
         clip = getVideoClipFromParser()
@@ -345,19 +465,19 @@ def main():
             intervals_of_speed_change = [list(map(float, line.strip().split(','))) for line in f.readlines()]
         
         clip = change_speed_segments(clip, intervals_of_speed_change, speed_factor)
-        save_clip(clip, 'SPEED_SEGMENTS', args.name, path_to_save)    
+        save_clip(clip, 'SPEED_SEGMENTS' + args.name, path_to_save)    
         
     if args.mirrorX != None:
         clip = getVideoClipFromParser()
         clip = mirror_at_x(clip)
         path_to_save = args.mirrorX[0]
-        save_clip(clip, 'MIRROR_X', args.name, path_to_save)
+        save_clip(clip, 'MIRROR_X' + args.name, path_to_save)
 
     if args.mirrorY != None:
         clip = getVideoClipFromParser()
         clip = mirror_at_y(clip)
         path_to_save = args.mirrorY[0]
-        save_clip(clip, 'MIRROR_Y', args.name, path_to_save)    
+        save_clip(clip, 'MIRROR_Y' + args.name, path_to_save)    
         
     if args.textGridInformation != None:
         clip = getClipFromParser()
@@ -373,14 +493,14 @@ def main():
         frame_location = args.insertFrame[1]
         path_to_save = args.insertFrame[2]
         clip = insert_frame(clip, frame_location, frame_time)
-        save_clip(clip, 'FRAME_INSERT', args.name, path_to_save)
+        save_clip(clip, 'FRAME_INSERT' + args.name, path_to_save)
 
     if args.makeVideoFromFrames != None:
         frame_location = args.makeVideoFromFrames[0]
         frames_per_second = float(args.makeVideoFromFrames[1])
         path_to_save = args.makeVideoFromFrames[2]
         clip = make_video_from_frames(frame_location, frames_per_second)
-        save_clip(clip, 'VIDEO_FROM_FRAMES', args.name, path_to_save) 
+        save_clip(clip, 'VIDEO_FROM_FRAMES' + args.name, path_to_save) 
     
     
     if args.removeFrame != None:
@@ -388,7 +508,7 @@ def main():
         frame_time = float(args.removeFrame[0])
         path_to_save = args.removeFrame[1]
         clip = remove_frame_time(clip, frame_time)
-        save_clip(clip, 'FRAME_REMOVE', args.name, path_to_save)
+        save_clip(clip, 'FRAME_REMOVE' + args.name, path_to_save)
     
     if args.saveFrame != None:
         clip = getVideoClipFromParser()
@@ -410,7 +530,7 @@ def main():
         end = float(startEnd[1])
         path_to_save = args.cut[2]
         clip = cut(clip, start, end)
-        save_clip(clip, "-CUT" + str(start) + str(end), args.name, path_to_save)
+        save_clip(clip, "CUT" + args.name, path_to_save)
     
     
     
@@ -422,14 +542,14 @@ def main():
         speed = float(startEndSpeed[2])
         path_to_save = args.speedChange[3]
         clip = change_speed(clip, speed, start, end)
-        save_clip(clip, "SPEEDx" + str(speed), args.name, path_to_save)
+        save_clip(clip, "SPEED" + args.name, path_to_save)
         
 
     if args.deleteFrameSync != None:
         clip = getVideoClipFromParser()
         frame_time = float(args.deleteFrameSync[0])
         clip = delete_frame_synchronous(clip,frame_time)
-        save_clip(clip, 'frameDeleteSync', args.name, path_to_file)
+        save_clip(clip, 'frameDeleteSync' + args.name, path_to_file)
     
 
     if args.extractTextGridOccasions != None:
@@ -462,6 +582,7 @@ def main():
             end = params[4]
             end = int(end) if type(end) is str and end.isdigit() else 0
         save_audio_from_text_grid(clip, row,path_grid, path_save_audio, start, end)
+        
     
   
     
@@ -469,6 +590,33 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
