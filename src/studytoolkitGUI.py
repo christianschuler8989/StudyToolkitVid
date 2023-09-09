@@ -6,6 +6,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtMultimediaWidgets import *
 from PyQt6.QtMultimedia import *
 # Christian joined the chat.
+# Anran says hi. 
 
 class MainWindow(QMainWindow):
 
@@ -48,20 +49,6 @@ class MainWindow(QMainWindow):
 		self.w = StatAnaWindow()
 		self.w.show()
 
-# helper class for buttons in the video editing window
-class MyButton(QPushButton) : 
-	def __init__(self, text, toAppend=[], toSetEnabled=False) : 
-		super(QPushButton, self).__init__()
-		self.setEnabled(toSetEnabled)
-		self.deleteFrameButton.setText(text)
-		toAppend.append(self)
-	def __init__(self, text, function, toAppend=[], toSetEnabled=False) : 
-		super(QPushButton, self).__init__()
-		self.setEnabled(toSetEnabled)
-		self.setText(text)
-		self.clicked.connect(function)
-		toAppend.append(self)
-
 
 
 class MediaEditWindow(QMainWindow):
@@ -77,27 +64,15 @@ class MediaEditWindow(QMainWindow):
 		# set up workspace folder
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
-		# media player 
-		self.oldvideoWidget = QVideoWidget()
-		self.oldvideoWidget.setMinimumWidth(400)
-		self.oldvideoWidget.show()
-		self.newvideoWidget = QVideoWidget()
-		self.newvideoWidget.setMinimumWidth(400)
-		self.newvideoWidget.show()
+		# media players 
+		self.oldPlayer = MediaPlayer() # it is a layout
+		self.newPlayer = MediaPlayer()
 		
-		self.oldplayButton = MyButton("Play", self.playold)
-		self.newplayButton = MyButton("Play", self.playnew)
-
 		# import and display original video, select workspace folder
 		oldvideolayout = QVBoxLayout()
 		oldvideolayout.addWidget(selectFolderButton)
 		oldvideolayout.addWidget(mediaImportButton)
-		oldvideolayout.addWidget(self.oldvideoWidget)
-		oldvideolayout.addWidget(self.oldplayButton)
-		# display new edited video
-		newvideolayout = QVBoxLayout()
-		newvideolayout.addWidget(self.newvideoWidget)
-		newvideolayout.addWidget(self.newplayButton)
+		oldvideolayout.addLayout(self.oldPlayer)
 		
 		# a list for buttons to edit videos
 		self.editButtons = []
@@ -138,21 +113,19 @@ class MediaEditWindow(QMainWindow):
 		# button to make video from frames
 		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.placeholder, self.editButtons)
 	
-
 		# area to edit vidwo
 		editinglayout = QVBoxLayout()
 		for button in self.editButtons : 
 			if button != self.speedButton : 
 				editinglayout.addWidget(button)
 		editinglayout.addLayout(speedlayout)
-		
 
 
 		# main window layout
 		layout = QHBoxLayout()
 		layout.addLayout(oldvideolayout)
 		layout.addLayout(editinglayout)
-		layout.addLayout(newvideolayout)
+		layout.addLayout(self.newPlayer)
 
 		widget = QWidget()
 		widget.setLayout(layout)
@@ -166,7 +139,7 @@ class MediaEditWindow(QMainWindow):
 			self,
 			"Choose Workspace Directory", 
 			"${HOME}",
-			) # .toStdString()
+			) + "/"
 
 	# import file and give to media player, requires existing workspace folder
 	def importfile(self):
@@ -176,56 +149,19 @@ class MediaEditWindow(QMainWindow):
 			self.workspaceFolder,
 			"All Files (*);; Python Files (*.py);; PNG Files (*.png)",
 		)
-		self.filename = self.fname[0].split("/")[-1]
-		self.inputPath = self.fname[0][:-len(self.filename)]
-		self.oldplayButton.setEnabled(True)
-		self.setplayer(self.oldvideoWidget, self.fname[0])
+		self.oldPlayer.getInput(self.fname[0])
 		# set all edit buttons active
 		for button in self.editButtons : 
 			button.setEnabled(True)
 		# create editor
 		self.editor = editing(self.fname[0], self.workspaceFolder)
 
-
-	# give player widgets a player instance 
-	def setplayer(self, widget, resource):
-		self.player = QMediaPlayer()
-		self.player.setSource(QUrl.fromLocalFile(resource))
-		self.player.setVideoOutput(widget)
-		self.audioOutput = QAudioOutput()
-		self.player.setAudioOutput(self.audioOutput)
-		self.audioOutput.setVolume(100)
-	
-	# play original video 
-	def playold(self) : 
-		if self.player.isPlaying():
-			self.player.pause()
-			self.oldplayButton.setText("Play")
-		else :
-			self.player.play()
-			self.oldplayButton.setText("Pause")
-	# play edited vidwo
-	def playnew(self) : 
-		if self.player.isPlaying():
-			self.player.pause()
-			self.newplayButton.setText("Play")
-		else :
-			self.player.play()
-			self.newplayButton.setText("Pause")
-	# show edited video
-	def showNewVideo(self) : 
-		# filetype = self.filename.split(".")[-1]
-		self.setplayer(self.newvideoWidget, self.editor.getClip()) 
-		self.newplayButton.setEnabled(True)
 		
 	# mirror video horizontally 
 	def mirrorX(self) : 
-		# to fit media_editing.py 
-		# os.system("python3 media_editing.py -path " + self.inputPath + " -name " + self.filename + " -mirrorX ./")
-		# pass new video to player widget 
-		# self.showNewVideo("-MIRROR_X")
 		self.editor.mirrorAtX()
-		self.showNewVideo()
+		self.editor.saveClip("tempClip", self.workspaceFolder)
+		self.newPlayer.getInput(self.workspaceFolder+"tempClip.mp4")
 
 
 	# change speed of video section
@@ -275,6 +211,60 @@ class StatAnaWindow(QMainWindow):
 
 
 
+# helper class for buttons in the video editing window
+class MyButton(QPushButton) : 
+	def __init__(self, text, toAppend=[], toSetEnabled=False) : 
+		super(QPushButton, self).__init__()
+		self.setEnabled(toSetEnabled)
+		self.deleteFrameButton.setText(text)
+		toAppend.append(self)
+	def __init__(self, text, function, toAppend=[], toSetEnabled=False) : 
+		super(QPushButton, self).__init__()
+		self.setEnabled(toSetEnabled)
+		self.setText(text)
+		self.clicked.connect(function)
+		toAppend.append(self)
+
+# the area with media player 
+class MediaPlayer(QVBoxLayout) : 
+	def __init__(self) : 
+		super(MediaPlayer, self).__init__()
+		# buttons and widgets to help layout 
+		self.playButton = MyButton("Play", self.play)
+		self.playerWidget = QVideoWidget()
+		self.playerWidget.setMinimumWidth(400)
+		self.playerWidget.show()
+			
+		self.addWidget(self.playerWidget)		
+		self.addWidget(self.playButton)
+	# click behavoir of the play button		
+	def play(self) : 
+		if self.player.isPlaying() :
+			self.player.pause()
+			self.playButton.setText("Play")
+		else : 
+			self.player.play()
+			self.playButton.setText("Pause")
+	# give widget a player instance
+	def getInput(self,resource) : 
+		# the actual player
+		self.player = QMediaPlayer()
+		# resource is the absolute path of the video
+		self.player.setSource(QUrl.fromLocalFile(resource))
+		self.player.setVideoOutput(self.playerWidget)
+		self.audioOutput = QAudioOutput()
+		self.player.setAudioOutput(self.audioOutput)
+		self.audioOutput.setVolume(100)
+		self.playButton.setEnabled(True)
+
+
+
+
+
+	
+	
+	
+	
 
 
 
