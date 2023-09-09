@@ -20,9 +20,11 @@ class editing():
     def __init__(self, path_to_file, path_to_save):
         self.path_to_file = path_to_file
         self.path_to_save = path_to_save
-        
-        self.clip, self.type = self.getClipFromPath(path_to_file)
-        self.clip_history = []
+        if self.checkDirExists(path_to_file):
+            self.clip, self.type = self.getClipFromPath(path_to_file)
+            self.clip_history = []
+        else:
+            raise Exception('Input directory or file does not exist: ' + path_to_file)
         
     def getClipFromPath(self, path_to_file):
         try:
@@ -40,7 +42,7 @@ class editing():
     def _clipHistory(self):
         self.clip_history.append(self.clip.copy())
         if len(self.clip_history) >5:
-            self.clip_history.remove(0)
+            del self.clip_history[0]
     
     def getClip(self):
         return self.clip
@@ -68,7 +70,11 @@ class editing():
             self.clip = self.clip_history[-1]
             del self.clip_history[-1]
         
+    
+    def checkDirExists(self, pathToCheck):
+        return os.path.exists(pathToCheck)
 
+    
     #Creates DIR when not existent
     def checkDirExistsAndCreate(self, pathToCheck):
         if not os.path.exists(pathToCheck):
@@ -88,15 +94,15 @@ class editing():
     
     
 
-    def get_frame(self, frame_time):
+    def getFrame(self, frame_time):
         return self.clip.get_frame(frame_time)
 
-    def save_frame(self, frame_time, frame_name, extension = 'png'):
+    def saveFrame(self, frame_time, frame_name, extension = 'png'):
         imageio.imwrite(self.path_to_save + frame_name  + '.' + extension, self.get_frame(frame_time))
 
 
 
-    def save_all_frames(self, path_optional = '', extension = 'png'):
+    def saveAllFrames(self, path_optional = '', extension = 'png'):
         if self.type == 'video':
             fps = self.clip.fps
             numberOfFrames = int(fps * self.clip.duration)
@@ -109,7 +115,7 @@ class editing():
                 imageio.imwrite(path + 'frame'+ str(f) + '.' + extension, img)
         
 
-    def remove_frame_time(self, frame_time):
+    def removeFrameTime(self, frame_time):
         self._clipHistory()
         fps = self.clip.fps
         if(frame_time < 1.0/fps):
@@ -123,7 +129,7 @@ class editing():
         
         return self.clip
 
-    def remove_frame_index(self, frame_index):
+    def removeFrameIndex(self, frame_index):
         self._clipHistory()
         fps = self.clip.fps
         frame_time = frame_index*1.0/fps
@@ -132,7 +138,7 @@ class editing():
         self.clip = concatenate_videoclips([first_clip, second_clip])
         return self.clip
 
-    def insert_frame(self, frame_path, frame_time):
+    def insertFrame(self, frame_path, frame_time):
         self._clipHistory()
         try:
             frame_clip = ImageClip(frame_path).set_duration(1.0/self.clip.fps)
@@ -152,7 +158,7 @@ class editing():
             
 
 
-    def save_clip(self, name_of_clip, path_optional = '', extension = ''):
+    def saveClip(self, name_of_clip, path_optional = '', extension = ''):
         path = self.path_to_save if path_optional == '' else path_optional
         if extension == '':
             extension = '.mp4' if self.type == 'video' else '.mp3'
@@ -165,7 +171,7 @@ class editing():
     #The frame name must include the ordering number: 'frame0.png' / '1frame.png' / 'frame1out.png' etc.
     #Currently only accepts images of type:
     #jpeg, jpg, png
-    def make_video_from_frames(self, frames_path, frames_per_second):
+    def makeVideoFromFrames(self, frames_path, frames_per_second):
         if not os.path.exists(frames_path):
             raise Exception('Directory does not exist')
         self._clipHistory()
@@ -185,18 +191,18 @@ class editing():
         self.clip = concat_clip.set_fps(frames_per_second)
         return self.clip
     
-    def mirror_at_x(self):
+    def mirrorAtX(self):
         self._clipHistory()
         self.clip = self.clip.fx(vfx.mirror_x)
         return self.clip
 
-    def mirror_at_y(self):
+    def mirrorAtY(self):
         self._clipHistory()
         self.clip = self.clip.fx(vfx.mirror_y)
         return self.clip
     
     
-    def change_speed(self, speed, start, end):
+    def changeSpeed(self, speed, start, end):
         self._clipHistory()
         if start < 0:
             start = 0
@@ -226,123 +232,136 @@ class editing():
         return self.clip
 
 
-def delete_frame_synchronous(clip, frame_time):
-    fps = clip.fps
-    if frame_time >= 0 and frame_time < clip.duration:
-        frametime_norm = int(frame_time * fps) * 1/fps
-        before = clip.get_frame(frametime_norm - 1/fps)
-        after = clip.get_frame(frametime_norm + 1/fps)
-        delete = clip.get_frame(frametime_norm)
-        new_frame = np.add(after/2, before/2).astype(int)
-
-        before_clip = clip.subclip(0, frametime_norm - 1/fps)
-        after_clip = clip.subclip(frametime_norm + 1/fps, clip.duration)
-
-        frame_clip = ImageClip(new_frame).set_duration(1.0/clip.fps)
-        audio = clip.audio.copy()
-        new_clip = concatenate_videoclips([before_clip, frame_clip, after_clip])
-        new_clip.audio = audio
-        return new_clip
-
-
-
-
-def change_speed_segments(clip, intervals, speed_factor):
-    clip.audio.write_audiofile("tempAudio.wav")
-    stream = ffmpeg.input("tempAudio.wav")
-
-    audio_segments = []
-    prev_end = 0
-    for interval in intervals:
-        segment_start = interval[0]
-        segment_end = interval[1]
-        if prev_end < segment_start:
-            audio_segments.append(stream.filter('atrim', start=prev_end, end=segment_start))
-        audio_segments.append(
-            stream.filter('atrim', start=segment_start, end=segment_end)
-            .filter('atempo', speed_factor)
-            .filter('asetpts', 'PTS-STARTPTS')
-        )
-        prev_end = segment_end
-    if prev_end < float(ffmpeg.probe("tempAudio.wav")['format']['duration']):
-        audio_segments.append(stream.filter('atrim', start=prev_end))
-    stream = ffmpeg.concat(*audio_segments, v=0, a=1)
-    stream = ffmpeg.output(stream, "tempAudio2.wav", acodec='pcm_s16le').overwrite_output()
-    ffmpeg.run(stream, capture_stderr=True)
-
-    audio = AudioFileClip("tempAudio2.wav")
-    new_clip = clip.set_audio(audio)
-    return new_clip
+    def deleteFrameSynchronous(self, frame_time):
+        if frame_time >= 0 and frame_time < self.clip.duration:
+            self._clipHistory()
+            fps = self.clip.fps
+            frametime_norm = int(frame_time * fps) * 1/fps
+            before = self.clip.get_frame(frametime_norm - 1/fps)
+            after = self.clip.get_frame(frametime_norm + 1/fps)
+            new_frame = np.add(after/2, before/2).astype(int)
+    
+            before_clip = self.clip.subclip(0, frametime_norm - 1/fps)
+            after_clip = self.clip.subclip(frametime_norm + 1/fps, self.clip.duration)
+    
+            frame_clip = ImageClip(new_frame).set_duration(1.0/self.clip.fps)
+            audio = self.clip.audio.copy()
+            new_clip = concatenate_videoclips([before_clip, frame_clip, after_clip])
+            new_clip.audio = audio
+            self.clip = new_clip
+            return self.clip
 
 
-def save_audio_from_text_grid(clip, row, path_textgrid, path_to_save_audios, start, end):
-    checkDirExists(path_to_save_audios)
-    tg = textgrid.TextGrid.fromFile(path_textgrid)
-    audio = clip.audio
-    if end == 0:
-        end = len(tg[row])
-    for i in range(start, end, 1):
-        minT = tg[row][i].minTime
-        maxT = tg[row][i].maxTime
-        audio_short = audio.subclip(minT - minT / 6000, maxT + maxT / 6000)
-        name_of_short = str(i) + str(tg[row][i].mark) + ".wav"
-        name_of_short = name_of_short.replace(":", "")
-        audio_short.write_audiofile(path_to_save_audios + name_of_short, logger=None)
+
+    
+    def changeSpeedSegmentsAudio(self, intervals, speed_factor):
+        self.clip.audio.write_audiofile("tempAudio.wav")
+        stream = ffmpeg.input("tempAudio.wav")
+    
+        audio_segments = []
+        prev_end = 0
+        for interval in intervals:
+            segment_start = interval[0]
+            segment_end = interval[1]
+            if prev_end < segment_start:
+                audio_segments.append(stream.filter('atrim', start=prev_end, end=segment_start))
+            audio_segments.append(
+                stream.filter('atrim', start=segment_start, end=segment_end)
+                .filter('atempo', speed_factor)
+                .filter('asetpts', 'PTS-STARTPTS')
+            )
+            prev_end = segment_end
+        if prev_end < float(ffmpeg.probe("tempAudio.wav")['format']['duration']):
+            audio_segments.append(stream.filter('atrim', start=prev_end))
+        stream = ffmpeg.concat(*audio_segments, v=0, a=1)
+        stream = ffmpeg.output(stream, "tempAudio2.wav", acodec='pcm_s16le').overwrite_output()
+        ffmpeg.run(stream, capture_stderr=True)
+    
+        audio = AudioFileClip("tempAudio2.wav")
+        self.clip = self.clip.set_audio(audio)
+        return self.clip
 
 
-def create_audio_from_audios(name, path_to_audios, path_to_save):
-    checkDirExists(path_to_save)
-    all_shorts = []
-    for short in os.listdir(path_to_audios):
-        shortname = os.fsdecode(short)
-        if shortname.endswith(".wav") or shortname.endswith(".mp3"):
-            all_shorts.append(path_to_audios + shortname)
+    def saveAudioFromTextGrid(self, row, path_textgrid, path_to_save_audios, start_index, end_index):
+        self.checkDirExistsAndCreate(path_to_save_audios)
+        tg = textgrid.TextGrid.fromFile(path_textgrid)
+        audio = self.clip.audio
+        if end_index < 0 or end_index > len(tg[row]):
+            end_index = len(tg[row])
+        for i in range(start_index, end_index, 1):
+            minT = tg[row][i].minTime
+            maxT = tg[row][i].maxTime
+            audio_short = audio.subclip(minT - minT / 6000, maxT + maxT / 6000)
+            name_of_short = str(i) + str(tg[row][i].mark) + ".wav"
+            name_of_short = name_of_short.replace(":", "")
+            audio_short.write_audiofile(path_to_save_audios + name_of_short, logger=None)
+
+
+    def createAudioFromAudios(self, name_of_file, path_to_audios, path_to_save = '', extension = ''):
+        if self.checkDirExists(path_to_audios):
+            self.checkDirExistsAndCreate(path_to_save)
+            path = self.path_to_save if path_to_save == '' else path_to_save
+            file_extension = '.mp3' if extension =='' else extension
+            all_shorts = []
+            for short in os.listdir(path_to_audios):
+                shortname = os.fsdecode(short)
+                if shortname.endswith(".wav") or shortname.endswith(".mp3"):
+                    all_shorts.append(path_to_audios + shortname)
+                else:
+                    continue
+        
+            all_shorts.sort(key=natural_keys)
+            clips = [AudioFileClip(m) for m in all_shorts]
+            concat_clip = concatenate_audioclips(clips)
+            concat_clip.write_audiofile(path + name_of_file + '.' + file_extension)
         else:
-            continue
-
-    all_shorts.sort(key=natural_keys)
-    clips = [AudioFileClip(m) for m in all_shorts]
-    concat_clip = concatenate_audioclips(clips)
-    concat_clip.write_audiofile(path_to_save + name)
+            raise Exception('Directory was not found: ' + path_to_audios)
     
 
 
-def get_text_grid_information(clip, text_of_interest, path_textgrid, path_save):
-    checkDirExists(path_save)
-    tg = textgrid.TextGrid.fromFile(path_textgrid)
-    occasions = []
-    for row in range(len(tg)):
-        for column in range(len(tg[row])):
-            if tg[row][column].mark == text_of_interest:
-                occasions.append(str(tg[row][column].mark) + ": "
-                                 + str(tg[row][column].minTime) + "s - " 
-                                 + str(tg[row][column].maxTime)+ "s\n")
-
-    filename = path_save + 'TextGridInfo-' + text_of_interest + '.txt'
-    with open(filename, 'w') as f:
-        for o in occasions:
-            f.write(o)
-
-def extract_text_occasions_from_grid(clip, text_of_interest, path_textgrid, path_save):
-    checkDirExists(path_save)
-    tg = textgrid.TextGrid.fromFile(path_textgrid)
-    occasions = []
-    for row in range(len(tg)):
-        for column in range(len(tg[row])):
-            if tg[row][column].mark == text_of_interest:
-                occasions.append([tg[row][column].minTime, tg[row][column].maxTime])
+    def getTextGridInformation(self, text_of_interest, path_textgrid, path_save):
+        self.checkDirExistsAndCreate(path_save)
+        try:
+            tg = textgrid.TextGrid.fromFile(path_textgrid)
+        except:
+            raise Exception('Textgrid could not be found: ' + path_textgrid)
+        occasions = []
+        for row in range(len(tg)):
+            for column in range(len(tg[row])):
+                if tg[row][column].mark == text_of_interest:
+                    occasions.append(str(tg[row][column].mark) + ": "
+                                     + str(tg[row][column].minTime) + "s - " 
+                                     + str(tg[row][column].maxTime)+ "s\n")
     
-    if isinstance(clip, VideoFileClip):
-        audio = clip.audio
-    else:
-        audio = clip
-    for o in range(len(occasions)):
-        minT = occasions[o][0]
-        maxT = occasions[o][1]
-        audio_short = audio.subclip(minT-minT/6000,maxT+maxT/6000)
-        name_of_short = str(o) + text_of_interest + '-' + str(minT)[:5] + ".wav"
-        name_of_short = name_of_short.replace(":", "")
-        audio_short.write_audiofile(path_save + name_of_short, logger=None)
+        filename = path_save + 'TextGridInfo-' + text_of_interest + '.txt'
+        with open(filename, 'w') as f:
+            for o in occasions:
+                f.write(o)
+
+    def extractTextOccasionsFromGrid(self, text_of_interest, path_textgrid, path_save, extension = ''):
+        self.checkDirExistsAndCreate(path_save)
+        file_extension = 'mp3' if extension == '' else extension
+        try:
+            tg = textgrid.TextGrid.fromFile(path_textgrid)
+        except:
+            raise Exception('Textgrid could not be found: ' + path_textgrid)
+        occasions = []
+        for row in range(len(tg)):
+            for column in range(len(tg[row])):
+                if tg[row][column].mark == text_of_interest:
+                    occasions.append([tg[row][column].minTime, tg[row][column].maxTime])
+        
+        if self.type == 'video':
+            audio = self.clip.audio
+        else:
+            audio = self.clip
+        for o in range(len(occasions)):
+            minT = occasions[o][0]
+            maxT = occasions[o][1]
+            audio_short = audio.subclip(minT-minT/6000,maxT+maxT/6000)
+            name_of_short = str(o) + text_of_interest + '-' + str(minT)[:5] + '.' + file_extension
+            name_of_short = name_of_short.replace(":", "")
+            audio_short.write_audiofile(path_save + name_of_short, logger=None)
 
 
 
