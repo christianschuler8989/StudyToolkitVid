@@ -160,30 +160,32 @@ class MediaEditWindow(QMainWindow):
 	# placeholder function, for no use
 	def placeholder() : 
 		pass 
+	# select workspace folder
+	def selectFolder(self) : 
+		self.workspaceFolder = QFileDialog.getExistingDirectory(
+			self,
+			"Choose Workspace Directory", 
+			"${HOME}",
+			) # .toStdString()
 
 	# import file and give to media player, requires existing workspace folder
 	def importfile(self):
 		self.fname = QFileDialog.getOpenFileName(
 			self,
 			"Open File",
-			self.workspaceFolder[0],
+			self.workspaceFolder,
 			"All Files (*);; Python Files (*.py);; PNG Files (*.png)",
 		)
 		self.filename = self.fname[0].split("/")[-1]
-		self.filepath = self.fname[0][:-len(self.filename)]
+		self.inputPath = self.fname[0][:-len(self.filename)]
 		self.oldplayButton.setEnabled(True)
 		self.setplayer(self.oldvideoWidget, self.fname[0])
 		# set all edit buttons active
 		for button in self.editButtons : 
 			button.setEnabled(True)
-		self.editor = editing(self.fname[0], workspaceFolder)
+		# create editor
+		self.editor = editing(self.fname[0], self.workspaceFolder)
 
-	def selectFolder(self) : 
-		self.workspaceFolder = QFileDialog.getExistingDirectory(
-			self,
-			"Choose Workspace Directory", 
-			"${HOME}",
-			)
 
 	# give player widgets a player instance 
 	def setplayer(self, widget, resource):
@@ -211,21 +213,24 @@ class MediaEditWindow(QMainWindow):
 			self.player.play()
 			self.newplayButton.setText("Pause")
 	# show edited video
-	def showNewVideo(self, extension) : 
-		filetype = self.filename.split(".")[-1]
-		self.setplayer(self.newvideoWidget, self.filename[:-(len(filetype)+1)] + extension + "." + filetype) 
+	def showNewVideo(self) : 
+		# filetype = self.filename.split(".")[-1]
+		self.setplayer(self.newvideoWidget, self.editor.getClip()) 
 		self.newplayButton.setEnabled(True)
 		
 	# mirror video horizontally 
 	def mirrorX(self) : 
 		# to fit media_editing.py 
-		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -mirrorX ./")
+		# os.system("python3 media_editing.py -path " + self.inputPath + " -name " + self.filename + " -mirrorX ./")
 		# pass new video to player widget 
-		self.showNewVideo("-MIRROR_X")
+		# self.showNewVideo("-MIRROR_X")
+		self.editor.mirrorAtX()
+		self.showNewVideo()
+
 
 	# change speed of video section
 	def changeSpeed(self) : 
-		os.system("python3 media_editing.py -path " + self.filepath + " -name " + self.filename + " -speedChange " + self.startInput.text() + " " + self.endInput.text() + " " + self.speedInput.text() +  " ./")
+		os.system("python3 media_editing.py -path " + self.inputPath + " -name " + self.filename + " -speedChange " + self.startInput.text() + " " + self.endInput.text() + " " + self.speedInput.text() +  " ./")
 		# pass new video to player widget 
 		self.showNewVideo("-SPEEDx" + str(float(self.speedInput.text())))
 
