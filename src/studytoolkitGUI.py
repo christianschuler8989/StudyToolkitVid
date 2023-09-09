@@ -58,11 +58,12 @@ class MediaEditWindow(QMainWindow):
 		self.setWindowTitle("Media Editing")
 		self.setMinimumSize(QSize(1200,600))
 		
-		# import file button 
-		mediaImportButton = MyButton("Import File", self.importfile, toSetEnabled=True)
-
 		# set up workspace folder
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
+
+		# import file button 
+		mediaImportButton = MyButton("Import File", self.importfile, toSetEnabled=True)
+		mediaImportButton.setIcon(QIcon("open.xpm"))
 
 		# media players 
 		self.oldPlayer = MediaPlayer() # it is a layout
@@ -79,22 +80,27 @@ class MediaEditWindow(QMainWindow):
 		# button to mirror horizontally
 		mirrorXButton = MyButton("Mirror Horizontally", self.mirrorX, self.editButtons)
 		# button to mirror vertically
-		mirrorYButton = MyButton("Mirror Vertically", self.placeholder, self.editButtons)
+		mirrorYButton = MyButton("Mirror Vertically", self.mirrorY, self.editButtons)
 		
 		# area to change video speed
-		self.speedButton = QPushButton()
-		self.speedButton.setEnabled(False)
-		self.speedButton.setText("Change Speed")		
-		self.speedButton.clicked.connect(self.changeSpeed)
+		speedButton = MyButton("Change Speed", self.changeSpeed, self.editButtons)
 		self.startInput = QLineEdit(placeholderText="start time")
 		self.endInput = QLineEdit(placeholderText="end time")
 		self.speedInput = QLineEdit(placeholderText="speed")
-
 		speedlayout = QHBoxLayout()
 		speedlayout.addWidget(self.startInput)
 		speedlayout.addWidget(self.endInput)
 		speedlayout.addWidget(self.speedInput)
-		speedlayout.addWidget(self.speedButton)
+		speedlayout.addWidget(speedButton)
+
+		# area to cut video
+		cutButton = MyButton("Cut", self.cutVideo, self.editButtons)
+		self.startCut = QLineEdit(placeholderText="start time")
+		self.endCut = QLineEdit(placeholderText="end time")
+		cutlayout = QHBoxLayout()
+		cutlayout.addWidget(self.startCut)
+		cutlayout.addWidget(self.endCut)
+		cutlayout.addWidget(cutButton)
 
 		# button to save all frames
 		saveFrameButton = MyButton("Save All Frames", self.placeholder, self.editButtons)
@@ -116,9 +122,10 @@ class MediaEditWindow(QMainWindow):
 		# area to edit vidwo
 		editinglayout = QVBoxLayout()
 		for button in self.editButtons : 
-			if button != self.speedButton : 
+			if button != (speedButton or cutButton): 
 				editinglayout.addWidget(button)
 		editinglayout.addLayout(speedlayout)
+		editinglayout.addLayout(cutlayout)
 
 
 		# main window layout
@@ -156,19 +163,28 @@ class MediaEditWindow(QMainWindow):
 		# create editor
 		self.editor = editing(self.fname[0], self.workspaceFolder)
 
+	# save clip and give as input to video player
+	def updateVideo(self) : 
+		self.editor.saveClip("tempClip")
+		self.newPlayer.getInput(self.workspaceFolder+"tempClip.mp4")
 		
 	# mirror video horizontally 
 	def mirrorX(self) : 
 		self.editor.mirrorAtX()
-		self.editor.saveClip("tempClip", self.workspaceFolder)
-		self.newPlayer.getInput(self.workspaceFolder+"tempClip.mp4")
+		self.updateVideo()
 
+	def mirrorY(self) : 
+		self.editor.mirrorAtY()
+		self.updateVideo()
 
 	# change speed of video section
 	def changeSpeed(self) : 
-		os.system("python3 media_editing.py -path " + self.inputPath + " -name " + self.filename + " -speedChange " + self.startInput.text() + " " + self.endInput.text() + " " + self.speedInput.text() +  " ./")
-		# pass new video to player widget 
-		self.showNewVideo("-SPEEDx" + str(float(self.speedInput.text())))
+		self.editor.changeSpeed(self.speedInput, self.startInput, self.endInput)
+		self.updateVideo()
+	# cut video
+	def cutVideo(self): 
+		self.editor.cut(self.startCut, self.endCut)
+		self.updateVideo()
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
@@ -256,8 +272,6 @@ class MediaPlayer(QVBoxLayout) :
 		self.player.setAudioOutput(self.audioOutput)
 		self.audioOutput.setVolume(100)
 		self.playButton.setEnabled(True)
-
-
 
 
 
