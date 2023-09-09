@@ -1,22 +1,11 @@
 import sys, os 
-import media_editing 
+from media_editing import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtMultimediaWidgets import *
 from PyQt6.QtMultimedia import *
 # Christian joined the chat.
-
-####### Defining different windows #######
-class Color(QWidget):
-
-	def __init__(self, color):
-		super(Color, self).__init__()
-		self.setAutoFillBackground(True)
-
-		palette = self.palette()
-		palette.setColor(QPalette.ColorRole.Window, QColor(color))
-		self.setPalette(palette)
 
 class MainWindow(QMainWindow):
 
@@ -26,23 +15,23 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("Study Tool Kit")
 		self.setMinimumSize(QSize(600,400))
 
-		mediaEditBtn = QPushButton(self)
-		mediaEditBtn.setText("Media Editing")
-		mediaEditBtn.clicked.connect(self.openMediaEditWindow)
+		mediaEditButton = QPushButton(self)
+		mediaEditButton.setText("Media Editing")
+		mediaEditButton.clicked.connect(self.openMediaEditWindow)
 
-		studyGenBtn = QPushButton(self)
-		studyGenBtn.setText("Study Generation")
-		studyGenBtn.clicked.connect(self.openStudyGenWindow)
+		studyGenButton = QPushButton(self)
+		studyGenButton.setText("Study Generation")
+		studyGenButton.clicked.connect(self.openStudyGenWindow)
 
-		statAnaBtn = QPushButton(self)
-		statAnaBtn.setText("Statistical Analysis")
-		statAnaBtn.clicked.connect(self.openStatAnaWindow)
+		statAnaButton = QPushButton(self)
+		statAnaButton.setText("Statistical Analysis")
+		statAnaButton.clicked.connect(self.openStatAnaWindow)
 
 		layout = QHBoxLayout()
 
-		layout.addWidget(mediaEditBtn)
-		layout.addWidget(studyGenBtn)
-		layout.addWidget(statAnaBtn)
+		layout.addWidget(mediaEditButton)
+		layout.addWidget(studyGenButton)
+		layout.addWidget(statAnaButton)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -59,8 +48,23 @@ class MainWindow(QMainWindow):
 		self.w = StatAnaWindow()
 		self.w.show()
 
-class MediaEditWindow(QMainWindow):
+# helper class for buttons in the video editing window
+class MyButton(QPushButton) : 
+	def __init__(self, text, toAppend=[], toSetEnabled=False) : 
+		super(QPushButton, self).__init__()
+		self.setEnabled(toSetEnabled)
+		self.deleteFrameButton.setText(text)
+		toAppend.append(self)
+	def __init__(self, text, function, toAppend=[], toSetEnabled=False) : 
+		super(QPushButton, self).__init__()
+		self.setEnabled(toSetEnabled)
+		self.setText(text)
+		self.clicked.connect(function)
+		toAppend.append(self)
 
+
+
+class MediaEditWindow(QMainWindow):
 	def __init__(self):
 		super(MediaEditWindow, self).__init__()
 
@@ -68,12 +72,12 @@ class MediaEditWindow(QMainWindow):
 		self.setMinimumSize(QSize(1200,600))
 		
 		# import file button 
-		mediaImportBtn = QPushButton(self)
-		mediaImportBtn.setText("Import file")
-		mediaImportBtn.clicked.connect(self.importfile)
+		mediaImportButton = MyButton("Import File", self.importfile, toSetEnabled=True)
 
+		# set up workspace folder
+		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
-		# media player
+		# media player 
 		self.oldvideoWidget = QVideoWidget()
 		self.oldvideoWidget.setMinimumWidth(400)
 		self.oldvideoWidget.show()
@@ -81,20 +85,13 @@ class MediaEditWindow(QMainWindow):
 		self.newvideoWidget.setMinimumWidth(400)
 		self.newvideoWidget.show()
 		
+		self.oldplayButton = MyButton("Play", self.playold)
+		self.newplayButton = MyButton("Play", self.playnew)
 
-		self.oldplayButton = QPushButton()
-		self.oldplayButton.setEnabled(False)
-		self.oldplayButton.setText("Play")
-		self.oldplayButton.clicked.connect(self.playold)
-
-		self.newplayButton = QPushButton()
-		self.newplayButton.setEnabled(False)
-		self.newplayButton.setText("Play")
-		self.newplayButton.clicked.connect(self.playnew)
-
-		# import and display original video
+		# import and display original video, select workspace folder
 		oldvideolayout = QVBoxLayout()
-		oldvideolayout.addWidget(mediaImportBtn)
+		oldvideolayout.addWidget(selectFolderButton)
+		oldvideolayout.addWidget(mediaImportButton)
 		oldvideolayout.addWidget(self.oldvideoWidget)
 		oldvideolayout.addWidget(self.oldplayButton)
 		# display new edited video
@@ -102,19 +99,14 @@ class MediaEditWindow(QMainWindow):
 		newvideolayout.addWidget(self.newvideoWidget)
 		newvideolayout.addWidget(self.newplayButton)
 		
-		# buttons to edit vidwo
+		# a list for buttons to edit videos
+		self.editButtons = []
 		# button to mirror horizontally
-		self.mirrorXButton = QPushButton()
-		self.mirrorXButton.setEnabled(False)
-		self.mirrorXButton.setText("Mirror Horizontally")
-		self.mirrorXButton.clicked.connect(self.mirrorX)
-
+		mirrorXButton = MyButton("Mirror Horizontally", self.mirrorX, self.editButtons)
 		# button to mirror vertically
-		self.mirrorYButton = QPushButton()
-		self.mirrorYButton.setEnabled(False)
-		self.mirrorYButton.setText("Mirror Vertically")
+		mirrorYButton = MyButton("Mirror Vertically", self.placeholder, self.editButtons)
 		
-		# container to change video speed
+		# area to change video speed
 		self.speedButton = QPushButton()
 		self.speedButton.setEnabled(False)
 		self.speedButton.setText("Change Speed")		
@@ -129,66 +121,34 @@ class MediaEditWindow(QMainWindow):
 		speedlayout.addWidget(self.speedInput)
 		speedlayout.addWidget(self.speedButton)
 
-
 		# button to save all frames
-		self.saveFrameButton = QPushButton()
-		self.saveFrameButton.setEnabled(False)
-		self.saveFrameButton.setText("Save All Frames")
-
+		saveFrameButton = MyButton("Save All Frames", self.placeholder, self.editButtons)
 		# button to delete a frame
-		self.deleteFrameButton = QPushButton()
-		self.deleteFrameButton.setEnabled(False)
-		self.deleteFrameButton.setText("Extract Occasion")
-
+		deleteFrameButton = MyButton("Delete Frame", self.placeholder, self.editButtons)
 		# button to extract an occasion
-		self.extractOccasionButton = QPushButton()
-		self.extractOccasionButton.setEnabled(False)
-		self.extractOccasionButton.setText("Extract Occasion")
-
+		extractOccasionButton = MyButton("Extract Occasion", self.placeholder, self.editButtons)
 		# button to concatenating audios
-		self.concatAudioButton = QPushButton()
-		self.concatAudioButton.setEnabled(False)
-		self.concatAudioButton.setText("Concatenate Audios")
-
+		concatAudioButton = MyButton("Concatenate Audios", self.placeholder, self.editButtons)
 		# button to save frame at time
-		self.saveFrameAtButton = QPushButton()
-		self.saveFrameAtButton.setEnabled(False)
-		self.saveFrameAtButton.setText("Save Frame At: ")
-		
+		saveFrameAtButton = MyButton("Save Frame At: ", self.placeholder, self.editButtons)
 		# button to delete frame at time
-		self.deleteFrameAtButton = QPushButton()
-		self.deleteFrameAtButton.setEnabled(False)
-		self.deleteFrameAtButton.setText("Delete Frame At: ")
-
+		deleteFrameAtButton = MyButton("Delete Frame At: ", self.placeholder, self.editButtons)
 		# button to insert frame at time
-		self.insertFrameAtButton = QPushButton()
-		self.insertFrameAtButton.setEnabled(False)
-		self.insertFrameAtButton.setText("Insert Frame At: ")
-
+		insertFrameAtButton = MyButton("Insert Frame At: ", self.placeholder, self.editButtons)
 		# button to make video from frames
-		self.makeVideoFromFramesButton = QPushButton()
-		self.makeVideoFromFramesButton.setEnabled(False)
-		self.makeVideoFromFramesButton.setText("Make Video From Frames")
-
+		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.placeholder, self.editButtons)
 	
 
 		# area to edit vidwo
 		editinglayout = QVBoxLayout()
-		editinglayout.addWidget(self.mirrorXButton)
-		editinglayout.addWidget(self.mirrorYButton)
+		for button in self.editButtons : 
+			if button != self.speedButton : 
+				editinglayout.addWidget(button)
 		editinglayout.addLayout(speedlayout)
-		editinglayout.addWidget(self.saveFrameButton)
-		editinglayout.addWidget(self.deleteFrameButton)
-		editinglayout.addWidget(self.extractOccasionButton)
-		editinglayout.addWidget(self.concatAudioButton)
-		editinglayout.addWidget(self.saveFrameAtButton)
-		editinglayout.addWidget(self.deleteFrameAtButton)
-		editinglayout.addWidget(self.insertFrameAtButton)
-		editinglayout.addWidget(self.makeVideoFromFramesButton)
 		
 
 
-
+		# main window layout
 		layout = QHBoxLayout()
 		layout.addLayout(oldvideolayout)
 		layout.addLayout(editinglayout)
@@ -197,34 +157,33 @@ class MediaEditWindow(QMainWindow):
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
+	# placeholder function, for no use
+	def placeholder() : 
+		pass 
 
-	# import file and give to media player
+	# import file and give to media player, requires existing workspace folder
 	def importfile(self):
 		self.fname = QFileDialog.getOpenFileName(
 			self,
 			"Open File",
-			"${HOME}",
+			self.workspaceFolder[0],
 			"All Files (*);; Python Files (*.py);; PNG Files (*.png)",
 		)
 		self.filename = self.fname[0].split("/")[-1]
 		self.filepath = self.fname[0][:-len(self.filename)]
 		self.oldplayButton.setEnabled(True)
 		self.setplayer(self.oldvideoWidget, self.fname[0])
-		self.setEditingBtnActive()
+		# set all edit buttons active
+		for button in self.editButtons : 
+			button.setEnabled(True)
+		self.editor = editing(self.fname[0], workspaceFolder)
 
-	# set buttons for editing active
-	def setEditingBtnActive(self): 
-		self.mirrorXButton.setEnabled(True)
-		self.mirrorYButton.setEnabled(True)
-		self.speedButton.setEnabled(True)
-		self.saveFrameButton.setEnabled(True)
-		self.deleteFrameButton.setEnabled(True)
-		self.extractOccasionButton.setEnabled(True)
-		self.concatAudioButton.setEnabled(True)
-		self.saveFrameAtButton.setEnabled(True)
-		self.deleteFrameAtButton.setEnabled(True)
-		self.insertFrameAtButton.setEnabled(True)
-		self.makeVideoFromFramesButton.setEnabled(True)
+	def selectFolder(self) : 
+		self.workspaceFolder = QFileDialog.getExistingDirectory(
+			self,
+			"Choose Workspace Directory", 
+			"${HOME}",
+			)
 
 	# give player widgets a player instance 
 	def setplayer(self, widget, resource):
@@ -279,12 +238,12 @@ class StudyGenWindow(QMainWindow):
 		self.setWindowTitle("Study Generation")
 		self.setMinimumSize(QSize(400,600))
 
-		studyGenBtn = QPushButton(self)
-		studyGenBtn.setText("Generate your study")
+		studyGenButton = QPushButton(self)
+		studyGenButton.setText("Generate your study")
 
 		layout = QHBoxLayout()
 
-		layout.addWidget(studyGenBtn)
+		layout.addWidget(studyGenButton)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -299,12 +258,12 @@ class StatAnaWindow(QMainWindow):
 		self.setWindowTitle("Statistical Analysis")
 		self.setMinimumSize(QSize(400,600))
 
-		statAnaBtn = QPushButton(self)
-		statAnaBtn.setText("Analyse your data")
+		statAnaButton = QPushButton(self)
+		statAnaButton.setText("Analyse your data")
 
 		layout = QHBoxLayout()
 
-		layout.addWidget(statAnaBtn)
+		layout.addWidget(statAnaButton)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
