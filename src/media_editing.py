@@ -11,22 +11,27 @@ import argparse
 import textgrid
 import numpy as np
 import imageio
-#from PIL import Image
 
 
-
+"""
+Editing class for video and audio files. It works mostly with video files at the moment.
+Init:
+    - path_to_file: Path to the file that should be edited
+    - path_to_save: Standard path to save (most methods offer an optional parameter for their save-location)
+"""
 class editing():
     
     def __init__(self, path_to_file, path_to_save):
         self.path_to_file = path_to_file
         self.path_to_save = path_to_save
-        if self.checkDirExists(path_to_file):
-            self.clip, self.type = self.getClipFromPath(path_to_file)
+        if self._checkDirExists(path_to_file):
+            self.clip, self.type = self._getClipFromPath(path_to_file)
             self.clip_history = []
         else:
             raise Exception('Input directory or file does not exist: ' + path_to_file)
+     
         
-    def getClipFromPath(self, path_to_file):
+    def _getClipFromPath(self, path_to_file):
         try:
             return VideoFileClip(path_to_file), "video"
         except:
@@ -44,12 +49,15 @@ class editing():
         if len(self.clip_history) >5:
             del self.clip_history[0]
     
+    #Return the current (edited) clip
     def getClip(self):
         return self.clip
-        
+     
+    #Return the audio of the current (edited) clip
     def getAudioClip(self):
         return self.clip.audio    
         
+    #Sets the audio of the current edited clip
     def setAudioClip(self, audio_clip):
         self._clipHistory()
         self.clip.set_audio(audio_clip)
@@ -58,30 +66,31 @@ class editing():
     """
     Functions for sorting by numbers. Remove anything than the numbers in a string.
     """
-    def atoi(self, text):
+    def _atoi(self, text):
         return int(text) if text.isdigit() else text
 
-    def natural_keys(self, text):
-        return [ self.atoi(c) for c in re.split(r'(\d+)', text) ]    
+    def _natural_keys(self, text):
+        return [ self._atoi(c) for c in re.split(r'(\d+)', text)] 
     
-    #Stores the last 5 clips
+    #Stores the last 5 clips and enables a basic undo-function
     def undo():
         if len(self.clip_history) >0:
             self.clip = self.clip_history[-1]
             del self.clip_history[-1]
         
     
-    def checkDirExists(self, pathToCheck):
+    #Checks if dir exists
+    def _checkDirExists(self, pathToCheck):
         return os.path.exists(pathToCheck)
 
     
-    #Creates DIR when not existent
-    def checkDirExistsAndCreate(self, pathToCheck):
+    #Checks if dir exists, if not: creates dir
+    def _checkDirExistsAndCreate(self, pathToCheck):
         if not os.path.exists(pathToCheck):
             os.makedirs(pathToCheck)
      
         
-
+    #Cut the current clip 
     def cut(self, start, end):
         self._clipHistory()
         if start < 0:
@@ -93,71 +102,81 @@ class editing():
         return self.clip
     
     
-
+    #Return a frame at a given time
     def getFrame(self, frame_time):
-        return self.clip.get_frame(frame_time)
+        if self.type == 'video':
+            return self.clip.get_frame(frame_time)
 
+    #Saves a frame at a given time. Requires the name for the frame.
     def saveFrame(self, frame_time, frame_name, extension = 'png'):
-        imageio.imwrite(self.path_to_save + frame_name  + '.' + extension, self.get_frame(frame_time))
+        if self.type == 'video':
+            imageio.imwrite(self.path_to_save + frame_name  + '.' + extension, self.get_frame(frame_time))
 
 
-
+    #Saves all frames of the clip either in the standard save path or a given one
     def saveAllFrames(self, path_optional = '', extension = 'png'):
         if self.type == 'video':
             fps = self.clip.fps
             numberOfFrames = int(fps * self.clip.duration)
             path = self.path_to_save if path_optional =='' else path_optional
-            self.checkDirExistsAndCreate(path)
+            self._checkDirExistsAndCreate(path)
             for f in range(numberOfFrames):
                 frame = self.clip.get_frame(f*1.0/fps)
                 normalized_array = (frame - np.min(frame)) / (np.max(frame) - np.min(frame))
                 img = (normalized_array * 255).astype(np.uint8)
                 imageio.imwrite(path + 'frame'+ str(f) + '.' + extension, img)
         
-
+    
+    #Removes a frame at a certain time
     def removeFrameTime(self, frame_time):
-        self._clipHistory()
-        fps = self.clip.fps
-        if(frame_time < 1.0/fps):
-            self.clip = self.clip.subclip(1/fps, self.clip.duration)
-        elif(frame_time > self.clip.duration - 1.0/fps):
-            self.clip = self.clip.subclip(self.clip.duration - 1.0/fps , self.clip.duration)
-        else:
+        if self.type == 'video':
+            self._clipHistory()
+            fps = self.clip.fps
+            if(frame_time < 1.0/fps):
+                self.clip = self.clip.subclip(1/fps, self.clip.duration)
+            elif(frame_time > self.clip.duration - 1.0/fps):
+                self.clip = self.clip.subclip(self.clip.duration - 1.0/fps , self.clip.duration)
+            else:
+                first_clip = self.clip.subclip(0, frame_time - 0.5 * 1.0/fps)
+                second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/fps, self.clip.duration)
+                self.clip = concatenate_videoclips([first_clip, second_clip])
+            
+            return self.clip
+
+    #Removes a frame at a given index
+    def removeFrameIndex(self, frame_index):
+        if self.type == 'video':
+            self._clipHistory()
+            fps = self.clip.fps
+            frame_time = frame_index*1.0/fps
             first_clip = self.clip.subclip(0, frame_time - 0.5 * 1.0/fps)
             second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/fps, self.clip.duration)
             self.clip = concatenate_videoclips([first_clip, second_clip])
-        
-        return self.clip
-
-    def removeFrameIndex(self, frame_index):
-        self._clipHistory()
-        fps = self.clip.fps
-        frame_time = frame_index*1.0/fps
-        first_clip = self.clip.subclip(0, frame_time - 0.5 * 1.0/fps)
-        second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/fps, self.clip.duration)
-        self.clip = concatenate_videoclips([first_clip, second_clip])
-        return self.clip
-
-    def insertFrame(self, frame_path, frame_time):
-        self._clipHistory()
-        try:
-            frame_clip = ImageClip(frame_path).set_duration(1.0/self.clip.fps)
-            if frame_time < 1.0/self.clip.fps:
-                self.clip =  concatenate_videoclips([frame_clip, self.clip])
-            elif frame_time > self.clip.duration - 1.0/self.clip.fps:
-                self.clip = concatenate_videoclips([self.clip.clip, frame_clip])
-            else:
-                first_clip = self.clip.subclip(0, frame_time - 0.5 * 1.0/self.clip.fps)
-                second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/self.clip.fps, self.clip.duration)
-                self.clip =  concatenate_videoclips([first_clip, frame_clip, second_clip])
-            
             return self.clip
-        except:
-            raise Exception('Could not find the frame for the given path: ' + frame_path)
+
+
+    #Inserts a frame at a given index
+    def insertFrame(self, frame_path, frame_time):
+        if self.type == 'video':
+            try:
+                self._clipHistory()
+                frame_clip = ImageClip(frame_path).set_duration(1.0/self.clip.fps)
+                if frame_time < 1.0/self.clip.fps:
+                    self.clip =  concatenate_videoclips([frame_clip, self.clip])
+                elif frame_time > self.clip.duration - 1.0/self.clip.fps:
+                    self.clip = concatenate_videoclips([self.clip.clip, frame_clip])
+                else:
+                    first_clip = self.clip.subclip(0, frame_time - 0.5 * 1.0/self.clip.fps)
+                    second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/self.clip.fps, self.clip.duration)
+                    self.clip =  concatenate_videoclips([first_clip, frame_clip, second_clip])
+                
+                return self.clip
+            except:
+                raise Exception('Could not find the frame for the given path: ' + frame_path)
             
             
 
-
+    #Saves the clip to the standard save path or to the given optional path
     def saveClip(self, name_of_clip, path_optional = '', extension = ''):
         path = self.path_to_save if path_optional == '' else path_optional
         if extension == '':
@@ -166,6 +185,7 @@ class editing():
             self.clip.write_videofile(path + name_of_clip + extension)
         except:
             raise Exception('Could not save the clip in directory: ' + path + name_of_clip + extension)
+
 
     #Frames have to be ordered by number. Without numbers the order of the frames is random.
     #The frame name must include the ordering number: 'frame0.png' / '1frame.png' / 'frame1out.png' etc.
@@ -185,23 +205,27 @@ class editing():
                 continue
         #print(all_frames)
         # Assuming natural_keys function is defined
-        all_frames.sort(key=self.natural_keys)
+        all_frames.sort(key=self._natural_keys)
         clips = [ImageClip(m).set_duration(1.0/frames_per_second) for m in all_frames]
         concat_clip = concatenate_videoclips(clips)
         self.clip = concat_clip.set_fps(frames_per_second)
         return self.clip
     
+    #Mirrors the clip at the x-axis
     def mirrorAtX(self):
-        self._clipHistory()
-        self.clip = self.clip.fx(vfx.mirror_x)
-        return self.clip
-
+        if self.type == 'video':
+            self._clipHistory()
+            self.clip = self.clip.fx(vfx.mirror_x)
+            return self.clip
+        
+    #Mirrors the clip at the y-axis
     def mirrorAtY(self):
-        self._clipHistory()
-        self.clip = self.clip.fx(vfx.mirror_y)
-        return self.clip
+        if self.type == 'video':
+            self._clipHistory()
+            self.clip = self.clip.fx(vfx.mirror_y)
+            return self.clip
     
-    
+    #Changes the speed of the clip for a given segment
     def changeSpeed(self, speed, start, end):
         self._clipHistory()
         if start < 0:
@@ -231,9 +255,9 @@ class editing():
         self.clip = concatenate_videoclips([before_speed, speed_clip, after_speed])
         return self.clip
 
-
+    #Delets a frame at a certain time and fuses the two neighboring frame to one to make the audio-video sync again
     def deleteFrameSynchronous(self, frame_time):
-        if frame_time >= 0 and frame_time < self.clip.duration:
+        if frame_time >= 0 and frame_time < self.clip.duration and self.type == 'video':
             self._clipHistory()
             fps = self.clip.fps
             frametime_norm = int(frame_time * fps) * 1/fps
@@ -253,7 +277,8 @@ class editing():
 
 
 
-    
+    #Changes the speed for given segments of the video:
+    #Segments are given like this: [[start_1, end_1], [start_2, end_2], ... ]
     def changeSpeedSegmentsAudio(self, intervals, speed_factor):
         self.clip.audio.write_audiofile("tempAudio.wav")
         stream = ffmpeg.input("tempAudio.wav")
@@ -282,8 +307,10 @@ class editing():
         return self.clip
 
 
+    #Saves certain audios/segments from the clip according to a given textgrid
+    #Start/end index are in regards to how many elements from the textgrid should be saved
     def saveAudioFromTextGrid(self, row, path_textgrid, path_to_save_audios, start_index, end_index):
-        self.checkDirExistsAndCreate(path_to_save_audios)
+        self._checkDirExistsAndCreate(path_to_save_audios)
         tg = textgrid.TextGrid.fromFile(path_textgrid)
         audio = self.clip.audio
         if end_index < 0 or end_index > len(tg[row]):
@@ -296,10 +323,10 @@ class editing():
             name_of_short = name_of_short.replace(":", "")
             audio_short.write_audiofile(path_to_save_audios + name_of_short, logger=None)
 
-
+    #Creates an audio from many audios and saves it to a given path with a given name
     def createAudioFromAudios(self, name_of_file, path_to_audios, path_to_save = '', extension = ''):
-        if self.checkDirExists(path_to_audios):
-            self.checkDirExistsAndCreate(path_to_save)
+        if self._checkDirExists(path_to_audios):
+            self._checkDirExistsAndCreate(path_to_save)
             path = self.path_to_save if path_to_save == '' else path_to_save
             file_extension = '.mp3' if extension =='' else extension
             all_shorts = []
@@ -310,7 +337,7 @@ class editing():
                 else:
                     continue
         
-            all_shorts.sort(key=natural_keys)
+            all_shorts.sort(key=self._natural_keys)
             clips = [AudioFileClip(m) for m in all_shorts]
             concat_clip = concatenate_audioclips(clips)
             concat_clip.write_audiofile(path + name_of_file + '.' + file_extension)
@@ -319,8 +346,9 @@ class editing():
     
 
 
+    #Saves a txt file with information about a certain text_of_interest according to a given textGrid
     def getTextGridInformation(self, text_of_interest, path_textgrid, path_save):
-        self.checkDirExistsAndCreate(path_save)
+        self._checkDirExistsAndCreate(path_save)
         try:
             tg = textgrid.TextGrid.fromFile(path_textgrid)
         except:
@@ -338,8 +366,9 @@ class editing():
             for o in occasions:
                 f.write(o)
 
+    #Saves occasions of text_of_interest (as audio) according to the given text grid
     def extractTextOccasionsFromGrid(self, text_of_interest, path_textgrid, path_save, extension = ''):
-        self.checkDirExistsAndCreate(path_save)
+        self._checkDirExistsAndCreate(path_save)
         file_extension = 'mp3' if extension == '' else extension
         try:
             tg = textgrid.TextGrid.fromFile(path_textgrid)
