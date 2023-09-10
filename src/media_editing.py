@@ -61,7 +61,7 @@ class editing():
     def setAudioClip(self, audio_clip):
         self._clipHistory()
         self.clip.set_audio(audio_clip)
-        return self.clip
+
 
     """
     Functions for sorting by numbers. Remove anything than the numbers in a string.
@@ -99,7 +99,6 @@ class editing():
             end = self.clip.duration
         
         self.clip.subclip(start, end)
-        return self.clip
     
     
     #Return a frame at a given time
@@ -141,7 +140,6 @@ class editing():
                 second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/fps, self.clip.duration)
                 self.clip = concatenate_videoclips([first_clip, second_clip])
             
-            return self.clip
 
     #Removes a frame at a given index
     def removeFrameIndex(self, frame_index):
@@ -152,7 +150,6 @@ class editing():
             first_clip = self.clip.subclip(0, frame_time - 0.5 * 1.0/fps)
             second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/fps, self.clip.duration)
             self.clip = concatenate_videoclips([first_clip, second_clip])
-            return self.clip
 
 
     #Inserts a frame at a given index
@@ -170,7 +167,6 @@ class editing():
                     second_clip = self.clip.subclip(frame_time + 0.5 * 1.0/self.clip.fps, self.clip.duration)
                     self.clip =  concatenate_videoclips([first_clip, frame_clip, second_clip])
                 
-                return self.clip
             except:
                 raise Exception('Could not find the frame for the given path: ' + frame_path)
             
@@ -209,21 +205,20 @@ class editing():
         clips = [ImageClip(m).set_duration(1.0/frames_per_second) for m in all_frames]
         concat_clip = concatenate_videoclips(clips)
         self.clip = concat_clip.set_fps(frames_per_second)
-        return self.clip
     
     #Mirrors the clip at the x-axis
     def mirrorAtX(self):
         if self.type == 'video':
             self._clipHistory()
             self.clip = self.clip.fx(vfx.mirror_x)
-            return self.clip
+
         
     #Mirrors the clip at the y-axis
     def mirrorAtY(self):
         if self.type == 'video':
             self._clipHistory()
             self.clip = self.clip.fx(vfx.mirror_y)
-            return self.clip
+
     
     #Changes the speed of the clip for a given segment
     def changeSpeed(self, speed, start, end):
@@ -253,7 +248,7 @@ class editing():
         speed_clip = speed_clip.speedx(speed)
         speed_clip = speed_clip.set_audio(audio)
         self.clip = concatenate_videoclips([before_speed, speed_clip, after_speed])
-        return self.clip
+
 
     #Delets a frame at a certain time and fuses the two neighboring frame to one to make the audio-video sync again
     def deleteFrameSynchronous(self, frame_time):
@@ -273,7 +268,7 @@ class editing():
             new_clip = concatenate_videoclips([before_clip, frame_clip, after_clip])
             new_clip.audio = audio
             self.clip = new_clip
-            return self.clip
+
 
 
 
@@ -304,7 +299,7 @@ class editing():
     
         audio = AudioFileClip("tempAudio2.wav")
         self.clip = self.clip.set_audio(audio)
-        return self.clip
+
 
 
     #Saves certain audios/segments from the clip according to a given textgrid
@@ -366,7 +361,7 @@ class editing():
             for o in occasions:
                 f.write(o)
 
-    #Saves occasions of text_of_interest (as audio) according to the given text grid
+    #Saves occasions of text_of_interest (as audio) according to the given textGrid
     def extractTextOccasionsFromGrid(self, text_of_interest, path_textgrid, path_save, extension = ''):
         self._checkDirExistsAndCreate(path_save)
         file_extension = 'mp3' if extension == '' else extension
