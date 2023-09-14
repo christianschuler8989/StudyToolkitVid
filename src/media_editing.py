@@ -109,7 +109,7 @@ class editing():
     #Saves a frame at a given time. Requires the name for the frame.
     def saveFrame(self, frame_time, frame_name, extension = 'png'):
         if self.type == 'video':
-            imageio.imwrite(self.path_to_save + frame_name  + '.' + extension, self.get_frame(frame_time))
+            imageio.imwrite(self.path_to_save + frame_name  + '.' + extension, self.clip.get_frame(frame_time))
 
 
     #Saves all frames of the clip either in the standard save path or a given one
