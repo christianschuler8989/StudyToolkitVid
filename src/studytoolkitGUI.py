@@ -129,16 +129,20 @@ class MediaEditWindow(QMainWindow):
 		saveFramesLayout.addWidget(saveFramesButton)
 		editLayouts.append(saveFramesLayout)
 
+		# area to delete a frame at given time
+		deleteFrameAtButton = MyButton("Delete Frame with Audio", self.deleteFrameSync, self.areaEditButtons)
+		self.delFrametime = QLineEdit(placeholderText="time of frame")
+		delFrameLayout = QHBoxLayout()
+		delFrameLayout.addWidget(self.delFrametime)
+		delFrameLayout.addWidget(deleteFrameAtButton)
+		editLayouts.append(delFrameLayout)
+		
 
 
-		# button to delete a frame
-		deleteFrameButton = MyButton("Delete Frame", self.placeholder, self.singleEditButtons)
 		# button to extract an occasion
 		extractOccasionButton = MyButton("Extract Occasion", self.placeholder, self.singleEditButtons)
 		# button to concatenating audios
 		concatAudioButton = MyButton("Concatenate Audios", self.placeholder, self.singleEditButtons)
-		# button to delete frame at time
-		deleteFrameAtButton = MyButton("Delete Frame", self.placeholder, self.singleEditButtons)
 		# button to insert frame at time
 		insertFrameAtButton = MyButton("Insert Frame", self.placeholder, self.singleEditButtons)
 		# button to make video from frames
@@ -253,6 +257,11 @@ class MediaEditWindow(QMainWindow):
 	def save(self) : 
 		outputPath = QFileDialog.getSaveFileName(self,"Save File", self.workspaceFolder)
 		self.editor.saveClip(outputPath[0].split("/")[-1])
+
+	# delete a frame with its audio 
+	def deleteFrameSync(self) : 
+		self.editor.deleteFrameSynchronous(float(self.delFrametime.text()))
+		self.updateVideo()
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
