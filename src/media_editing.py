@@ -73,7 +73,7 @@ class editing():
         return [ self._atoi(c) for c in re.split(r'(\d+)', text)] 
     
     #Stores the last 5 clips and enables a basic undo-function
-    def undo():
+    def undo(self):
         if len(self.clip_history) >0:
             self.clip = self.clip_history[-1]
             del self.clip_history[-1]
