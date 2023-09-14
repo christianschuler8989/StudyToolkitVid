@@ -1,5 +1,5 @@
 import sys, os 
-from media_editing import *
+from media_editing import * 
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -59,10 +59,11 @@ class MediaEditWindow(QMainWindow):
 		self.setMinimumSize(QSize(1200,600))
 		
 		# set up workspace folder
-		self.workspaceFolder = "./"
+		# self.workspaceFolder = "${HOME}"
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
 		# import file button 
+		# self.fname = "${HOME}"
 		mediaImportButton = MyButton("Import File", self.importfile, toSetEnabled=True)
 		mediaImportButton.setIcon(QIcon("open.xpm"))
 
@@ -111,7 +112,7 @@ class MediaEditWindow(QMainWindow):
 		editLayouts.append(cutLayout)
 
 		# area to save a frame and give it a name
-		saveFrameAtButton = MyButton("Save Frame At: ", self.saveFrameAt, self.areaEditButtons)
+		saveFrameAtButton = MyButton("Save Frame", self.saveFrameAt, self.areaEditButtons)
 		self.frametime = QLineEdit(placeholderText="time of frame")
 		self.framename = QLineEdit(placeholderText="name of frame")
 		saveFrameLayout = QHBoxLayout()
@@ -121,7 +122,6 @@ class MediaEditWindow(QMainWindow):
 		editLayouts.append(saveFrameLayout)
 
 		# area to save all frames into a given folder
-		self.saveFrameFolder = self.workspaceFolder
 		saveFrameFolderButton = MyButton("Choose Directory to Save All Frames", self.selectFramesFolder, self.areaEditButtons)
 		saveFramesButton = MyButton("Save All Frames", self.saveFrames, self.areaEditButtons)
 		saveFramesLayout = QHBoxLayout()
@@ -138,9 +138,9 @@ class MediaEditWindow(QMainWindow):
 		# button to concatenating audios
 		concatAudioButton = MyButton("Concatenate Audios", self.placeholder, self.singleEditButtons)
 		# button to delete frame at time
-		deleteFrameAtButton = MyButton("Delete Frame At: ", self.placeholder, self.singleEditButtons)
+		deleteFrameAtButton = MyButton("Delete Frame", self.placeholder, self.singleEditButtons)
 		# button to insert frame at time
-		insertFrameAtButton = MyButton("Insert Frame At: ", self.placeholder, self.singleEditButtons)
+		insertFrameAtButton = MyButton("Insert Frame", self.placeholder, self.singleEditButtons)
 		# button to make video from frames
 		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.placeholder, self.singleEditButtons)
 	
@@ -195,7 +195,13 @@ class MediaEditWindow(QMainWindow):
 		for button in self.singleEditButtons + self.areaEditButtons: 
 			button.setEnabled(True)
 		# create editor
-		self.editor = editing(self.fname[0], self.workspaceFolder)
+		try : 
+			self.editor = editing(self.fname[0], self.workspaceFolder)
+		except : 
+			self.msgBox = QMessageBox()
+			self.msgBox.setText("Please select a workspace folder and a file! ")
+			self.msgBox.exec()
+
 
 	# save clip and give as input to video player
 	def updateVideo(self) : 
@@ -215,23 +221,29 @@ class MediaEditWindow(QMainWindow):
 
 	# change speed of video section
 	def changeSpeed(self) : 
-		self.editor.changeSpeed(self.speedInput, self.startInput, self.endInput)
+		self.editor.changeSpeed(float(self.speedInput.text()), float(self.startInput.text()), float(self.endInput.text()))
 		self.updateVideo()
 	# cut video
 	def cutVideo(self): 
-		self.editor.cut(self.startCut, self.endCut)
+		self.editor.cut(float(self.startCut.text()), float(self.endCut.text()))
 		self.updateVideo()
 	# save one frame at time give name
 	def saveFrameAt(self): 
-		self.editor.saveFrame(self.frametime, self.framename)
-		self.newPlayer.getInput(self.workspaceFolder+self.framename+".png")
+		self.editor.saveFrame(self.frametime.text(), self.framename.text())
+		self.newPlayer.getInput(self.workspaceFolder+self.framename.text()+".png")
 
 	# select folder to save all frames
 	def selectFramesFolder(self) : 
 		self.saveFrameFolder = QFileDialog.getExistingDirectory(self, "Choose Directory to Save All Frames", "${HOME}", ) + "/"
 	# save frames to the selected folder
 	def saveFrames(self) : 
-		self.editor.saveAllFrames(self.saveFrameFolder)
+		try : 
+			self.editor.saveAllFrames(self.saveFrameFolder)
+		except : 
+			self.msgBox = QMessageBox()
+			self.msgBox.setText("Please select a folder to save the frames! ")
+			self.msgBox.exec()
+
 
 	# undo up to 5 actions
 	def undoGUI(self): 
