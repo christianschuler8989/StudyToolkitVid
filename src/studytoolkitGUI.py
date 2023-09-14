@@ -59,6 +59,7 @@ class MediaEditWindow(QMainWindow):
 		self.setMinimumSize(QSize(1200,600))
 		
 		# set up workspace folder
+		self.workspaceFolder = "./"
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
 		# import file button 
@@ -70,69 +71,102 @@ class MediaEditWindow(QMainWindow):
 		self.newPlayer = MediaPlayer()
 		
 		# import and display original video, select workspace folder
-		oldvideolayout = QVBoxLayout()
-		oldvideolayout.addWidget(selectFolderButton)
-		oldvideolayout.addWidget(mediaImportButton)
-		oldvideolayout.addLayout(self.oldPlayer)
+		oldvideoLayout = QVBoxLayout()
+		oldvideoLayout.addWidget(selectFolderButton)
+		oldvideoLayout.addWidget(mediaImportButton)
+		oldvideoLayout.addLayout(self.oldPlayer)
 		
-		# a list for buttons to edit videos
-		self.editButtons = []
+		# a list for buttons to edit videos that appear by themselves
+		self.singleEditButtons = []
+		# a list for buttons to edit videos that appear within an layout area
+		self.areaEditButtons = []
+		# a list for layouts to manage edit buttons that have input textx
+		editLayouts = []
+
 		# button to mirror horizontally
-		mirrorXButton = MyButton("Mirror Horizontally", self.mirrorX, self.editButtons)
+		mirrorXButton = MyButton("Mirror Horizontally", self.mirrorX, self.singleEditButtons)
 		# button to mirror vertically
-		mirrorYButton = MyButton("Mirror Vertically", self.mirrorY, self.editButtons)
+		mirrorYButton = MyButton("Mirror Vertically", self.mirrorY, self.singleEditButtons)
 		
 		# area to change video speed
-		speedButton = MyButton("Change Speed", self.changeSpeed, self.editButtons)
+		speedButton = MyButton("Change Speed", self.changeSpeed, self.areaEditButtons)
 		self.startInput = QLineEdit(placeholderText="start time")
 		self.endInput = QLineEdit(placeholderText="end time")
 		self.speedInput = QLineEdit(placeholderText="speed")
-		speedlayout = QHBoxLayout()
-		speedlayout.addWidget(self.startInput)
-		speedlayout.addWidget(self.endInput)
-		speedlayout.addWidget(self.speedInput)
-		speedlayout.addWidget(speedButton)
+		speedLayout = QHBoxLayout()
+		speedLayout.addWidget(self.startInput)
+		speedLayout.addWidget(self.endInput)
+		speedLayout.addWidget(self.speedInput)
+		speedLayout.addWidget(speedButton)
+		editLayouts.append(speedLayout)
 
 		# area to cut video
-		cutButton = MyButton("Cut", self.cutVideo, self.editButtons)
+		cutButton = MyButton("Cut", self.cutVideo, self.areaEditButtons)
 		self.startCut = QLineEdit(placeholderText="start time")
 		self.endCut = QLineEdit(placeholderText="end time")
-		cutlayout = QHBoxLayout()
-		cutlayout.addWidget(self.startCut)
-		cutlayout.addWidget(self.endCut)
-		cutlayout.addWidget(cutButton)
+		cutLayout = QHBoxLayout()
+		cutLayout.addWidget(self.startCut)
+		cutLayout.addWidget(self.endCut)
+		cutLayout.addWidget(cutButton)
+		editLayouts.append(cutLayout)
 
-		# button to save all frames
-		saveFrameButton = MyButton("Save All Frames", self.placeholder, self.editButtons)
+		# area to save a frame and give it a name
+		saveFrameAtButton = MyButton("Save Frame At: ", self.saveFrameAt, self.areaEditButtons)
+		self.frametime = QLineEdit(placeholderText="time of frame")
+		self.framename = QLineEdit(placeholderText="name of frame")
+		saveFrameLayout = QHBoxLayout()
+		saveFrameLayout.addWidget(self.frametime)
+		saveFrameLayout.addWidget(self.framename)
+		saveFrameLayout.addWidget(saveFrameAtButton)
+		editLayouts.append(saveFrameLayout)
+
+		# area to save all frames into a given folder
+		self.saveFrameFolder = self.workspaceFolder
+		saveFrameFolderButton = MyButton("Choose Directory to Save All Frames", self.selectFramesFolder, self.areaEditButtons)
+		saveFramesButton = MyButton("Save All Frames", self.saveFrames, self.areaEditButtons)
+		saveFramesLayout = QHBoxLayout()
+		saveFramesLayout.addWidget(saveFrameFolderButton)
+		saveFramesLayout.addWidget(saveFramesButton)
+		editLayouts.append(saveFramesLayout)
+
+
+
 		# button to delete a frame
-		deleteFrameButton = MyButton("Delete Frame", self.placeholder, self.editButtons)
+		deleteFrameButton = MyButton("Delete Frame", self.placeholder, self.singleEditButtons)
 		# button to extract an occasion
-		extractOccasionButton = MyButton("Extract Occasion", self.placeholder, self.editButtons)
+		extractOccasionButton = MyButton("Extract Occasion", self.placeholder, self.singleEditButtons)
 		# button to concatenating audios
-		concatAudioButton = MyButton("Concatenate Audios", self.placeholder, self.editButtons)
-		# button to save frame at time
-		saveFrameAtButton = MyButton("Save Frame At: ", self.placeholder, self.editButtons)
+		concatAudioButton = MyButton("Concatenate Audios", self.placeholder, self.singleEditButtons)
 		# button to delete frame at time
-		deleteFrameAtButton = MyButton("Delete Frame At: ", self.placeholder, self.editButtons)
+		deleteFrameAtButton = MyButton("Delete Frame At: ", self.placeholder, self.singleEditButtons)
 		# button to insert frame at time
-		insertFrameAtButton = MyButton("Insert Frame At: ", self.placeholder, self.editButtons)
+		insertFrameAtButton = MyButton("Insert Frame At: ", self.placeholder, self.singleEditButtons)
 		# button to make video from frames
-		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.placeholder, self.editButtons)
+		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.placeholder, self.singleEditButtons)
 	
 		# area to edit vidwo
 		editinglayout = QVBoxLayout()
-		for button in self.editButtons : 
-			if button != (speedButton or cutButton): 
-				editinglayout.addWidget(button)
-		editinglayout.addLayout(speedlayout)
-		editinglayout.addLayout(cutlayout)
+		for button in self.singleEditButtons : 
+			editinglayout.addWidget(button)
+		for layout in editLayouts : 
+			editinglayout.addLayout(layout)
 
+		# undo button
+		self.undoButton = MyButton("Undo", self.undoGUI)
+		# save button
+		self.saveButton = MyButton("Save", self.save)
+
+		# area to display new video, undo up to 5 actions and save video
+		newvideoLayout = QVBoxLayout()
+		newvideoLayout.addLayout(self.newPlayer)
+		newvideoLayout.addWidget(self.undoButton)
+		newvideoLayout.addWidget(self.saveButton)
 
 		# main window layout
 		layout = QHBoxLayout()
-		layout.addLayout(oldvideolayout)
+		layout.addLayout(oldvideoLayout)
 		layout.addLayout(editinglayout)
-		layout.addLayout(self.newPlayer)
+		layout.addLayout(newvideoLayout)
 
 		widget = QWidget()
 		widget.setLayout(layout)
@@ -158,7 +192,7 @@ class MediaEditWindow(QMainWindow):
 		)
 		self.oldPlayer.getInput(self.fname[0])
 		# set all edit buttons active
-		for button in self.editButtons : 
+		for button in self.singleEditButtons + self.areaEditButtons: 
 			button.setEnabled(True)
 		# create editor
 		self.editor = editing(self.fname[0], self.workspaceFolder)
@@ -167,6 +201,8 @@ class MediaEditWindow(QMainWindow):
 	def updateVideo(self) : 
 		self.editor.saveClip("tempClip")
 		self.newPlayer.getInput(self.workspaceFolder+"tempClip.mp4")
+		self.undoButton.setEnabled(True)
+		self.saveButton.setEnabled(True)
 		
 	# mirror video horizontally 
 	def mirrorX(self) : 
@@ -185,6 +221,26 @@ class MediaEditWindow(QMainWindow):
 	def cutVideo(self): 
 		self.editor.cut(self.startCut, self.endCut)
 		self.updateVideo()
+	# save one frame at time give name
+	def saveFrameAt(self): 
+		self.editor.saveFrame(self.frametime, self.framename)
+		self.newPlayer.getInput(self.workspaceFolder+self.framename+".png")
+
+	# select folder to save all frames
+	def selectFramesFolder(self) : 
+		self.saveFrameFolder = QFileDialog.getExistingDirectory(self, "Choose Directory to Save All Frames", "${HOME}", ) + "/"
+	# save frames to the selected folder
+	def saveFrames(self) : 
+		self.editor.saveAllFrames(self.saveFrameFolder)
+
+	# undo up to 5 actions
+	def undoGUI(self): 
+		self.editor.undo()
+		self.updateVideo()
+	# save video
+	def save(self) : 
+		outputPath = QFileDialog.getSaveFileName(self,"Save File", self.workspaceFolder)
+		self.editor.saveClip(outputPath[0].split("/")[-1])
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
