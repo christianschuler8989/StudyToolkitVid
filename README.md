@@ -57,6 +57,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#datastructure">Data Structure</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -72,10 +73,9 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+Modular concept of the researchers’ toolkit _StudyToolkitVid_. From the formulated research question to the media editing to acquire test material, executing an online study and subsequently analysing the resulting data using statistical methods.
 
 [![Product Name Screen Shot][screenshot-pipeline]](https://github.com/christianschuler8989/StudyToolkitVid)
-
-Modular concept of the researchers’ toolkit _StudyToolkitVid_. From the formulated research question to the media editing to acquire test material, executing an online study and subsequently analysing the resulting data using statistical methods.
 
 There are many ways to edit media and investigate human perception based on great implementations available online; however, we didn't find one that really suited our needs while investigating the importance of lip synchrony, so we created this toolkit. We wanted to create a toolkit so easy and intuitive to use that it'll enable less tech-savy people to explore their scientific itches. On the other hand we try to keep it as modular as possible to enable adjustments and partial use of it.
 
@@ -129,6 +129,14 @@ _Below is an example of how you can instruct your audience on installing and set
    ```
 3. Do ...
 
+### Data Structure
+
+The strucutre of the pipelines directories. Arrows indicate file-movement inbetween the different parts of the toolkit.
+![Product Name Screen Shot][screenshot-datastructure]
+
+Alligning with best practice standards in science, files placed in an "input" directory are only read by the toolkit, never modified directly. Any modification of data takes place inside the "temp" directories, which can then automatically be cleaned up to free space, since all results are to be found in the "output" directories. The output of one step can serve as input for the next, or be used in other ways and form, separate to the toolkit.
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -136,8 +144,10 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-![Product Name Screen Shot][screenshot-naming]
 File naming as part of the pipeline for an automated workflow.
+![Product Name Screen Shot][screenshot-naming]
+
+In any project that works with and modifies data in any shape or form, a decision has to be made regarding the naming of files. There is a trade-off between "human-readability" and "preventing-inpractical-clutter". For example: If a media file is modified in numerous different ways and we want the name of the file to contain all applied modifications, we have to be aware of the different limits that a file name can maximally have before encountering errors.
 
 
 ### Part 1 - Media Editing
@@ -259,7 +269,7 @@ A list of helpful resources we would like to give credit to:
 [license-url]: https://github.com/christianschuler8989/StudyToolkitVid/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/christian-schuler-59090a177/
-# [product-screenshot]: images/screenshot.png
 [screenshot-pipeline]: images/StudyToolKitVid-pipelineFlow.png
 [screenshot-naming]: images/StudyToolKitVid-dataNaming.png
+[screenshot-datastructure]: images/StudyToolKitVid-directoriesUse.png
 
