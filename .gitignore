@@ -1,5 +1,4 @@
 *.DS_STORE # macos backup files
 
-data/
-introduction/examplesProcessed/
-introduction/examplesOutput/
+projects/
+

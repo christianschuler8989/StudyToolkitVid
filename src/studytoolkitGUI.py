@@ -352,19 +352,17 @@ class MediaPlayer(QVBoxLayout) :
 
 
 
-	
-	
-	
-	
-
-
-
-
-
 ################## main stream of the program #################
-app = QApplication(sys.argv)
+def main():
+	app = QApplication(sys.argv)
 
-window = MainWindow()
-window.show()
+	window = MainWindow()
+	window.show()
 
-app.exec()
+	app.exec()
+
+
+if __name__ == "__main__":
+    main()
+    
+

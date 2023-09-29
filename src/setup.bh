@@ -8,30 +8,26 @@
 
 # Build the directory structure
 ###############################
-mkdir -p "./introduction";
-mkdir -p "./introduction/manual";
-mkdir -p "./introduction/examples";
+mkdir -p "./../projects";
+mkdir -p "./../projects/exampleProject/mediaEditing";
+mkdir -p "./../projects/exampleProject/mediaEditing/input";
+mkdir -p "./../projects/exampleProject/mediaEditing/temp";
+mkdir -p "./../projects/exampleProject/mediaEditing/output";
 
-mkdir -p "./projects";
-mkdir -p "./projects/exampleProject/mediaEditing";
-mkdir -p "./projects/exampleProject/mediaEditing/input";
-mkdir -p "./projects/exampleProject/mediaEditing/temp";
-mkdir -p "./projects/exampleProject/mediaEditing/output";
+mkdir -p "./../projects/exampleProject/studySetup";
+mkdir -p "./../projects/exampleProject/studySetup/input";
+mkdir -p "./../projects/exampleProject/studySetup/temp";
+mkdir -p "./../projects/exampleProject/studySetup/output";
 
-mkdir -p "./projects/exampleProject/studySetup";
-mkdir -p "./projects/exampleProject/studySetup/input";
-mkdir -p "./projects/exampleProject/studySetup/temp";
-mkdir -p "./projects/exampleProject/studySetup/output";
-
-mkdir -p "./projects/exampleProject/statisticalAnalysis"
-mkdir -p "./projects/exampleProject/statisticalAnalysis/input";
-mkdir -p "./projects/exampleProject/statisticalAnalysis/temp";
-mkdir -p "./projects/exampleProject/statisticalAnalysis/output";
+mkdir -p "./../projects/exampleProject/statisticalAnalysis"
+mkdir -p "./../projects/exampleProject/statisticalAnalysis/input";
+mkdir -p "./../projects/exampleProject/statisticalAnalysis/temp";
+mkdir -p "./../projects/exampleProject/statisticalAnalysis/output";
 
 # Copy the short examples into the "starting spot"
 ##################################################
-cp ./examples/mediaEditing/lohse.mp4 ./projects/exampleProject/mediaEditing/input
-cp ./examples/mediaEditing/strong.mp4 ./projects/exampleProject/mediaEditing/input
+cp ./../examples/mediaEditing/lohse.mp4 ./../projects/exampleProject/mediaEditing/input
+cp ./../examples/mediaEditing/strong.mp4 ./../projects/exampleProject/mediaEditing/input
 
 
 
