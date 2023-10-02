@@ -97,7 +97,9 @@ Of course, no one toolkit will serve all projects since your needs may be differ
 
 List of major frameworks/libraries used to bootstrap this project.
 
-* Qt?
+* [PyQt](https://wiki.python.org/moin/PyQt)
+* [WebMAUS](https://clarin.phonetik.uni-muenchen.de/BASWebServices/interface/WebMAUSBasic)
+  - Here user can generate a time-aligned TEXTGRID based on a media and corresponding text file.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -110,8 +112,7 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-TODO: Once automated, this section is dropped.
-This is an example of how to list things you need to use the software and how to install them.
+TODO: 
 * npm
   ```sh
   npm install npm@latest -g
@@ -119,15 +120,33 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-TODO: Once automated, this section should be quite short.
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
-1. Get ...
-2. Clone the repo
+TODO:
+1. Clone the repo to get a local copy of the toolkit:
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone git@github.com:christianschuler8989/StudyToolkitVid.git
    ```
-3. Do ...
+2. Create virtual environment:
+  1. (Optional) Install python venv:
+   ```sh
+   python3 -m pip install virtualenv
+   ```
+  2. Create an environment named "venvToolkit"
+   ```sh
+   python -m venv venvToolkit
+   venvToolkit\bin\activate
+   ```
+3. Install requirements (from within the directory of the "requirements.txt" file):
+   ```sh
+   python -m pip install -r requirements.txt
+   ```
+4. Setup directory structure:
+   ```sh
+   python main.py --setup
+   ```
+5. Start the toolkit (continue in "Usage" section below):
+   ```sh
+   python main.py --run
+   ```
 
 ### Data Structure
 
@@ -189,8 +208,12 @@ _For more examples, please refer to the [Documentation](https://github.com/chris
     - [ ] Automate
 - [ ] Add Automated Installation
 - [ ] Add Tests
+    - [x] Core functionalities
+    - [ ] Advanced functionalities
     - [ ] Different Operating Systems
 - [ ] Add Usage Examples
+    - [x] Necessary media files
+    - [ ] Descriptions and Explanations
 - [ ] Multi-language Support
     - [x] English
     - [ ] German

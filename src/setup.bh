@@ -26,8 +26,8 @@ mkdir -p "./../projects/exampleProject/statisticalAnalysis/output";
 
 # Copy the short examples into the "starting spot"
 ##################################################
-cp ./../examples/mediaEditing/lohse.mp4 ./../projects/exampleProject/mediaEditing/input
-cp ./../examples/mediaEditing/strong.mp4 ./../projects/exampleProject/mediaEditing/input
-
+#cp ./../examples/mediaEditing/lohse.mp4 ./../projects/exampleProject/mediaEditing/input
+#cp ./../examples/mediaEditing/strong.mp4 ./../projects/exampleProject/mediaEditing/input
+cp ./../examples/mediaEditing/* ./../projects/exampleProject/mediaEditing/input
 
 

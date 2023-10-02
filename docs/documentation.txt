@@ -78,7 +78,7 @@ changeSpeedSegments (txt_of_intervals, speed, path_to_save)
 python editing.py -name dummy-video-merkel.mp4 -speedChangeSegments ./speedy.txt 1.5 ./ 
 
 
-#Extracts the information contained in the textgrid of a vertain string of text (text_of_interest) and prints
+#Extracts the information contained in the textgrid of a certain string of text (text_of_interest) and prints
 # it into a txt file
 textGridInformation (text_of_interest, path_to_textgrid, path_to_save_txt)
 python editing.py -name StrongTogether.mp4 -textGridInformation es ./dummy-video-merkel-speech.TextGrid ./  

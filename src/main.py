@@ -29,6 +29,8 @@ def main():
 		                  help='setting up the directory structure for the pipeline.')
 	parser.add_argument('-t', '--test', action="store_true",
 		                  help='testing the functionalities of the toolkit.')
+	parser.add_argument('-n', '--number', nargs="+", type=int,
+		                  help='which part to test out of (1,2,3).')
 	parser.add_argument('-r', '--run', action="store_true",
 		                  help='run the toolkit.')
 	args = parser.parse_args()
@@ -38,6 +40,7 @@ def main():
 	# Take the input arguments to then decide which mode to run
 	setup = args.setup
 	test = args.test
+	testParts = args.number
 	run = args.run
 
 	# Debugging:
@@ -47,7 +50,7 @@ def main():
 		if setup:
 			setup_toolkit(setup)
 		if test:
-			test_toolkit(test)
+			test_toolkit(testParts, test)
 		if run:
 			run_toolkit(run)
 	
@@ -63,10 +66,10 @@ def main():
 	"""
 	Test: Call "test_run.py" to test various toolkit functionalities.
 	"""
-	def test_toolkit(test=False):
+	def test_toolkit(testParts=1, test=False):
 		if test:
 			print("Testing the toolkits functionalities.")
-			test_run.main(False, True, False)
+			test_run.main(testParts)
 			return
 	
 	"""

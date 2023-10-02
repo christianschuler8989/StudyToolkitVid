@@ -326,7 +326,7 @@ def main():
         try:
             return getAudioClipFromParser()
         except:
-            raise Exception('File is neither a video nor a audio file.')
+            raise Exception('File is neither a video nor an audio file.')
         
     if args.setAudio != None:
         videoClip = getVideoClipFromParser()

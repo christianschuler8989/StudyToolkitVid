@@ -58,11 +58,18 @@ class MediaEditWindow(QMainWindow):
 		self.setWindowTitle("Media Editing")
 		self.setMinimumSize(QSize(1200,600))
 		
-		# set up workspace folder
+		# set up workspace folder - this can be considered to be the "root" of the project
 		# self.workspaceFolder = "${HOME}"
+		# self.workspaceFolder = "$StudyToolkitVid/projects/exampleProject/"
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
-		# import file button 
+		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
+		self.mode = "mediaEditing" 
+		#self.mode = "studySetup" 
+		#self.mode = "statisticalAnalysis" 
+		self.tempDir = self.workspaceFolder+self.mode+"/temp/"
+
+		# import file button - default locations depending on the current mode: e.g. media_editing = "mediaEditing/input/"
 		# self.fname = "${HOME}"
 		mediaImportButton = MyButton("Import File", self.importfile, toSetEnabled=True)
 		mediaImportButton.setIcon(QIcon("open.xpm"))
@@ -210,7 +217,7 @@ class MediaEditWindow(QMainWindow):
 	# save clip and give as input to video player
 	def updateVideo(self) : 
 		self.editor.saveClip("tempClip")
-		self.newPlayer.getInput(self.workspaceFolder+"tempClip.mp4")
+		self.newPlayer.getInput(self.workspaceFolder+self.mode+"/temp/tempClip.mp4")
 		self.undoButton.setEnabled(True)
 		self.saveButton.setEnabled(True)
 		
@@ -272,6 +279,12 @@ class StudyGenWindow(QMainWindow):
 		self.setWindowTitle("Study Generation")
 		self.setMinimumSize(QSize(400,600))
 
+		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
+		#self.mode = "mediaEditing" 
+		self.mode = "studySetup" 
+		#self.mode = "statisticalAnalysis" 
+		self.tempDir = self.workspaceFolder+self.mode+"/temp/"
+
 		studyGenButton = QPushButton(self)
 		studyGenButton.setText("Generate your study")
 
@@ -291,6 +304,12 @@ class StatAnaWindow(QMainWindow):
 
 		self.setWindowTitle("Statistical Analysis")
 		self.setMinimumSize(QSize(400,600))
+
+		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
+		#self.mode = "mediaEditing" 
+		#self.mode = "studySetup" 
+		self.mode = "statisticalAnalysis" 
+		self.tempDir = self.workspaceFolder+self.mode+"/temp/"
 
 		statAnaButton = QPushButton(self)
 		statAnaButton.setText("Analyse your data")
