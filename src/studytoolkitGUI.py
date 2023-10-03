@@ -60,7 +60,7 @@ class MediaEditWindow(QMainWindow):
 		
 		# set up workspace folder - this can be considered to be the "root" of the project
 		# self.workspaceFolder = "${HOME}"
-		self.workspaceFolder = "${PWD}/" # current directory
+		self.workspaceFolder = os.getcwd()+"/" # current directory
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
 		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
