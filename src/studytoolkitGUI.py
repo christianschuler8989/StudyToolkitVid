@@ -239,7 +239,7 @@ class MediaEditWindow(QMainWindow):
 		self.editor.saveClip("tempClip")
 		# for the followinhg line to work you need to also write the file with the above line to the corresponding location
 		# self.newPlayer.getInput(self.workspaceFolder+self.mode+"/temp/tempClip.mp4")
-		self.newPlayer.getInput(self.workspaceFolder+"/tempClip.mp4")
+		self.newPlayer.getInput(self.workspaceFolder+"tempClip.mp4")
 		self.undoButton.setEnabled(True)
 		self.saveButton.setEnabled(True)
 		
