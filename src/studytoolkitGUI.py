@@ -312,7 +312,7 @@ class MediaEditWindow(QMainWindow):
 	# save video
 	def save(self) : 
 		outputPath = QFileDialog.getSaveFileName(self,"Save File", self.workspaceFolder)
-		self.editor.saveClip(outputPath[0].split("/")[-1])
+		self.editor.saveClip(outputPath[0].split("/")[-1], self.workspaceFolder)
 
 	# delete a frame with its audio 
 	def deleteFrameSync(self) : 
