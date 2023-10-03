@@ -143,24 +143,43 @@ class MediaEditWindow(QMainWindow):
 		delFrameLayout.addWidget(self.delFrametime)
 		delFrameLayout.addWidget(deleteFrameAtButton)
 		editLayouts.append(delFrameLayout)
-		
 
-
-		# button to extract an occasion
-		extractOccasionButton = MyButton("Extract Occasion", self.placeholder, self.singleEditButtons)
-		# button to concatenating audios
-		concatAudioButton = MyButton("Concatenate Audios", self.placeholder, self.singleEditButtons)
+		# area to insert a selected frame at given time
+		selectFrameButton = MyButton("Select Frame File", self.selectFrame, self.areaEditButtons)
+		self.insertFrameTime = QLineEdit(placeholderText="time of frame")
 		# button to insert frame at time
-		insertFrameAtButton = MyButton("Insert Frame", self.placeholder, self.singleEditButtons)
+		insertFrameAtButton = MyButton("Insert Frame", self.placeholder, self.areaEditButtons)
+		insertFrameLayout = QHBoxLayout()
+		insertFrameLayout.addWidget(selectFrameButton)
+		insertFrameLayout.addWidget(self.insertFrameTime)
+		insertFrameLayout.addWidget(insertFrameAtButton)
+		editLayouts.append(insertFrameLayout)
+		
+		# area to make video from frames with given fps then save to workspace
+		self.fps = QLineEdit(placeholderText="fps")
 		# button to make video from frames
-		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.placeholder, self.singleEditButtons)
+		makeVideoFromFramesButton = MyButton("Make Video From Frames", self.makeVideoFromFrames, self.areaEditButtons)		
+		makeVideoLayout = QHBoxLayout()
+		makeVideoLayout.addWidget(self.fps)
+		makeVideoLayout.addWidget(makeVideoFromFramesButton)
+		editLayouts.append(makeVideoLayout)
+
 	
-		# area to edit vidwo
-		editinglayout = QVBoxLayout()
+		# area to edit video
+		upEditLayout = QHBoxLayout()
 		for button in self.singleEditButtons : 
-			editinglayout.addWidget(button)
-		for layout in editLayouts : 
-			editinglayout.addLayout(layout)
+			upEditLayout.addWidget(button)
+		midEditLayout = QHBoxLayout()
+		sep = 3
+		for layout in editLayouts[:sep] : 
+			midEditLayout.addLayout(layout)
+		downEditLayout = QHBoxLayout()
+		for layout in editLayouts[sep:] : 
+			downEditLayout.addLayout(layout)
+		editinglayout = QVBoxLayout()
+		editinglayout.addLayout(upEditLayout)
+		editinglayout.addLayout(midEditLayout)
+		editinglayout.addLayout(downEditLayout)
 
 		# undo button
 		self.undoButton = MyButton("Undo", self.undoGUI)
@@ -169,15 +188,18 @@ class MediaEditWindow(QMainWindow):
 
 		# area to display new video, undo up to 5 actions and save video
 		newvideoLayout = QVBoxLayout()
-		newvideoLayout.addLayout(self.newPlayer)
 		newvideoLayout.addWidget(self.undoButton)
 		newvideoLayout.addWidget(self.saveButton)
+		newvideoLayout.addLayout(self.newPlayer)
 
+		# upper half of main window
+		upLayout = QHBoxLayout()
+		upLayout.addLayout(oldvideoLayout)
+		upLayout.addLayout(newvideoLayout)
 		# main window layout
-		layout = QHBoxLayout()
-		layout.addLayout(oldvideoLayout)
+		layout = QVBoxLayout()
+		layout.addLayout(upLayout)
 		layout.addLayout(editinglayout)
-		layout.addLayout(newvideoLayout)
 
 		widget = QWidget()
 		widget.setLayout(layout)
@@ -209,15 +231,15 @@ class MediaEditWindow(QMainWindow):
 		try : 
 			self.editor = editing(self.fname[0], self.workspaceFolder)
 		except : 
-			self.msgBox = QMessageBox()
-			self.msgBox.setText("Please select a file! ")
-			self.msgBox.exec()
+			self.popMsg("Please select a file! ")
 
 
 	# save clip and give as input to video player
 	def updateVideo(self) : 
 		self.editor.saveClip("tempClip")
-		self.newPlayer.getInput(self.workspaceFolder+self.mode+"/temp/tempClip.mp4")
+		# for the followinhg line to work you need to also write the file with the above line to the corresponding location
+		# self.newPlayer.getInput(self.workspaceFolder+self.mode+"/temp/tempClip.mp4")
+		self.newPlayer.getInput(self.workspaceFolder+"/tempClip.mp4")
 		self.undoButton.setEnabled(True)
 		self.saveButton.setEnabled(True)
 		
@@ -251,10 +273,37 @@ class MediaEditWindow(QMainWindow):
 		try : 
 			self.editor.saveAllFrames(self.saveFrameFolder)
 		except : 
-			self.msgBox = QMessageBox()
-			self.msgBox.setText("Please select a folder to save the frames! ")
-			self.msgBox.exec()
+			self.popMsg("Please select a folder to save the frames! ")
 
+	# select a frame file
+	def selectFrame(self) : 
+		self.framepath = QFileDialog.getOpenFileName(
+			self,
+			"Select Frame",
+			self.workspaceFolder,
+			"All Files (*);; Python Files (*.py);; PNG Files (*.png)",
+		)
+	# select frame and insert to given time
+	def insertFrameAt(self) : 
+		try : 
+			self.editor.insertFrame(self.framepath, self.insertFrameTime.text())
+			self.updateVideo()
+		except : 
+			self.popMsg("Please select a frame file and input a time to insert the frame!")
+
+	# make video from frames and save it in workspace
+	def makeVideoFromFrames(self) : 
+		framefolder = QFileDialog.getExistingDirectory(
+			self,
+			"Choose Directory Containing All Frames", 
+			self.workspaceFolder,
+			) + "/"
+		try : 
+			self.editor.makeVideoFromFrames(framefolder, self.fps.text())
+			self.editor.saveClip("videoFrom"+self.framepath[:-1].split("/")[-1])
+			self.updateVideo()
+		except: 
+			self.popMsg("Please select a folder containing all frame files and input a valid fps!")
 
 	# undo up to 5 actions
 	def undoGUI(self): 
@@ -269,6 +318,12 @@ class MediaEditWindow(QMainWindow):
 	def deleteFrameSync(self) : 
 		self.editor.deleteFrameSynchronous(float(self.delFrametime.text()))
 		self.updateVideo()
+
+	# pop an error message 
+	def popMsg(self, msg) : 
+		self.msgBox = QMessageBox()
+		self.msgBox.setText(msg)
+		self.msgBox.exec()
 
 # window to generate studies
 class StudyGenWindow(QMainWindow):
