@@ -178,7 +178,7 @@ class editing():
         if extension == '':
             extension = '.mp4' if self.type == 'video' else '.mp3'
         try:
-            self.checkDirExistsAndCreate(path)
+            self._checkDirExistsAndCreate(path)
             self.clip.write_videofile(path + name_of_clip + extension)
         except:
             raise Exception('Could not save the clip in directory: ' + path + name_of_clip + extension)
@@ -365,7 +365,7 @@ class editing():
     #Saves occasions of text_of_interest (as audio) according to the given textGrid
     def extractTextOccasionsFromGrid(self, text_of_interest, path_textgrid, path_save, extension = ''):
         self._checkDirExistsAndCreate(path_save)
-        file_extension = 'mp3' if extension == '' else extension
+        
         try:
             tg = textgrid.TextGrid.fromFile(path_textgrid)
         except:
@@ -377,16 +377,25 @@ class editing():
                     occasions.append([tg[row][column].minTime, tg[row][column].maxTime])
         
         if self.type == 'video':
-            audio = self.clip.audio
+            file_extension = 'mp4' if extension == '' else extension
+            video = self.clip
+            for o in range(len(occasions)):
+                minT = occasions[o][0]
+                maxT = occasions[o][1]
+                video_short = video.subclip(minT-minT/6000,maxT+maxT/6000)
+                name_of_short = str(o) + text_of_interest + '-' + str(minT)[:5] + '.' + file_extension
+                name_of_short = name_of_short.replace(":", "")
+                video_short.write_videofile(path_save + name_of_short, logger=None)
         else:
+            file_extension = 'mp3' if extension == '' else extension
             audio = self.clip
-        for o in range(len(occasions)):
-            minT = occasions[o][0]
-            maxT = occasions[o][1]
-            audio_short = audio.subclip(minT-minT/6000,maxT+maxT/6000)
-            name_of_short = str(o) + text_of_interest + '-' + str(minT)[:5] + '.' + file_extension
-            name_of_short = name_of_short.replace(":", "")
-            audio_short.write_audiofile(path_save + name_of_short, logger=None)
+            for o in range(len(occasions)):
+                minT = occasions[o][0]
+                maxT = occasions[o][1]
+                audio_short = audio.subclip(minT-minT/6000,maxT+maxT/6000)
+                name_of_short = str(o) + text_of_interest + '-' + str(minT)[:5] + '.' + file_extension
+                name_of_short = name_of_short.replace(":", "")
+                audio_short.write_audiofile(path_save + name_of_short, logger=None)
 
 
 
