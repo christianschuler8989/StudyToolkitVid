@@ -78,8 +78,9 @@ def main(testParts):
 				f.write('Test Protocol!')
 		except FileNotFoundError:
 			print("The statistical analysis directory does not exist")
-	
-	
+
+
+
 	# Pipeline-Test: Part 2 Study Setup #######################################
 	###########################################################################
 	if 7 in testParts:
@@ -91,10 +92,22 @@ def main(testParts):
 		test_study_temp = current_working_directory+"/../projects/exampleProject/studySetup/temp"
 		test_study_output = current_working_directory+"/../projects/exampleProject/studySetup/output"
 		
-		study_setupper = setuping(test_study_input, test_study_output)
-		name = "ChRiStIaN"
-		study_setupper.sanityCheck(name)
+		# Create a "study_setupper"
+		study_setupper = setupping(test_study_input, test_study_output)
+		
+		# Set study creation parameters
+		study_setupper.setStudyParameters(trial_size=5, language="English")
 
+		study_setupper.createStudy()
+
+		# Get names for all the existing excerpts from input
+		#study_setupper.readDirectoryNamesFromInput(test_study_input)
+
+		# Work through the entire input directory
+		#study_setupper.processInputFolder(test_study_input, test_study_output)
+		
+
+	
 
 
 	# Pipeline-Test: Preparing Part 2 Study Setup #############################
