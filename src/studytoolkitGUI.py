@@ -16,18 +16,15 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("Study Tool Kit")
 		self.setMinimumSize(QSize(600,400))
 
-		mediaEditButton = QPushButton(self)
-		mediaEditButton.setText("Media Editing")
-		mediaEditButton.clicked.connect(self.openMediaEditWindow)
+		mediaEditButton = MyButton("Media Editing", self.openMediaEditWindow, toSetEnabled=True)
 
-		studyGenButton = QPushButton(self)
-		studyGenButton.setText("Study Generation")
-		studyGenButton.clicked.connect(self.openStudyGenWindow)
+		studyGenButton = MyButton("Study Generation", self.openStudyGenWindow, toSetEnabled=True)
 
-		statAnaButton = QPushButton(self)
-		statAnaButton.setText("Statistical Analysis")
-		statAnaButton.clicked.connect(self.openStatAnaWindow)
-
+		statAnaButton = MyButton("Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
+		
+		# # menu bars
+		MyMenu(self, "StudyToolkit")
+		
 		layout = QHBoxLayout()
 
 		layout.addWidget(mediaEditButton)
@@ -36,7 +33,7 @@ class MainWindow(QMainWindow):
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
-
+	
 	def openMediaEditWindow(self):
 		self.w = MediaEditWindow()
 		self.w.show()
@@ -55,9 +52,12 @@ class MediaEditWindow(QMainWindow):
 	def __init__(self):
 		super(MediaEditWindow, self).__init__()
 
+		MyMenu(self, "MediaEdit")
+
 		self.setWindowTitle("Media Editing")
 		self.setMinimumSize(QSize(1200,600))
 		
+
 		# set up workspace folder - this can be considered to be the "root" of the project
 		# self.workspaceFolder = "${HOME}"
 		self.workspaceFolder = os.getcwd()+"/" # current directory
@@ -331,6 +331,8 @@ class StudyGenWindow(QMainWindow):
 	def __init__(self):
 		super(StudyGenWindow, self).__init__()
 
+		MyMenu(self, "StudyGeneration")
+
 		self.setWindowTitle("Study Generation")
 		self.setMinimumSize(QSize(400,600))
 
@@ -338,7 +340,7 @@ class StudyGenWindow(QMainWindow):
 		#self.mode = "mediaEditing" 
 		self.mode = "studySetup" 
 		#self.mode = "statisticalAnalysis" 
-		self.tempDir = self.workspaceFolder+self.mode+"/temp/"
+		# self.tempDir = self.workspaceFolder+self.mode+"/temp/" # anran: this line leads to error!!!
 
 		studyGenButton = QPushButton(self)
 		studyGenButton.setText("Generate your study")
@@ -357,6 +359,8 @@ class StatAnaWindow(QMainWindow):
 	def __init__(self):
 		super(StatAnaWindow, self).__init__()
 
+		MyMenu(self, "StatAnalysis")
+
 		self.setWindowTitle("Statistical Analysis")
 		self.setMinimumSize(QSize(400,600))
 
@@ -364,7 +368,7 @@ class StatAnaWindow(QMainWindow):
 		#self.mode = "mediaEditing" 
 		#self.mode = "studySetup" 
 		self.mode = "statisticalAnalysis" 
-		self.tempDir = self.workspaceFolder+self.mode+"/temp/"
+		# self.tempDir = self.workspaceFolder+self.mode+"/temp/" # anran: this line leads to error!!!
 
 		statAnaButton = QPushButton(self)
 		statAnaButton.setText("Analyse your data")
@@ -424,6 +428,16 @@ class MediaPlayer(QVBoxLayout) :
 		self.audioOutput.setVolume(100)
 		self.playButton.setEnabled(True)
 
+
+# menu bars
+def MyMenu(self, name) : 
+	bar = self.menuBar() 
+	tk = bar.addMenu(name)
+	save = QAction("Close",self)
+	save.setShortcut("Ctrl+W")
+	tk.addAction(save)
+	quit = QAction("Quit",self) 
+	tk.triggered[QAction].connect(self.close)
 
 
 ################## main stream of the program #################
