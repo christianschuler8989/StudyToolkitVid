@@ -1,6 +1,6 @@
 #
 # 
-# Authors: Christian Schuler & Dominik Hauser
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################
 
 import ffmpeg
@@ -178,7 +178,7 @@ class editing():
         if extension == '':
             extension = '.mp4' if self.type == 'video' else '.mp3'
         try:
-            self.checkDirExistsAndCreate(path)
+            self._checkDirExistsAndCreate(path)
             self.clip.write_videofile(path + name_of_clip + extension)
         except:
             raise Exception('Could not save the clip in directory: ' + path + name_of_clip + extension)
