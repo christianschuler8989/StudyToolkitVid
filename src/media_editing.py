@@ -1,6 +1,6 @@
 #
 # 
-# Authors: Christian Schuler & Dominik Hauser
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################
 
 import ffmpeg

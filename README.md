@@ -150,7 +150,7 @@ TODO:
 
 ### Data Structure
 
-The strucutre of the pipelines directories. Arrows indicate file-movement inbetween the different parts of the toolkit.
+The structure of the pipelines directories. Arrows indicate file-movement inbetween the different parts of the toolkit.
 ![Product Name Screen Shot][screenshot-datastructure]
 
 Alligning with best practice standards in science, files placed in an "input" directory are only read by the toolkit, never modified directly. Any modification of data takes place inside the "temp" directories, which can then automatically be cleaned up to free space, since all results are to be found in the "output" directories. The output of one step can serve as input for the next, or be used in other ways and form, separate to the toolkit.
