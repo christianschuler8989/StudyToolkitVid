@@ -224,6 +224,7 @@ class editing():
     #Changes the speed of the clip for a given segment
     def changeSpeed(self, speed, start, end):
         self._clipHistory()
+        fps = self.clip.fps
         if start < 0:
             start = 0
         if end < 0:
@@ -248,7 +249,11 @@ class editing():
 
         speed_clip = speed_clip.speedx(speed)
         speed_clip = speed_clip.set_audio(audio)
-        self.clip = concatenate_videoclips([before_speed, speed_clip, after_speed])
+        concat_clip = concatenate_videoclips([before_speed, speed_clip, after_speed])
+        aud = concat_clip.audio.set_fps(44100)
+        concat_clip = concat_clip.without_audio().set_audio(aud)
+        concat_clip.set_fps(fps)
+        self.clip = concat_clip
 
 
     #Delets a frame at a certain time and fuses the two neighboring frame to one to make the audio-video sync again
