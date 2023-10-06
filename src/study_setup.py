@@ -7,15 +7,17 @@ import os
 import json
 import random
 import sys
+import shutil
 
 """
 Study setup class based on directories full of modified media files.
 """
 class setupping():
-    def __init__(self, path_to_input, path_to_temp, path_to_output):
+    def __init__(self, path_to_input, path_to_temp, path_to_output, path_to_study):
         self.path_to_input = path_to_input
         self.path_to_temp = path_to_temp
         self.path_to_output = path_to_output
+        self.path_to_study = path_to_study
         if self._checkDirExists(path_to_input):
             pass
         else:
@@ -23,11 +25,15 @@ class setupping():
         if self._checkDirExists(path_to_temp):
             pass
         else:
-            raise Exception('Input directory or file does not exist: ' + path_to_temp)
+            raise Exception('Temp directory or file does not exist: ' + path_to_temp)
         if self._checkDirExists(path_to_output):
             pass
         else:
-            raise Exception('Input directory or file does not exist: ' + path_to_output)
+            raise Exception('Output directory or file does not exist: ' + path_to_output)
+        if self._checkDirExists(path_to_study):
+            pass
+        else:
+            raise Exception('Study directory or file does not exist: ' + path_to_study)
      
     # Checks if dir exists
     def _checkDirExists(self, path_to_check):
@@ -43,12 +49,12 @@ class setupping():
         return list_of_filenames
 
     # To getting all existing excerpt's directory names
-    def readDirectoryNamesFromInput(self, path_to_input):
+    def readDirectoryPathsFromInput(self, path_to_input):
         list_of_directories = [f.path for f in os.scandir(path_to_input) if f.is_dir()]
         return list_of_directories
 
     # To getting all existing excerpt's directory paths
-    def readDirectoryPathsFromInput(self, path_to_input):
+    def readDirectoryNamesFromInput(self, path_to_input):
         list_of_directory_names = [os.path.basename(f.path) for f in os.scandir(path_to_input) if f.is_dir()]
         return list_of_directory_names
 
@@ -73,12 +79,12 @@ class setupping():
             "TestID": trial_id,
             "Files":
             {
-                "Reference": original_media,
-                "1": filenames[0],
-                "2": filenames[1],
-                "3": filenames[2],
-                "4": filenames[3],
-                "5": filenames[4],
+                "Reference": "video/"+original_media,
+                "1": "video/"+filenames[0],
+                "2": "video/"+filenames[1],
+                "3": "video/"+filenames[2],
+                "4": "video/"+filenames[3],
+                "5": "video/"+filenames[4],
             }
         }
         return new_trial, trial_name
@@ -124,7 +130,7 @@ class setupping():
         #    outfile.write(current_trial) 
 
     # Quick way to get some testing done
-    def turnTestsetIntoConfig(self, path_to_config, name_of_config, current_trial_list, test_url):
+    def turnTestsetIntoConfig(self, path_to_config, name_of_config, config_file_name, current_trial_list, test_url):
 
         # Put config together
         new_config = {
@@ -151,25 +157,27 @@ class setupping():
         }
 
         # Write the config file
-        with open(path_to_config+'/'+name_of_config+'.js', 'w') as f:
+        with open(path_to_config+'/'+config_file_name+'.js', 'w') as f:
             f.write('var TestConfig = ')
 
         # Append content to config file
-        with open(path_to_config+'/'+name_of_config+'.js', 'a') as f:
+        with open(path_to_config+'/'+config_file_name+'.js', 'a') as f:
             f.write(json.dumps(new_config))
 
         # Append ending to config file
-        #with open(path_to_config+'/'+name_of_config+'.js', 'a') as f:
+        #with open(path_to_config+'/'+config_file_name+'.js', 'a') as f:
         #    f.write('')
         
         return
 
     # Set the study parameters
-    def setStudyParameters(self, trial_size=5, language="English", name="MyStudy", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"):
+    def setStudyParameters(self, trial_size=5, testset_size=4, language="English", study_name="MyStudy", config_name="TestStudyConfig", study_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"):
         self.trial_size = trial_size
+        self.testset_size = testset_size
         self.language = language
-        self.test_name = name
-        self.test_url = url
+        self.study_name = study_name
+        self.config_name = config_name
+        self.study_url = study_url
         
 
     # Create study
@@ -182,10 +190,10 @@ class setupping():
         # self.list_of_directories = ["path/.../go", "path/.../lohse", ...]
         
         # Debugging
-        print("path_to_input: "+self.path_to_input)
-        print("path_to_output: "+self.path_to_output)
-        print("list_of_directory_names: "+str(self.list_of_directory_names))
-        print("list_of_directories: "+str(self.list_of_directories))
+        #print("path_to_input: "+self.path_to_input)
+        #print("path_to_output: "+self.path_to_output)
+        #print("list_of_directory_names: "+str(self.list_of_directory_names))
+        #print("list_of_directories: "+str(self.list_of_directories))
 
         # List of created trials to be part of a testset
         current_trial_list = []
@@ -193,7 +201,7 @@ class setupping():
 
         # Processing all input folders (one per media file that was edited)
         # Here for the excerpts: go, lohse, obama, strong
-        for excerpt_directory, excerpt_name in zip(self.list_of_directory_names, self.list_of_directories):
+        for excerpt_name, excerpt_directory in zip(self.list_of_directory_names, self.list_of_directories):
             print("Processing excerpt: "+excerpt_name)
             print("    in directory: "+excerpt_directory)
             
@@ -206,7 +214,7 @@ class setupping():
             excerpt_filenames.remove(original_media)
             
             i = 1
-            n = 100
+            n = self.testset_size
             # To prevent a death-loop
             while i <= n:
                 # Randomly select a sub-sample of the media files
@@ -251,8 +259,23 @@ class setupping():
             outfile.write(current_testset) 
 
         # Quick and basic study-setup
-        self.turnTestsetIntoConfig(self.path_to_output, "TestStudy", current_trial_list, "https://www.timobaumann.de/temp/vtts/beaqleJS_Service.php")
+        #self.turnTestsetIntoConfig(self.path_to_output, "FunWithAnranAndDomi", "TestStudy", current_trial_list, "https://www.timobaumann.de/temp/vtts/beaqleJS_Service.php")
+        self.turnTestsetIntoConfig(self.path_to_output, self.study_name, self.config_name, current_trial_list, self.study_url)
 
+
+
+    # Moving all video files into a single folder for the online study
+    def moveMediaFilesToStudy(self, path_to_study):
+        for excerpt_directory in self.list_of_directories:
+            #print("excerpt_directory: "+excerpt_directory) #Debugging
+            for file_name in os.listdir(excerpt_directory):
+                #print("file_name: "+file_name) #Debugging
+                # Construct full file path
+                source = excerpt_directory+'/'+file_name
+                destination = path_to_study+'/video/'+file_name
+                # Move only files
+                if os.path.isfile(source):
+                    shutil.copy(source, destination)
 
 
 

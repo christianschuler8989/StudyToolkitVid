@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+
+    <!--
+    BeaqleJS - HTML5 and JavaScript framework for listening tests, <https://github.com/HSU-ANT/beaqlejs>
+
+    This file and all corresponding parts of BeaqleJS are published under the GPLv3 license, <http://www.gnu.org/licenses/>
+    -->
+
+    <title>BeaqleJS</title>
+    
+      <!-- ############################################################ -->
+      <!-- # Load the TestStudy config to map media files onto trials # -->
+      <!-- ############################################################ -->
+      <script src="config/TestStudyConfig.js" type="text/javascript"></script>
+
+
+
+      <!-- ############################### -->
+      <!-- # Old/default config versions # -->
+      <!-- ############################### -->
+      <!-- <script src="config/example_config_mushra.js" type="text/javascript"></script> -->
+      <!-- <script src="config/example_config_abx.js" type="text/javascript"></script>  -->
+      <!-- <script src="config/example_config_mushra.js" type="text/javascript"></script> -->
+    <!---->
+
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="css/styles.css" rel="Stylesheet" />
+
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/video.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.custom.min.js" type="text/javascript" ></script>
+    <script src="js/beaqle.js" type="text/javascript"></script>
+    <!--
+    <style title="EN">
+    .textEN { display: inherit }
+    .textDE { display: none }
+    </style>
+    -->
+    <style title="DE">
+    .textEN { display: none }
+    .textDE { display: inherit }
+    </style>
+
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        var testHandle;
+        window.onload=function() {
+
+            // Uncomment one of the following lines to choose the desired test class
+
+            testHandle = new MushraTest(TestConfig);    // <-- MUSHRA test class
+            //testHandle = new AbxTest(TestConfig);     // <-- ABX test class
+            //testHandle = new PrefTest(TestConfig);     // <-- preference test class
+
+            $('#Footer').prepend(testHandle.browserFeatureString() + '<br/>');
+        };
+    /* ]]> */
+    </script>
+
+</head>
+
+<body>
+
+<div id="Wrapper">
+
+    <div id="TestTitle" class="commonBox">
+        <!-- overall title at the top
+             DO NOT EDIT! This box is automatically filled with content!
+        -->
+        Loading...
+    </div>
+
+    <!-- is displayed during load -->
+    <div id="LoadOverlay" class="commonBox">
+        <img src="img/ajax-loader.gif"/> &nbsp;&nbsp;&nbsp; Loading...
+    </div>
+
+    <!-- introduction before the instructions -->
+    <div id="TestIntroduction" class="commonBox">
+
+        <!-- edit here if you want to change the welcome message -->
+        <div style="text-align:left">
+          <!--
+          <span class="textEN">
+            Thank you for your interest in participating in this test. <br />
+            The overall test will roughly take 10 minutes. <br />
+            Please take your time and carefully rate every item. <br />
+          </span>
+          -->
+          <span class="textDE"style="font-size:16px;"> <!--<span class="textDE" style="font-size:12px;"> -->
+            <strong>Halli und Hallo</strong>, ich bin <span style="color:rgb(0,180,50);">Christian</span> und schreibe meine Bachelorarbeit an der Universität Hamburg. <br />
+            Vielen Dank für Dein Interesse an dieser Studie! Im Folgenden geht es um Video-Lippensynchronität. <br />
+            Dieser Durchlauf der Studie ist auf <strong>etwa 10 Minuten</strong> ausgelegt. <br />
+            Bei Fragen zu dieser Studie schreib mir diese gerne an: christian.schuler@studium.uni-hamburg.de.
+            <!--Vielen Dank für Dein Interesse an dieser Studienteilnahme.
+            Die Gesamtdauer sollte ungefähr 10 Minuten betragen.
+            Bitte nimm Dir die Zeit jeden Testgegenstand genau zu bewerten. <br />-->
+          </span>
+
+          <br />
+
+          <table>
+            <tr>
+              <td>
+                <label for="UserAge">
+                  <!--<span class="textEN">Agegroup:</span>-->
+                  <span class="textDE">Altersgruppe:</span>
+                </label>
+                <select id="UserAge" name"alter">
+                  <option value="none">Keine Angabe</option>
+                  <option value="0">Jünger als 10 Jahre</option>
+                  <option value="1">10 - 19 Jahre</option>
+                  <option value="2">20 - 29 Jahre</option>
+                  <option value="3">30 - 39 Jahre</option>
+                  <option value="4">40 - 49 Jahre</option>
+                  <option value="5">50 - 59 Jahre</option>
+                  <option value="6">60 - 69 Jahre</option>
+                  <option value="7">70 - 79 Jahre</option>
+                  <option value="8">80 - 89 Jahre</option>
+                  <option value="9">90 - 99 Jahre</option>
+                  <option value="99">Älter als 99 Jahre</option>
+                </select>
+              </td>
+              <td>
+                <!-- Spacing via CSS-Styling would be better, but don't know how to do that yet. -->
+              </td>
+              <td>
+                <label for="UserSex">
+                  <!--<span class="textEN">Gender:</span>-->
+                  <span class="textDE">Geschlecht:</span>
+                </label>
+                <select id="UserSex" name="UserSex">
+                  <option value="none">Keine Angabe</span>
+                  </option>
+                  <option value="male">Männlich</option>
+                  <option value="female">Weiblich</option>
+                </select>
+              </td>
+              <td>
+                <!-- Spacing via CSS-Styling would be better, but don't know how to do that yet. -->
+              </td>
+              <td>
+                <label for="UserLanguage">
+                  <!--<span class="textEN">Native language (if not german):</span>-->
+                  <span class="textDE">Muttersprache (falls nicht Deutsch):</span>
+                </label>
+                <input id="UserLanguage" type="text" size="35" maxlength="40" />
+              </td>
+            </tr>
+          </table>
+
+          <br />
+
+          <label for="UserInterest">
+            <!--<span class="textEN">Interest or field of study:</span>-->
+            <span class="textDE">Interesse oder Studienfach:</span>
+          </label>
+          <select id="UserInterest" name="UserInterest">
+            <option value="none">Keine Angabe</option>
+            <option value="natur">Naturwissenschaften (Mathematik, Informatik, Physik, Chemie, Geologie, Biologie, ...)</option>
+            <option value="geist">Geisteswissenschaften (Geschichte, Sprache, Literatur, Philosophie, Ethik, Religion, ...)</option>
+            <option value="kunst">Kunstwissenschaften (Musik, Kunst, Theater, Fotografie, Kunstgeschichte, ...)</option>
+            <option value="sozio">Sozialwissenschaften (Psychologie, Erziehung, Soziologie, Politik, Recht, Wirtschaft, ...)</option>
+            <option value="agrar">Agrarwissenschaften (Land- und Forstwirtschaft, Fischerei, Tierzucht, Tiermedizin, ...)</option>
+            <option value="gesun">Gesundheitswissenschaften (Medizin, Pharmazie, Medizinische Biotechnologie, ...)</option>
+            <option value="techn">Technische Wissenschaften (Maschinenbau, Bauingenieurwesen, Elektrotechnik, ...)</option>
+          </select>
+
+          <br />
+          <br />
+
+          <label for="UserEyesight">
+            <!--<span class="textEN">Impairement of eyesight (e.g. "Glasses because shortsighted" or "Glasseye on the left"):</span>-->
+            <span class="textDE">Einschränkung der Sehkraft (z.B. "Brille weil kurzsichtig" oder "Glasauge links"):</span>
+          </label>
+          <input id="UserEyesight" type="text" size="80" maxlength="80" />
+
+          <br />
+          <br />
+
+          <label for="UserHearing">
+            <!--<span class="textEN">Impairement of hearing (e.g. "Yes, but I'm using a hearing aid" or "Häh?"):</span>-->
+            <span class="textDE">Einschränkung der Hörkraft (z.B. "Ja, aber benutze ein Hörgerät" oder "Häh?"):</span>
+          </label>
+          <input id="UserHearing" type="text" size="80" maxlength="80" />
+
+          <br />
+          <br />
+
+          <table>
+            <tr>
+              <td>
+                <label for="UserName">
+                  <!--<span class="textEN">Name or pseudonym::</span>-->
+                  <span class="textDE">Name oder Pseudonym:</span>
+                </label>
+                <input id="UserName" type="text" size="35" maxlength="40" />
+              </td>
+              <td>
+                <!-- Spacing via CSS-Styling would be better, but don't know how to do that yet. -->
+              </td>
+              <td>
+                <label for="UserEMail">
+                  <span class="textDE">Email:</span>
+                </label>
+                <input id="UserEMail" type="text" size="35" maxlength="40" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <!--
+                <span class="textEN">Your name or pseudonym allow us to group your evaluations together <strong>in case you participate in following instances of this study</strong>.
+                It does not matter what you write here, as long as you remember what it was next time.</span>
+              -->
+                <span class="textDE" style="font-size:12px;">
+                  Dein Name oder ein Pseudonym erlaubt es, alle Deine Bewertungen zusammenzufassen <strong>falls Du in zukünftigen Folgedurchläufen der Studie weitere Bewertungen abgeben solltest</strong>.
+                  Es ist also egal, was du hier eingibst, solange du dich beim nächsten Mal noch daran erinnerst, was es war.
+                </span>
+              </td>
+              <td>
+                <!-- Spacing via CSS-Styling would be better, but don't know how to do that yet. -->
+              </td>
+              <td>
+                <span class="textDE" style="font-size:12px;">
+                  Die Angabe einer Email ermöglicht es mir Dich für Folgedurchläufe dieser Studie unverbindlich einzuladen. <br />
+                  Im Anschluss werden natürlich sämtliche angegebenen Email-Adressen gelöscht, so dass Du nicht mehr als maximal drei Einladungen erhalten würdest.
+                </span>
+              </td>
+            </tr>
+          </table>
+          <br />
+
+          <!--<span class="textEN"><strong>Data protection:</strong></span>-->
+          <span class="textDE"><strong>Datenschutzerklärung:</strong></span>
+          <!--<span class="textEN" style="font-size:9px;">
+            Providing the personal data requested as part of this study, such as age group or gender, is voluntary.
+            The data is collected anonymously and stored on secure servers belonging to an employee of the University of Hamburg.
+            An evaluation takes place exclusively in the context of this bachelor thesis and in aggregated form.
+            The data will not be passed on to third parties and you have the right to have your data deleted at any time.
+            Participation in this study is voluntary and can be canceled at any time if necessary.
+          </span> -->
+          <span class="textDE" style="font-size:9px;">
+            Die Angabe der im Rahmen dieser Studie abgefragten persönlichen Daten, wie etwa Altersgruppe oder Geschlecht, sind freiwillig.
+            Die Daten werden anonym erhoben und auf sicheren Servern eines Mitarbeiters der Universität Hamburg gespeichert.
+            Eine Auswertung findet ausschließlich aggregiert im Rahmen dieser Bachelorarbeit statt.
+            Die Daten werden nicht an Dritte weitergegeben und Du hast jederzeit ein Recht auf Löschung Deiner Daten.
+            Die Teilnahme an dieser Studie ist freiwillig und kann bei Bedarf jederzeit abgebrochen werden.
+          </span>
+        </div>
+
+        <!-- this button leads to the instructions -->
+        <button id="BtnInstruction" onclick="testHandle.showInstruction();">
+          <!--<span class="textEN">Continue</span>-->
+          <span class="textDE">Weiter</span>
+        </button>
+    </div>
+
+    <!-- instructions before the test starts -->
+    <div id="TestInstruction" class="commonBox">
+
+      <!-- edit here if you want to change the instructions -->
+      <div style="text-align:left">
+        <!--<span class="textEN">Instructions:</span>-->
+        <span class="textDE"><strong>Anleitung:</strong></span>
+        <ul>
+          <li>
+            <!--<span class="textEN">Try to evaluate the lip synchrony and put less focus on the overall video-quality.</span>-->
+            <span class="textDE">Versuch die <strong>Lippensynchronität zu bewerten</strong> und nicht so sehr die allgemeine Videoqualität.</span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">You should listen to the reference and all the test conditions by clicking on the respective buttons.</span>-->
+            <span class="textDE">Schaue Dir alle Videos durch <strong>Anklicken der entsprechenden Schaltknöpfe</strong> an. <br/ > <text style="font-size:10px;">Die Steuerung innerhalb des Players funktioniert leider nicht problemfrei.</style></span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">Use the slider for each signal to indicate your opinion of its quality.</span>-->
+            <span class="textDE"><strong>Nutze die Schieberegler</strong> der jeweiligen Videos, um deine Meinung über ihre Qualität anzugeben.</span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">Rate the quality of the test items only compared to the reference on top.</span>-->
+            <span class="textDE">Oben findet sich immer das <strong>unveränderte Referenzvideo</strong> und darunter die Testkonditionen.</span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">You may listen to the signals in any order, any number of times.</span>-->
+            <span class="textDE">Du kannst die Videos in beliebiger Reihenfolge und wiederholt anschauen.</span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">Do not be worried: it sometimes may be difficult to detect the differences.</span>-->
+            <span class="textDE">Sei unbesorgt, falls es dir einige Male schwer fallen sollte, Unterschiede zu erkennen.</span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">At the bottom of the test-window you will be able to control the area of the video to be looped if you want to take a closer look.</span>-->
+            <span class="textDE">Am unteren Ende des Fensters wirst du für das laufende Video genau einstellen können, welcher Abschnitt abgespielt werden soll, um nicht immer das ganze Video wiederholen zu müssen.</span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">
+              This website sends your indicated preferences to our server where they will be saved. <br />
+              This makes it possible for you to stop at any time without data getting lost. <br />
+              We are delighted about every finished evaluation, even after the 10 minute mark- but you should be careful not to overstrain yourself and take a break or simply stop the test after some time according to your own judgement.
+            </span>-->
+            <span class="textDE">
+              Diese Webseite sendet Deine Präferenzurteile zu unserem Server wo sie gespeichert werden. <br />
+              Dies ermöglicht es, dass Du <strong>jederzeit aufhören kannst</strong>, ohne das Daten verloren gehen. <br />
+              Zwar freue ich mich über jeden, auch nach den 10 Minuten, absolvierten Vergleich, jedoch solltest Du dich <strong>nicht überanstrengen und rechtzeitig eine Pause einlegen</strong> oder auf <strong>Test Ende</strong> klicken.
+            </span>
+          </li>
+          <br />
+
+          <li>
+            <!--<span class="textEN">Please take the test in a low-noise environment, ideally with high quality head-phones.</span>-->
+            <span class="textDE">Bitte nimm die Bewertungen in einer <strong>ruhigen Umgebung</strong> vor, idealerweise mit guten Kopfhörern.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- this button starts the first test -->
+      <button id="BtnStartTest" onclick="testHandle.startTests();">Start!</button>
+    </div>
+
+    <!-- final text after all tests have passed -->
+    <div id="TestEnd" class="commonBox">
+
+        <!-- edit here if you want to change the thank you message -->
+        <!--<span class="textEN">Thank you very much!</span>-->
+        <span class="textDE">Vielen lieben Dank für Deine Teilnahme!</span>
+        <br />
+        <br />
+
+        <!-- show some informations before submitting the results -->
+        <div id="SubmitBox">
+            <div id="SubmitError" class="error">
+              <!--<span class="textEN">We are sorry, but the following error occured during your submission:</span>-->
+              <span class="textDE">Es tut uns leid, aber der folgende Fehler ist aufgetreten:</span>
+                <p id="ErrorCode"></p>
+            </div>
+
+            <p class="submitOnline">
+              <!-- edit here if you want to change the information about online submission, e.g. add privacy policy information -->
+
+              <!--<span class="textEN">
+                Please submit the results to our server. Entering a name or email address is not mandatory but can ease our analysis of the data in case you decide to participate in following instances of this study. <br />
+                Entering a name or email address is not mandatory but it would help us to contact you if we have further questions. <br />
+                You can also leave a comment.
+              </span>-->
+              <span class="textDE">
+                <!-- Die Angabe einer Email ist nicht zwingend notwendig, ermöglicht es uns aber Dich für Folgedurchläufe dieser Studie unverbindlich einzuladen. <br />
+                Diese gesamte Studie setzt sich nämlich am Ende aus diesem und drei weiteren (sehr ähnlichen) Abschnitten zusammen und ist dann beendet. <br />
+                Im Anschluss werden natürlich sämtliche angegebenen Email-Adressen gelöscht, so dass du nicht mehr als maximal drei Einladungen erhalten würdest. <br /> -->
+                Du kannst außerdem einen Kommentar hinzufügen.
+              </span>
+                <!-- Bitte sende die Resultate nun an unseren Server. Die Angabe einer Email ist nicht zwingend notwendig, können aber die anschließende Analyse erleichtern, falls Du beschließen solltest an zukünftigen Folgedurchläufen der Studie teilzunehmen. <br /> -->
+                <!-- Die Angabe von Name oder Email sind nicht zwingend notwendig, ermöglichen es uns aber Dich für möglicherweise aufkommende Nachfragen zu kontaktieren.-->
+            </p>
+
+            <p class="submitDownload">
+                <!-- edit here if you want to change the information about online submission, e.g. add privacy policy information -->
+                <!--<span class="textEN">
+                  Please download and save the results to send them to us. Entering a name or email address is not mandatory but can ease our analysis of the data in case you decide to participate in following instances of this study. <br />
+                  Entering a name or email address is not mandatory but it would help us to contact you if we have further questions. <br />
+                  You can also leave a comment.
+                </span>-->
+                <span class="textDE">
+                  Bitte downloade nun die Resultate und sende sie uns zu. <br />
+                  Die Angabe einer Email ist nicht zwingend notwendig, ermöglicht es uns aber Dich für Folgedurchläufe dieser Studie unverbindlich einzuladen. <br />
+                  Diese gesamte Studie setzt sich nämlich am Ende aus diesem und drei weiteren (sehr ähnlichen) Abschnitten zusammen und ist dann beendet. <br />
+                  Im Anschluss werden natürlich sämtliche angegebenen Email-Adressen gelöscht, so dass du nicht mehr als maximal drei Einladungen erhalten würdest. <br />
+                </span>
+                  <!-- Die Angabe von Name oder Email sind nicht zwingend notwendig, ermöglichen es uns aber Dich für möglicherweise aufkommende Nachfragen zu kontaktieren.-->
+                  <!--Du kannst außerdem einen Kommentar hinzufügen.-->
+            </p>
+
+            <table border=0 style="margin-left: auto;margin-right: auto;">
+              <!-- <tr><td>Name:</td><td><input id="UserName" type="text" size="40" maxlength="40" /></td></tr> -->
+              <!-- <tr><td>Email:</td><td><input id="UserEMail" type="text" size="40" maxlength="40" /></td></tr> -->
+              <tr><td></td><td><textarea id="UserComment" cols="40" rows="4">Dein Kommentar...</textarea></td></tr>
+            </table>
+            <br />
+            <!-- <button id="BtnSubmitData" class="submitOnline" onclick="testHandle.SubmitTestResults();">Submit</button> -->
+            <button id="BtnSubmitData" class="submitOnline" onclick="testHandle.SubmitTestResults();">Senden
+              <!--<span class="textEN">Submit</span>-->
+              <!--<span class="textDE">Senden</span>-->
+            </button>
+            <button id="BtnDownloadData" class="submitDownload" onclick="testHandle.DownloadTestResults();">Herunterladen
+              <!--<span class="textEN">Download</span>-->
+              <!--<span class="textDE">Herunterladen</span>-->
+            </button>
+            <p class="submitEmail error">
+                <!-- edit here if you want to change the information about email submission, e.g. add privacy policy information -->
+                <!--<span class="textEN">Results should be sent to <span class="supervisorEmail"></span></span>-->
+                <span class="textDE">Resultate sollen gesendet werden an
+                  <span class="supervisorEmail"></span>
+                </span>
+            </p>
+        </div>
+
+        <!-- the test results are displayed in this box -->
+        <div id="ResultsBox">
+        </div>
+    </div>
+
+    <div id="TableContainer" class="commonBox">
+        <!-- container for the test items and sliders
+             DO NOT EDIT! This box is automatically filled with content!
+        -->
+
+        <!-- heading for the single test -->
+        <div id="TestHeading">
+        </div>
+
+    </div>
+
+    <div id="videocontainer">
+
+    </div>
+
+    <!-- controls to go to next/previous test -->
+    <div id="TestControls" class="commonBox">
+        <button id="BtnNextTest">
+          <!--<span class="textEN">Next Test</span>-->
+          <span class="textDE">Nächster Vergleich</span>
+        </button>
+        <button id="BtnPrevTest">
+          <!--<span class="textEN">Previous Test</span>-->
+          <span class="textDE">Voriger Vergleich</span>
+        </button>
+
+    </div>
+
+    <!-- playback control -->
+    <div id="PlayerControls" class="commonBox">
+
+        <div id="duration">
+            <span>00:00</span>
+        </div>
+
+        <div id="TimeLine">
+            <div id="ProgressBar"></div>
+            <div id="ABRange"></div>
+        </div>
+
+        <div>
+            <input id="ChkLoopAudio" type="checkbox" value="Loop" /><label for="ChkLoopAudio">
+              <!--<span class='textEN'>Loop</span>-->
+              <span class='textDE'>Endloses Wiederholen</span>
+            </label>
+            <input id="ChkAutoReturn" type="checkbox" value="Auto Return" /><label for="ChkAutoReturn">
+              <!--<span class='textEN'>Auto Return</span>-->
+              <span class='textDE'>Automatisches Abspielen</span>
+            </label>
+        </div>
+
+        <!--<div id="TestEnding">-->
+          <button id="BtnEndTest">
+            <!--<span class="textEN">Test End</span>-->
+            <span class="textDE">Test Ende</span>
+          </button>
+        <!--</div>-->
+
+        <div id="Volume">
+            <!--<span class="textEN">Volume</span>-->
+            <span class="textDE">Lautstärke</span>
+            <div id="VolumeSlider"></div>
+        </div>
+
+        <br style="clear:both"/>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="Footer">
+        This listening test has been created with <a href="https://github.com/HSU-ANT/beaqlejs" target="_blank">BeaqleJS</a> <a href="https://github.com/HSU-ANT/beaqlejs/tree/master" target="_blank">master</a>.
+    </div>
+</div>
+
+</body>
+
+</html>

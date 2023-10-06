@@ -24,10 +24,16 @@ mkdir -p "./../projects/exampleProject/statisticalAnalysis/input";
 mkdir -p "./../projects/exampleProject/statisticalAnalysis/temp";
 mkdir -p "./../projects/exampleProject/statisticalAnalysis/output";
 
-# Copy the short examples into the "starting spot"
-##################################################
+# Copy the short examples into the "starting spot" for media_editing
+####################################################################
 #cp ./../examples/mediaEditing/lohse.mp4 ./../projects/exampleProject/mediaEditing/input
 #cp ./../examples/mediaEditing/strong.mp4 ./../projects/exampleProject/mediaEditing/input
 cp ./../examples/mediaEditing/* ./../projects/exampleProject/mediaEditing/input
 
+# Copy the necessary study files into the study_folder of the example project
+#############################################################################
+cp -r ./../examples/studySetup/study ./../projects/exampleProject/studySetup/study
+
+mkdir -p "./../projects/exampleProject/studySetup/study/video";
+mkdir -p "./../projects/exampleProject/studySetup/study/config";
 

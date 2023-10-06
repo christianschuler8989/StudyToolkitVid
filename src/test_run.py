@@ -5,10 +5,14 @@
 
 import os
 import shutil
-import subprocess
+#import subprocess
+import multiprocessing
 from media_editing import * 
 from study_setup import *
 import sys
+import webbrowser
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+import time
 
 """
 Pipeline test class for development and bug-fixing.
@@ -80,6 +84,77 @@ def main(testParts):
 		#	print("The statistical analysis directory does not exist")
 
 
+	# Big-Boy-TODO: Un-tangle all of this testing-methods-mess...
+
+	# Helper for running a server
+	def serverHelper():
+		httpd = HTTPServer(('localhost', 8000), SimpleHTTPRequestHandler)
+		httpd.serve_forever()
+
+	# Helper for starting the browser
+	def browserHelper():
+		webbrowser.open('http://localhost:8000', new=2)
+
+
+	# Pipeline-Test: Create Study Setup #######################################
+	###########################################################################
+	if 5 in testParts:
+		study_setup=True
+		print("Testing Study Execution:")
+
+		# Print the current working directory
+		#print("Current working directory: {0}".format(os.getcwd()))
+		
+		# Change the current working directory
+		os.chdir(os.getcwd()+'/../projects/exampleProject/studySetup/study')
+
+		# Print the current working directory
+		#print("Current working directory: {0}".format(os.getcwd()))
+
+		# Run http.server module of python for local testing
+		# Works, but user has to start bowser on their own... Service-Wüste Deutschland, oder was?
+		#httpd = HTTPServer(('localhost', 8000), SimpleHTTPRequestHandler)
+		#httpd.serve_forever()
+
+		# Via multiprocessing
+		process_server = multiprocessing.Process(target=serverHelper)
+		
+		process_browser = multiprocessing.Process(target=browserHelper)
+
+		process_server.start()
+		time.sleep(5)
+		process_browser.start()
+
+		# Via subprocess does not work: "NameError: name 'httpd' is not defined" ...
+		#subprocess.run([sys.executable, "-c", "httpd = HTTPServer(('localhost', 8000), SimpleHTTPRequestHandler)"])
+		#subprocess.run([sys.executable, "-c", "httpd.serve_forever()"])
+		
+
+		# Start webbrowser for testing the study
+		#webbrowser.open('http://localhost:8000', new=2)
+
+	
+
+	# Pipeline-Test: Create Study Setup #######################################
+	###########################################################################
+	if 6 in testParts:
+		study_setup=True
+		print("Prepare testing Study Execution:")
+		# Necessary directory paths:
+		test_study_directory = current_working_directory+"/../projects/exampleProject/studySetup"
+		test_study_input = current_working_directory+"/../projects/exampleProject/studySetup/input"
+		test_study_temp = current_working_directory+"/../projects/exampleProject/studySetup/temp"
+		test_study_output = current_working_directory+"/../projects/exampleProject/studySetup/output"
+		test_study_study = current_working_directory+"/../projects/exampleProject/studySetup/study"
+	
+		# Move the TestConfig-file to the online-study folder
+		source = test_study_output+'/TestStudyConfig.js'
+		destination = test_study_study+'/config/TestStudyConfig.js'
+		# Move only files
+		if os.path.isfile(source):
+			shutil.move(source, destination)
+		print('Moved the TestStudyConfig.js for example project.')		
+
 
 	# Pipeline-Test: Part 2 Study Setup #######################################
 	###########################################################################
@@ -91,14 +166,17 @@ def main(testParts):
 		test_study_input = current_working_directory+"/../projects/exampleProject/studySetup/input"
 		test_study_temp = current_working_directory+"/../projects/exampleProject/studySetup/temp"
 		test_study_output = current_working_directory+"/../projects/exampleProject/studySetup/output"
+		test_study_study = current_working_directory+"/../projects/exampleProject/studySetup/study"
 		
 		# Create a "study_setupper"
-		study_setupper = setupping(test_study_input, test_study_temp, test_study_output)
+		study_setupper = setupping(test_study_input, test_study_temp, test_study_output, test_study_study)
 		
 		# Set study creation parameters
-		study_setupper.setStudyParameters(trial_size=5, language="English")
+		study_setupper.setStudyParameters(trial_size=5, testset_size=50, language="English", study_name="FunWithAnranAndDomi", config_name="TestStudyConfig", study_url="http://localhost:8000/web_service/beaqleJS_Service.php")
 
 		study_setupper.createStudy()
+
+		study_setupper.moveMediaFilesToStudy(test_study_study)
 
 		#study_setupper.createTestset(test_study_temp, test_study_output, "my_testset")
 
