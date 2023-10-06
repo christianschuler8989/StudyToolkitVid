@@ -21,7 +21,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/christianschuler8989/StudyToolkitVid">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="330" height="120">
   </a>
 
   <h3 align="center">StudyToolkitVid</h3>
