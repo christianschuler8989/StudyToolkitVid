@@ -31,11 +31,11 @@ def main(testParts):
 		#print("Testing in Directory: " + test_media_directory) # Debugging
 
 		# Create test protocol
-		try:
-			with open(test_media_temp+'/test.txt', 'w') as f:
-				f.write('Test Protocol!')
-		except FileNotFoundError:
-			print("The media editing directory does not exist")
+		#try:
+		#	with open(test_media_temp+'/test.txt', 'w') as f:
+		#		f.write('Test Protocol!')
+		#except FileNotFoundError:
+		#	print("The media editing directory does not exist")
 
 
 
@@ -52,11 +52,11 @@ def main(testParts):
 		#print("Testing in Directory: " + test_study_directory) # Debugging
 
 		# Create test protocol
-		try:
-			with open(test_study_temp+'/test.txt', 'w') as f:
-				f.write('Test Protocol!')
-		except FileNotFoundError:
-			print("The study setup directory does not exist")
+		#try:
+		#	with open(test_study_temp+'/test.txt', 'w') as f:
+		#		f.write('Test Protocol!')
+		#except FileNotFoundError:
+		#	print("The study setup directory does not exist")
 
 
 
@@ -73,11 +73,11 @@ def main(testParts):
 		#print("Testing in Directory: " + test_statistical_directory) # Debugging
 
 		# Create test protocol
-		try:
-			with open(test_statistical_temp+'/test.txt', 'w') as f:
-				f.write('Test Protocol!')
-		except FileNotFoundError:
-			print("The statistical analysis directory does not exist")
+		#try:
+		#	with open(test_statistical_temp+'/test.txt', 'w') as f:
+		#		f.write('Test Protocol!')
+		#except FileNotFoundError:
+		#	print("The statistical analysis directory does not exist")
 
 
 
@@ -93,12 +93,14 @@ def main(testParts):
 		test_study_output = current_working_directory+"/../projects/exampleProject/studySetup/output"
 		
 		# Create a "study_setupper"
-		study_setupper = setupping(test_study_input, test_study_output)
+		study_setupper = setupping(test_study_input, test_study_temp, test_study_output)
 		
 		# Set study creation parameters
 		study_setupper.setStudyParameters(trial_size=5, language="English")
 
 		study_setupper.createStudy()
+
+		#study_setupper.createTestset(test_study_temp, test_study_output, "my_testset")
 
 		# Get names for all the existing excerpts from input
 		#study_setupper.readDirectoryNamesFromInput(test_study_input)
@@ -123,11 +125,11 @@ def main(testParts):
 		#print("Testing in Directory: " + test_study_directory) # Debugging
 
 		# Create test protocol
-		try:
-			with open(test_study_temp+'/test.txt', 'w') as f:
-				f.write('Test Protocol!')
-		except FileNotFoundError:
-			print("The study setup directory does not exist")
+		#try:
+		#	with open(test_study_temp+'/test.txt', 'w') as f:
+		#		f.write('Test Protocol!')
+		#except FileNotFoundError:
+		#	print("The study setup directory does not exist")
 		
 		# Using shutil to move all the previously (in 9) created media files
 		os.mkdir("../projects/exampleProject/studySetup/input/lohse/")
@@ -193,11 +195,11 @@ def main(testParts):
 		#print("Testing in Directory: " + test_media_directory) # Debugging
 
 		# Create test protocol
-		try:
-			with open(test_media_temp+'/test.txt', 'w') as f:
-				f.write('Test Protocol!')
-		except FileNotFoundError:
-			print("The media editing directory does not exist")
+		#try:
+		#	with open(test_media_temp+'/test.txt', 'w') as f:
+		#		f.write('Test Protocol!')
+		#except FileNotFoundError:
+		#	print("The media editing directory does not exist")
 
 		# Working with TextGrids: #############################################
 
