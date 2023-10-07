@@ -456,8 +456,8 @@ def main():
 	# if empty them pop up a window asking whether to set up examples
 	if len(dir) == 0 or len(dir) == 1 and dir[0] == ".DS_Store": # .ds_store is always there for macos
 		msgBox=QMessageBox()
-		msgBox.setText("Set up example project? ")
-		msgBox.setInformativeText("Welcome to the StudyToolkitVid! Seems like you are using it for the first time, you can set up an example project to test it out! ")
+		msgBox.setText("Welcome to the StudyToolkitVid!")
+		msgBox.setInformativeText("Seems like you are using it for the first time, you can set up an example project to test it out! Set up example project now?")
 		yes = MyButton("Yes", setupWorkplace, toSetEnabled=True)
 		no = MyButton("No")
 		msgBox.addButton(yes, QMessageBox.ButtonRole.NoRole)

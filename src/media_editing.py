@@ -1,4 +1,4 @@
-#
+# Part 1 - Media Editing
 # 
 # Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################

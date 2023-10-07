@@ -1,4 +1,4 @@
-#
+# Part 2 - Study Setup
 # 
 # Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################
@@ -169,18 +169,73 @@ class setupping():
         #    f.write('')
         
         return
+    
+    ##############################
+    # From (Create Study Button) #
+    ##############################
+    # Confirm format of provided study paramters
+    def checkStudyParameters():
+        # TODO
+        pass
 
     # Set the study parameters
-    def setStudyParameters(self, trial_size=5, testset_size=4, language="English", study_name="MyStudy", config_name="TestStudyConfig", study_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"):
-        self.trial_size = trial_size
-        self.testset_size = testset_size
-        self.language = language
-        self.study_name = study_name
-        self.config_name = config_name
-        self.study_url = study_url
+    def setStudyParameters(self, 
+                           study_name="MyStudy", 
+                           config_name="TestStudyConfig", 
+                           language="English", 
+                           rate_scale_png="img/scale_abs.png",
+                           rate_scale_bg_png="img/scale_abs_background.png",
+                           supervisor_contact="7schuler@informatik.uni-hamburg.de",
+                           study_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                           testset_size=4, 
+                           trial_size=5, 
+                           rate_min_value=0,
+                           rate_max_value=100,
+                           rate_default_value=0,
+                           anchors_number=2,
+                           max_tests_per_run=25,
+                           show_file_ids="false",
+                           show_results="false",
+                           loop_by_default="false",
+                           enable_ab_loop="false",
+                           randomize_test_order="true",
+                           online_submission="true",
+                           upload_intermediates="true",
+                           require_max_rating="false",
+                           ):
         
+        # Text
+        self.study_name = study_name                        # TestName: "My Awesome Study"
+        self.config_name = config_name                      # ConfigFileName: "my_config.js"
+        self.language = language                            # Language: "English"
+        # Filepaths
+        self.rate_scale_png = rate_scale_png                # RateScalePng: "img/scale_abs.png",
+        self.rate_scale_bg_png = rate_scale_bg_png          # RateScaleBgPng: "img/scale_abs_background.png",
+        # Special 
+        self.supervisor_contact = supervisor_contact        # SupervisorContact: "7schuler@informatik.uni-hamburg.de"
+        self.beaqle_service_url = study_url                 # BeaqleServiceURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        #self.study_url = study_url
+        # Integer
+        self.testset_size = testset_size                    # Testsize: 4
+        self.trial_size = trial_size                        # TrialSize: 5
+        self.rate_min_value = rate_min_value                # RateMinValue: 0
+        self.rate_max_value = rate_max_value                # RateMaxValue: 100
+        self.rate_default_value = rate_default_value        # RateDefaultValue: 0
+        self.anchors_number = anchors_number                # AnchorsNumber: 2
+        self.max_tests_per_run = max_tests_per_run          # MaxTestsPerRun: 25
+        # Boolean
+        self.show_file_ids = show_file_ids                  # ShowFileIDs: "false"
+        self.show_results = show_results                    # ShowResults: "false"
+        self.loop_by_default = loop_by_default              # LoopByDefault: "false"
+        self.enable_ab_loop = enable_ab_loop                # EnableABLoop: "false"
+        self.randomize_test_order = randomize_test_order    # RandomizeTestOrder: "true"
+        self.online_submission = online_submission          # EnableOnlineSubmission: "true"
+        self.upload_intermediates = upload_intermediates    # UploadIntermediates: "true"
+        self.require_max_rating = require_max_rating        # RequireMaxRating: "false"
 
-    # Create study
+        return
+        
+    # Create the study
     def createStudy(self):
         print("Entering createStudy()")
         # Get names and directories for all the existing excerpts from the input directory
