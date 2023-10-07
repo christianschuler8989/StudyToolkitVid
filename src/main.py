@@ -9,7 +9,7 @@ import textwrap
 import subprocess
 import test_run
 import studytoolkitGUI
-
+import setup as pythonBasedSetup
 """
 Different modes via arguments:
 '-s', '--setup'
@@ -60,7 +60,8 @@ def main():
 	def setup_toolkit(setup=False):
 		if setup:
 			print("Setting up the workspace.")
-			subprocess.call("./setup.bh")
+			#subprocess.call("./setup.bh")
+			pythonBasedSetup.setupWorkplace()
 			return
 			
 	"""
