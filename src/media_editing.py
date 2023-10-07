@@ -200,7 +200,7 @@ class editing():
         for frame in os.listdir(frames_path):
             framename = os.fsdecode(frame)
             extension = framename.split(".")[-1]
-            if extension in ['jpeg', 'jpg','png'] :
+            if extension in ['jpeg', 'jpg','png'] : 
                 all_frames.append(frames_path + framename)
             else:
                 continue

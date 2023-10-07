@@ -1,4 +1,0 @@
-pyqt6
-ffmpeg-python # not ffmpeg, it would lead to errors
-moviepy
-textgrid
