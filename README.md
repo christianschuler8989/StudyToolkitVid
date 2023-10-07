@@ -119,7 +119,7 @@ List of major frameworks/libraries used to bootstrap this project:
 To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
-* You need a Python installation (tested with: 3.10.9)
+* You need a Python installation (tested with: 3.11.5 on macOS & 3.10.9 on Ubuntu)
   - For how to install Python on Windoof refer to: [Using Python on Windows](https://docs.python.org/3.10/using/windows.html)
   - For how to install Python on macOS refer to: [Using Python on a Mac](https://docs.python.org/3.10/using/mac.html)
   - For how to install Python on Linux refer to: The person who introduced you to Linux, and please tell them "The Lannisters send their regards!" (or go to [Using Python on Unix platforms](https://docs.python.org/3.10/using/unix.html))
