@@ -1,4 +1,7 @@
 *.DS_STORE # macos backup files
 
 projects/
+__pycache__/
+src/tempAudio*
+
 
