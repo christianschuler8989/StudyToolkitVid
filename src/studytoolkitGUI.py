@@ -1,8 +1,3 @@
-# StudyToolkitVid
-# 
-# Authors: Christian Schuler & Dominik Hauser & Anran Wang
-################################################################################
-
 import sys, os 
 from media_editing import * 
 from PyQt6.QtWidgets import *
@@ -67,7 +62,10 @@ class MediaEditWindow(QMainWindow):
 
 		# set up workspace folder - this can be considered to be the "root" of the project
 		# self.workspaceFolder = "${HOME}"
-		self.workspaceFolder = os.getcwd()+"/" # current directory
+		try : 
+			self.workspaceFolder = os.path.abspath('..')+"/projects/" # current directory then projects
+		except FileNotFoundError : 
+			self.workspaceFolder = os.getcwd()+"/" # current directory
 		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
 
 		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
@@ -155,7 +153,7 @@ class MediaEditWindow(QMainWindow):
 		selectFrameButton = MyButton("Select Frame File", self.selectFrame, self.areaEditButtons)
 		self.insertFrameTime = QLineEdit(placeholderText="time of frame")
 		# button to insert frame at time
-		insertFrameAtButton = MyButton("Insert Frame", self.placeholder, self.areaEditButtons)
+		insertFrameAtButton = MyButton("Insert Frame", self.insertFrameAt, self.areaEditButtons)
 		insertFrameLayout = QHBoxLayout()
 		insertFrameLayout.addWidget(selectFrameButton)
 		insertFrameLayout.addWidget(self.insertFrameTime)
@@ -219,7 +217,7 @@ class MediaEditWindow(QMainWindow):
 		self.workspaceFolder = QFileDialog.getExistingDirectory(
 			self,
 			"Choose Workspace Directory", 
-			"${HOME}",
+			"${PWD}",
 			) + "/"
 
 	# import file and give to media player, requires existing workspace folder
@@ -261,16 +259,25 @@ class MediaEditWindow(QMainWindow):
 
 	# change speed of video section
 	def changeSpeed(self) : 
-		self.editor.changeSpeed(float(self.speedInput.text()), float(self.startInput.text()), float(self.endInput.text()))
-		self.updateVideo()
+		try : 
+			self.editor.changeSpeed(float(self.speedInput.text()), float(self.startInput.text()), float(self.endInput.text()))
+			self.updateVideo()
+		except ValueError : 
+			self.popMsg("Invalid Input! ")
 	# cut video
 	def cutVideo(self): 
-		self.editor.cut(float(self.startCut.text()), float(self.endCut.text()))
-		self.updateVideo()
+		try : 
+			self.editor.cut(float(self.startCut.text()), float(self.endCut.text()))
+			self.updateVideo()
+		except ValueError : 
+			self.popMsg("Invalid Input! ")
 	# save one frame at time give name
 	def saveFrameAt(self): 
-		self.editor.saveFrame(self.frametime.text(), self.framename.text())
-		self.newPlayer.getInput(self.workspaceFolder+self.framename.text()+".png")
+		try: 
+			self.editor.saveFrame(self.frametime.text(), self.framename.text())
+			self.newPlayer.getInput(self.workspaceFolder+self.framename.text()+".png")
+		except ValueError : 
+			self.popMsg("Invalid Input! ")
 
 	# select folder to save all frames
 	def selectFramesFolder(self) : 
@@ -323,8 +330,11 @@ class MediaEditWindow(QMainWindow):
 
 	# delete a frame with its audio 
 	def deleteFrameSync(self) : 
-		self.editor.deleteFrameSynchronous(float(self.delFrametime.text()))
-		self.updateVideo()
+		try: 
+			self.editor.deleteFrameSynchronous(float(self.delFrametime.text()))
+			self.updateVideo()
+		except ValueError : 
+			self.popMsg("Invalid Input! ")
 
 	# pop an error message 
 	def popMsg(self, msg) : 
@@ -461,8 +471,8 @@ def main():
 	# if empty them pop up a window asking whether to set up examples
 	if len(dir) == 0 or len(dir) == 1 and dir[0] == ".DS_Store": # .ds_store is always there for macos
 		msgBox=QMessageBox()
-		msgBox.setText("Welcome to the StudyToolkitVid!")
-		msgBox.setInformativeText("Seems like you are using it for the first time, you can set up an example project to test it out! Set up example project now?")
+		msgBox.setText("Set up example project? ")
+		msgBox.setInformativeText("Welcome to the StudyToolkitVid! Seems like you are using it for the first time, you can set up an example project to test it out! ")
 		yes = MyButton("Yes", setupWorkplace, toSetEnabled=True)
 		no = MyButton("No")
 		msgBox.addButton(yes, QMessageBox.ButtonRole.NoRole)
