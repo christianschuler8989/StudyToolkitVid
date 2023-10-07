@@ -1,5 +1,7 @@
 import sys, os 
 from media_editing import * 
+from study_setup import * 
+from statistical_analysis import * 
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
