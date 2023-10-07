@@ -17,27 +17,81 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("Study Tool Kit")
 		self.setMinimumSize(QSize(600,400))
 
+		# buttons to open separate windows
 		mediaEditButton = MyButton("Media Editing", self.openMediaEditWindow, toSetEnabled=True)
-
 		studyGenButton = MyButton("Study Generation", self.openStudyGenWindow, toSetEnabled=True)
-
 		statAnaButton = MyButton("Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
+		# layout for area to open corresponding windows
+		bottomlayout = QHBoxLayout()
+		bottomlayout.addWidget(mediaEditButton)
+		bottomlayout.addWidget(studyGenButton)
+		bottomlayout.addWidget(statAnaButton)
 		
 		# menu bars
 		MyMenu(self, "StudyToolkit")
 		
-		layout = QHBoxLayout()
-
-		layout.addWidget(mediaEditButton)
-		layout.addWidget(studyGenButton)
-		layout.addWidget(statAnaButton)
+		# layout for area of general functions
+		toplayout = QHBoxLayout()
+		# buttons to do some general functions
+		exampleButton = MyButton("Re-setup Examples", setupWorkplace, toSetEnabled=True)
+		toplayout.addWidget(exampleButton)
+		testButton = MyButton("Test Toolkit", toSetEnabled=True) # todo: link to implementation of testing
+		toplayout.addWidget(testButton)
+		projectLayout = QHBoxLayout()
+		try : 
+			self.projectFolder = os.path.abspath('..')+"/projects/" # current directory then projects
+		except FileNotFoundError : 
+			self.projectFolder = os.getcwd()+"/" # current directory
+		self.projectButton = MyButton("Create Project", self.createProject)
+		self.projectName = QLineEdit(placeholderText="project name")
+		self.projectName.textChanged.connect(self.enableButton)
+		projectLayout.addWidget(self.projectName)
+		projectLayout.addWidget(self.projectButton)
+		toplayout.addLayout(projectLayout)
+		selProjectButton = MyButton("Select Project", self.selectProject, toSetEnabled=True)
+		toplayout.addWidget(selProjectButton)
+	
+		# central widget layout
+		layout = QVBoxLayout()
+		layout.addLayout(toplayout)
+		layout.addLayout(bottomlayout)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
 
+	# create project button is only enabled if project name is not empty
+	def enableButton(self) : 
+		if not self.projectName.text() == "" : 
+			self.projectButton.setEnabled(True)
+		else : 
+			self.projectButton.setEnabled(False)
+	# create project folder
+	def createProject(self) : 
+		# select location for projects 
+		try : 
+			self.projectFolder = QFileDialog.getExistingDirectory(
+				self,
+				"Choose Project Location", 
+				"${PWD}",
+				) + "/" + self.projectName.text()
+			os.mkdir(self.projectFolder)
+		except: 
+			msg=QMessageBox()
+			msg.setText("Please select project location! ")
+			msg.exec()
+
+	# select existing project
+	def selectProject(self) : 
+		self.projectFolder = QFileDialog.getExistingDirectory(
+				self,
+				"Choose Project", 
+				"${PWD}",
+				) + "/" 
+		
 	
+
 	def openMediaEditWindow(self):
-		self.w = MediaEditWindow()
+		self.w = MediaEditWindow(self.projectFolder)
 		self.w.show()
 
 	def openStudyGenWindow(self):
@@ -51,7 +105,7 @@ class MainWindow(QMainWindow):
 
 
 class MediaEditWindow(QMainWindow):
-	def __init__(self):
+	def __init__(self, projectFolder):
 		super(MediaEditWindow, self).__init__()
 
 		MyMenu(self, "MediaEdit")
@@ -61,12 +115,8 @@ class MediaEditWindow(QMainWindow):
 		
 
 		# set up workspace folder - this can be considered to be the "root" of the project
-		# self.workspaceFolder = "${HOME}"
-		try : 
-			self.workspaceFolder = os.path.abspath('..')+"/projects/" # current directory then projects
-		except FileNotFoundError : 
-			self.workspaceFolder = os.getcwd()+"/" # current directory
-		selectFolderButton = MyButton("Select Workspace Folder", self.selectFolder, toSetEnabled=True)
+		self.workspaceFolder = projectFolder
+		selectFolderButton = MyButton("Change Project Location", self.selectFolder, toSetEnabled=True)
 
 		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
 		self.mode = "mediaEditing" 
@@ -209,9 +259,7 @@ class MediaEditWindow(QMainWindow):
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
-	# placeholder function, for no use
-	def placeholder() : 
-		pass 
+
 	# select workspace folder
 	def selectFolder(self) : 
 		self.workspaceFolder = QFileDialog.getExistingDirectory(
