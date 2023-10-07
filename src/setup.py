@@ -9,23 +9,22 @@ import shutil
 
 
 # Creating the directories for a new project
-def setupDirectories(projectName):
+def setupDirectories(newProjectPath):
     dirs = [
-    "./../projects",
-    "./../projects/"+projectName+"/mediaEditing",
-    "./../projects/"+projectName+"/mediaEditing/input",
-    "./../projects/"+projectName+"/mediaEditing/temp",
-    "./../projects/"+projectName+"/mediaEditing/output",
-    "./../projects/"+projectName+"/studySetup",
-    "./../projects/"+projectName+"/studySetup/input",
-    "./../projects/"+projectName+"/studySetup/temp",
-    "./../projects/"+projectName+"/studySetup/output",
-    "./../projects/"+projectName+"/statisticalAnalysis",
-    "./../projects/"+projectName+"/statisticalAnalysis/input",
-    "./../projects/"+projectName+"/statisticalAnalysis/temp",
-    "./../projects/"+projectName+"/statisticalAnalysis/output",
-    "./../projects/"+projectName+"/studySetup/study/video",
-    "./../projects/"+projectName+"/studySetup/study/config"
+    newProjectPath+"mediaEditing",
+    newProjectPath+"mediaEditing/input",
+    newProjectPath+"mediaEditing/temp",
+    newProjectPath+"mediaEditing/output",
+    newProjectPath+"studySetup",
+    newProjectPath+"studySetup/input",
+    newProjectPath+"studySetup/temp",
+    newProjectPath+"studySetup/output",
+    newProjectPath+"statisticalAnalysis",
+    newProjectPath+"statisticalAnalysis/input",
+    newProjectPath+"statisticalAnalysis/temp",
+    newProjectPath+"statisticalAnalysis/output",
+    newProjectPath+"studySetup/study/video",
+    newProjectPath+"studySetup/study/config"
     ]
 
     for dir_to_create in dirs:
