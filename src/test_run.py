@@ -17,6 +17,39 @@ import time
 """
 Pipeline test class for development and bug-fixing.
 """
+class toolkitTest():
+
+	def __init__(self, path_to_input, path_to_temp, path_to_output):
+		self.path_to_input = path_to_input
+		self.path_to_temp = path_to_temp
+		self.path_to_output = path_to_output
+
+	def setupTestProject(self):
+		print("Start testing Project Setup:")
+		# TODO
+		print("Test project setup.")
+
+	def testMediaEditing(self):
+		print("Start testing Media Editing:")
+		# TODO
+		print("Test of Part 1 done.")
+
+	def testStudySetup(self):
+		print("Start testing Study Setup:")
+		# TODO
+		print("Test of Part 2 done.")
+
+	def testStatisticalAnalysis(self):
+		print("Start testing Statistical Analysis:")
+		# TODO
+		print("Test of Part 3 done.")
+
+	def testToolkit(self):
+		self.testMediaEditing()
+		self.testStudySetup()
+		self.testStatisticalAnalysis()
+
+
 def main(testParts):
 	current_working_directory = os.getcwd()
 	print("Current Working Directory: " + current_working_directory)
