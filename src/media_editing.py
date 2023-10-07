@@ -7,7 +7,6 @@ import ffmpeg
 import os.path as path
 from moviepy.editor import *
 import re
-import argparse
 import textgrid
 import numpy as np
 import imageio
@@ -58,9 +57,13 @@ class editing():
         return self.clip.audio    
         
     #Sets the audio of the current edited clip
-    def setAudioClip(self, audio_clip):
+    def setAudioClip(self, path_to_clip):
         self._clipHistory()
-        self.clip.set_audio(audio_clip)
+        try:
+            audio = AudioFileClip(path_to_clip)
+            self.clip.set_audio(audio)
+        except:
+            raise Exception('Could not find the audio file or audio file has wrong format: ' + frame_path)
 
 
     """
@@ -93,12 +96,13 @@ class editing():
     #Cut the current clip 
     def cut(self, start, end):
         self._clipHistory()
-        if start < 0:
-            start = 0
-        if end < 0 or end > self.clip.duration:
-            end = self.clip.duration
-        
-        self.clip.subclip(start, end)
+        if start < end:
+            if start < 0:
+                start = 0
+            if end < 0 or end > self.clip.duration:
+                end = self.clip.duration
+            
+            self.clip.subclip(start, end)
     
     
     #Return a frame at a given time
