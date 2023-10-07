@@ -119,14 +119,11 @@ List of major frameworks/libraries used to bootstrap this project:
 To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
-1. You need a Python installation (tested with: 3.10.9)
-
-* For how to install Python on Windoof refer to: [Using Python on Windows](https://docs.python.org/3.10/using/windows.html)
-* For how to install Python on macOS refer to: [Using Python on a Mac](https://docs.python.org/3.10/using/mac.html)
-* For how to install Python on Linux refer to: The person who introduced you to Linux, and please tell them "The Lannisters send their regards!" (or go to [Using Python on Unix platforms](https://docs.python.org/3.10/using/unix.html))
-
-2. You need to use a terminal (at least once ;) )
-
+* You need a Python installation (tested with: 3.10.9)
+  - For how to install Python on Windoof refer to: [Using Python on Windows](https://docs.python.org/3.10/using/windows.html)
+  - For how to install Python on macOS refer to: [Using Python on a Mac](https://docs.python.org/3.10/using/mac.html)
+  - For how to install Python on Linux refer to: The person who introduced you to Linux, and please tell them "The Lannisters send their regards!" (or go to [Using Python on Unix platforms](https://docs.python.org/3.10/using/unix.html))
+* You need to use a terminal (at least once ;) )
 For more information about how to work with a terminal, refer to [Microsoft's Guide](https://learn.microsoft.com/en-us/windows/terminal/install) for Windoof, [Apple's Guide](https://support.apple.com/de-de/guide/terminal/apd5265185d-f365-44cb-8b09-71a064a42125/2.12/mac/11.0) for macOS, and [Ubuntu's Guide](https://ubuntu.com/tutorials/command-line-for-beginners#1-overview) for Linux systems.
 
 
@@ -137,36 +134,36 @@ Then navigate into this directory and open the terminal from within it.
 
 1. Clone this repository to get a local copy of the toolkit on your system:
 Execute the following lines inside of your terminal.
-   ```sh
+   ```console
    git clone git@github.com:christianschuler8989/StudyToolkitVid.git
    ```
 2. (Optional, but recommended) Create a virtual environment for the toolkit:
    1. (If not yet installed) Install python venv:
-   ```sh
+   ```console
    python3 -m pip install virtualenv
    ```
    2. Create an environment named "venvToolkit"
-   ```sh
+   ```console
    python -m venv venvToolkit
    ```
    3. Activate the virtual environment every time before starting the toolkit
-   ```sh
+   ```console
    source venvToolkit/bin/activate
    ```
 3. Navigate into the cloned toolkit-directory named "StudyToolkitVid", so you end up
-   ```sh
+   ```console
    cd StudyToolkitVid
    ```
    Assuming you cloned the repository into your "/Home/Download/" directory, you would type
-   ```sh
+   ```console
    cd /Home/Download/MyAwesomeDirectory/StudyToolkitVid
    ```
 4. Install the requirements:
-   ```sh
+   ```console
    python -m pip install -r requirements.txt
    ```
 5. Start the toolkit (continue in <a href="#usage">Usage</a> section below):
-   ```sh
+   ```console
    python main.py --run
    ```
 
@@ -314,10 +311,10 @@ A list of helpful resources we would like to give credit to:
 * [The Digital and Data Literacy in Teaching Lab, who initially funded this project](https://www.isa.uni-hamburg.de/ddlitlab.html)
 * [Our Mentor Prof. Dr. Timo Baumann who always believed in us](https://timobaumann.de/work/)
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template) 
-* [PyQt](https://wiki.python.org/moin/PyQt)
+* [PyQt as Python bindings for the Qt cross-platform C++ framework](https://wiki.python.org/moin/PyQt)
 * [BAS WebService of the Bavarian Archive for Speech Signals hosted by the Institute of Phonetics and Speech Processing at the Ludwig-Maximilians-Universität, München, Germany](http://hdl.handle.net/11858/00-1779-0000-0028-421B-4)
 * [S. Kraft, U. Zölzer: "BeaqleJS: HTML5 and JavaScript based Framework for the Subjective Evaluation of Audio Quality"](https://github.com/HSU-ANT/beaqlejs)
-* [R](https://www.r-project.org/)
+* [The R Project for Statistical Computing](https://www.r-project.org/)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
