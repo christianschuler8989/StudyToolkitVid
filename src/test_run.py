@@ -1,6 +1,6 @@
-#
+# Collection of automated tests for the early phases of development
 # 
-# Authors: Christian Schuler & Dominik Hauser
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################
 
 import os

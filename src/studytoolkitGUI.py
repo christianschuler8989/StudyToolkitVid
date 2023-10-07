@@ -1,3 +1,8 @@
+# StudyToolkitVid
+# 
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
+################################################################################
+
 import sys, os 
 from media_editing import * 
 from PyQt6.QtWidgets import *

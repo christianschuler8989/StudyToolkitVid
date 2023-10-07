@@ -1,6 +1,6 @@
-#
+# Part 1 - Media Editing (version for easy access for early testing)
 # 
-# Authors: Christian Schuler & Dominik Hauser
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################
 
 import ffmpeg

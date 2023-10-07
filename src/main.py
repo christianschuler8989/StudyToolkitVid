@@ -1,6 +1,6 @@
-# The main script of the StudyToolkitVid-pipeline.
+# The main script of the StudyToolkitVid-pipeline in early phase of development
 # 
-# Authors: Christian Schuler & Dominik Hauser
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
 ################################################################################
 
 import os.path as path
