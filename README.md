@@ -95,55 +95,77 @@ Of course, no one toolkit will serve all projects since your needs may be differ
 
 ### Built With
 
-List of major frameworks/libraries used to bootstrap this project.
+List of major frameworks/libraries used to bootstrap this project:
 
 * [PyQt](https://wiki.python.org/moin/PyQt)
+  - "PyQt is one of the most popular Python bindings for the Qt cross-platform C++ framework. PyQt was developed by Riverbank Computing Limited."
+  - With the use of PyQt we were able to create a pipeline that bridges the following utilities in an easy-to-use and neatly packaged toolkit.
 * [WebMAUS](https://clarin.phonetik.uni-muenchen.de/BASWebServices/interface/WebMAUSBasic)
-  - Here user can generate a time-aligned TEXTGRID based on a media and corresponding text file.
-
+  - "This web service inputs a media file with a speech signal and a text file with a corresponding orthographic transcript, and computes a word segmentation and a phonetic segmentation and labeling."
+  - The output of WebMAUS is used in <a href="#mediaEditing">Part 1 - Media Editing</a> of the StudyToolkitVid pipeline.
+* [beaqlejs](https://github.com/HSU-ANT/beaqlejs)
+  - "BeaqleJS (browser based evaluation of audio quality and comparative listening environment) provides a framework to create browser based listening tests and is purely based on open web standards like HTML5 and Javascript."
+  - A modified version, to also enable use of video files, is used to create the studies in <a href="#statisticalAnalysis">Part 2 - Study Setup</a>.
+* [R](https://www.r-project.org/)
+  - "R is a free software environment for statistical computing and graphics. It compiles and runs on a wide variety of UNIX platforms, Windows and MacOS."
+  - R is the foundation for the scripts used in <a href="#statisticalAnalysis">Part 3 - Statistical Analysis</a> of this toolkit.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 
 
 <!-- GETTING STARTED -->
 ## Getting Started
-
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
+1. You need a Python installation (tested with: 3.10.9)
 
-TODO: 
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+* For how to install Python on Windoof refer to: [Using Python on Windows](https://docs.python.org/3.10/using/windows.html)
+* For how to install Python on macOS refer to: [Using Python on a Mac](https://docs.python.org/3.10/using/mac.html)
+* For how to install Python on Linux refer to: The person who introduced you to Linux, and please tell them "The Lannisters send their regards!" (or go to [Using Python on Unix platforms](https://docs.python.org/3.10/using/unix.html))
+
+2. You need to use a terminal (at least once ;) )
+
+For more information about how to work with a terminal, refer to [Microsoft's Guide](https://learn.microsoft.com/en-us/windows/terminal/install) for Windoof, [Apple's Guide](https://support.apple.com/de-de/guide/terminal/apd5265185d-f365-44cb-8b09-71a064a42125/2.12/mac/11.0) for macOS, and [Ubuntu's Guide](https://ubuntu.com/tutorials/command-line-for-beginners#1-overview) for Linux systems.
+
 
 ### Installation
+Create a directory for the toolkit and all your projects to be saved in.
+For this description we will call it "MyAwesomeDirectory"
+Then navigate into this directory and open the terminal from within it.
 
-TODO:
-1. Clone the repo to get a local copy of the toolkit:
+1. Clone this repository to get a local copy of the toolkit on your system:
+Execute the following lines inside of your terminal.
    ```sh
    git clone git@github.com:christianschuler8989/StudyToolkitVid.git
    ```
-2. Create virtual environment:
-  1. (Optional) Install python venv:
+2. (Optional, but recommended) Create a virtual environment for the toolkit:
+   1. (If not yet installed) Install python venv:
    ```sh
    python3 -m pip install virtualenv
    ```
-  2. Create an environment named "venvToolkit"
+   2. Create an environment named "venvToolkit"
    ```sh
    python -m venv venvToolkit
-   venvToolkit\bin\activate
    ```
-3. Install requirements (from within the directory of the "requirements.txt" file):
+   3. Activate the virtual environment every time before starting the toolkit
+   ```sh
+   source venvToolkit/bin/activate
+   ```
+3. Navigate into the cloned toolkit-directory named "StudyToolkitVid", so you end up
+   ```sh
+   cd StudyToolkitVid
+   ```
+   Assuming you cloned the repository into your "/Home/Download/" directory, you would type
+   ```sh
+   cd /Home/Download/MyAwesomeDirectory/StudyToolkitVid
+   ```
+4. Install the requirements:
    ```sh
    python -m pip install -r requirements.txt
    ```
-4. Setup directory structure:
-   ```sh
-   python main.py --setup
-   ```
-5. Start the toolkit (continue in "Usage" section below):
+5. Start the toolkit (continue in <a href="#usage">Usage</a> section below):
    ```sh
    python main.py --run
    ```
@@ -162,7 +184,7 @@ Alligning with best practice standards in science, files placed in an "input" di
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-
+<a name="usage"></a>
 File naming as part of the pipeline for an automated workflow.
 ![Product Name Screen Shot][screenshot-naming]
 
@@ -170,27 +192,24 @@ In any project that works with and modifies data in any shape or form, a decisio
 
 
 ### Part 1 - Media Editing
-
-Creating data sets for investigating perceived quality of video material
-
+<a name="mediaEditing"></a>
+Creating data sets for investigating perceived quality of video material.
+[TODO]
 
 
 ### Part 2 - Study Setup
-
-Setting up and executing a user study based on these (or other) data sets
-
+<a name="studySetup"></a>
+Setting up and executing a user study based on these (or other) data sets.
+[TODO]
 
 
 ### Part 3 - Statistical Analysis
+<a name="statisticalAnalysis"></a>
+Running and reporting a statistical analysis following the results from a study.
+[TODO]
 
-Running and reporting a statistical analysis following the results from a study
 
-
-
-
-TODO: Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://github.com/christianschuler8989/StudyToolkitVid/tree/main/docs)_
+_For more information, please refer to the [Documentation](https://github.com/christianschuler8989/StudyToolkitVid/tree/main/docs/StudyToolkitVid_Documentation.pdf)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -200,27 +219,48 @@ _For more examples, please refer to the [Documentation](https://github.com/chris
 ## Roadmap
 
 - [x] Finally "git-it-up"
-- [x] Add Media Editing
-    - [ ] Automate
-- [x] Add Study Creation
-    - [ ] Automate
+- [ ] Media Editing
+    - [x] Core Functionalities
+    - [ ] Smooth Lip-Asynchrony Introduction
+    - [ ] Automated Lip Recognition
+    - [x] Testing
+    - [ ] Beginner-Friendly UI
+- [ ] Add Study Creation
+    - [x] Core Functionalities
+    - [ ] More User-Customization
+    - [x] Testing
+    - [ ] Beginner-Friendly UI
 - [ ] Add Statistical Analysis
-    - [ ] Automate
-- [ ] Add Automated Installation
-- [ ] Add Tests
+    - [ ] Core Functionalities
+    - [ ] More User-Customization
+    - [ ] Result Exploration
+    - [ ] Automated Visualizations
+    - [ ] Testing
+- [x] Automated Installation/Setup
+- [ ] General Testing
     - [x] Core functionalities
     - [ ] Advanced functionalities
-    - [ ] Different Operating Systems
-- [ ] Add Usage Examples
-    - [x] Necessary media files
-    - [ ] Descriptions and Explanations
-- [ ] Multi-language Support
+    - [x] Different Operating Systems
+        - [x] Ubuntu 22.04
+        - [x] Windoof 10
+        - [x] macOS Monterey 12.3
+- [ ] Quality of Life
+    - [x] Example Media Files
+    - [ ] Tool-Tip Pop-Ups
+    - [ ] Documentation
+    - [x] User Guide
+- [ ] Multi-Language Support
     - [x] English
     - [ ] German
     - [ ] Chinese
     - [ ] Spanish
+- [ ] Expand File Format Support
+    - [x] .mp4
+    - [ ] Other Video Formats
+    - [ ] Text (Literature & Translation Studies)
+    - [ ] Image (Art & Computer Vision Studies)
 
-See the TODO: [open issues](https://github.com/christianschuler8989/StudyToolkitVid/issues) for a full list of proposed features (and known issues).
+Go to the [open issues](https://github.com/christianschuler8989/StudyToolkitVid/issues) section to propose new features or simply report encountered bugs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -271,8 +311,14 @@ Anran Wang - [@AnranW](https://github.com/AnranW) - echowanng1996(thesymbolforem
 
 A list of helpful resources we would like to give credit to:
 
-* [Digital and Data Literacy in Teaching Lab](https://www.isa.uni-hamburg.de/ddlitlab.html)
+* [The Digital and Data Literacy in Teaching Lab, who initially funded this project](https://www.isa.uni-hamburg.de/ddlitlab.html)
+* [Our Mentor Prof. Dr. Timo Baumann who always believed in us](https://timobaumann.de/work/)
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template) 
+* [PyQt](https://wiki.python.org/moin/PyQt)
+* [BAS WebService of the Bavarian Archive for Speech Signals hosted by the Institute of Phonetics and Speech Processing at the Ludwig-Maximilians-Universität, München, Germany](http://hdl.handle.net/11858/00-1779-0000-0028-421B-4)
+* [S. Kraft, U. Zölzer: "BeaqleJS: HTML5 and JavaScript based Framework for the Subjective Evaluation of Audio Quality"](https://github.com/HSU-ANT/beaqlejs)
+* [R](https://www.r-project.org/)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
