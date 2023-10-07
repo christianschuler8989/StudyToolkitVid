@@ -5,6 +5,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtMultimediaWidgets import *
 from PyQt6.QtMultimedia import *
+from setup import *
 # Christian joined the chat.
 # Anran says hi. 
 
@@ -22,7 +23,7 @@ class MainWindow(QMainWindow):
 
 		statAnaButton = MyButton("Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
 		
-		# # menu bars
+		# menu bars
 		MyMenu(self, "StudyToolkit")
 		
 		layout = QHBoxLayout()
@@ -33,6 +34,7 @@ class MainWindow(QMainWindow):
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
+
 	
 	def openMediaEditWindow(self):
 		self.w = MediaEditWindow()
@@ -384,16 +386,12 @@ class StatAnaWindow(QMainWindow):
 
 # helper class for buttons in the video editing window
 class MyButton(QPushButton) : 
-	def __init__(self, text, toAppend=[], toSetEnabled=False) : 
-		super(QPushButton, self).__init__()
-		self.setEnabled(toSetEnabled)
-		self.deleteFrameButton.setText(text)
-		toAppend.append(self)
-	def __init__(self, text, function, toAppend=[], toSetEnabled=False) : 
+	def __init__(self, text, function=None, toAppend=[], toSetEnabled=False) : 
 		super(QPushButton, self).__init__()
 		self.setEnabled(toSetEnabled)
 		self.setText(text)
-		self.clicked.connect(function)
+		if not function == None: 
+			self.clicked.connect(function)
 		toAppend.append(self)
 
 # the area with media player 
@@ -446,8 +444,28 @@ def main():
 
 	window = MainWindow()
 	window.show()
+	# app.setActiveWindow(window)
+	# window.activateWindow()
+
+	# check if project folder is empty
+	path = "../projects"
+	try : 
+		dir = os.listdir(path) 
+	except FileNotFoundError : 
+		dir = []
+	# if empty them pop up a window asking whether to set up examples
+	if len(dir) == 0 or len(dir) == 1 and dir[0] == ".DS_Store": # .ds_store is always there for macos
+		msgBox=QMessageBox()
+		msgBox.setText("Set up example project? ")
+		msgBox.setInformativeText("Welcome to the StudyToolkitVid! Seems like you are using it for the first time, you can set up an example project to test it out! ")
+		yes = MyButton("Yes", setupWorkplace, toSetEnabled=True)
+		no = MyButton("No")
+		msgBox.addButton(yes, QMessageBox.ButtonRole.NoRole)
+		msgBox.addButton(no, QMessageBox.ButtonRole.YesRole)
+		msgBox.show()
 
 	app.exec()
+
 
 
 if __name__ == "__main__":
