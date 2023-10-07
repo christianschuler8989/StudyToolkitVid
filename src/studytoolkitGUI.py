@@ -474,7 +474,7 @@ def main():
 		msgBox.setText("Set up example project? ")
 		msgBox.setInformativeText("Welcome to the StudyToolkitVid! Seems like you are using it for the first time, you can set up an example project to test it out! ")
 		yes = MyButton("Yes", setupWorkplace, toSetEnabled=True)
-		no = MyButton("No")
+		no = MyButton("No", toSetEnabled=True)
 		msgBox.addButton(yes, QMessageBox.ButtonRole.NoRole)
 		msgBox.addButton(no, QMessageBox.ButtonRole.YesRole)
 		msgBox.show()
