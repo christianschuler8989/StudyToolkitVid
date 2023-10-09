@@ -14,34 +14,6 @@ import requests
 
 
 
-headers = {
-    #'content-type': 'multipart/form-data',
-}
-
-files = {
-    'TEXT':open('C:/Users/do_34/Desktop/StudyToolkitVid/examples/mediaEditing/go.txt','rb'), 
-    'SIGNAL': open('C:/Users/do_34/Desktop/StudyToolkitVid/examples/mediaEditing/go.mp4', 'rb'),
-}
-
-datas = {
-    'LANGUAGE':'deu-DE',
-    'OUTFORMAT':'TextGrid',
-}
-
-response = requests.post(
-    'https://clarin.phonetik.uni-muenchen.de/BASWebServices/services/runMAUSBasic',
-    headers=headers,
-    files=files,
-    data=datas
-)
-
-
-myUrl = str(response.content)[str(response.content).find('https://'):str(response.content).find('</downloadLink')]
-req = requests.post(myUrl)
-content_string = req.content.decode("utf-8")
-with open('./go.TextGrid', 'w') as f: f.write(content_string)
-
-
 
 """
 Editing class for video and audio files. It works mostly with video files at the moment.
