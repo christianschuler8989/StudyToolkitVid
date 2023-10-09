@@ -10,6 +10,37 @@ import re
 import textgrid
 import numpy as np
 import imageio
+import requests
+
+
+
+headers = {
+    #'content-type': 'multipart/form-data',
+}
+
+files = {
+    'TEXT':open('C:/Users/do_34/Desktop/StudyToolkitVid/examples/mediaEditing/go.txt','rb'), 
+    'SIGNAL': open('C:/Users/do_34/Desktop/StudyToolkitVid/examples/mediaEditing/go.mp4', 'rb'),
+}
+
+datas = {
+    'LANGUAGE':'deu-DE',
+    'OUTFORMAT':'TextGrid',
+}
+
+response = requests.post(
+    'https://clarin.phonetik.uni-muenchen.de/BASWebServices/services/runMAUSBasic',
+    headers=headers,
+    files=files,
+    data=datas
+)
+
+
+myUrl = str(response.content)[str(response.content).find('https://'):str(response.content).find('</downloadLink')]
+req = requests.post(myUrl)
+content_string = req.content.decode("utf-8")
+with open('./go.TextGrid', 'w') as f: f.write(content_string)
+
 
 
 """
@@ -406,9 +437,44 @@ class editing():
                 name_of_short = name_of_short.replace(":", "")
                 audio_short.write_audiofile(path_save + name_of_short, logger=None)
 
+    
+    #Requires: Internet
+    def getTextGrid(self, path_to_media, path_to_txt, path_to_save, name_of_file, language):
+        if language in ['aus-AU', 'afr-ZA', 'sqi-AL', 'eus-ES', 'eus-FR', 'cat-ES', 'nld-BE', 'nld-NL',
+                        'eng-AU', 'eng-US', 'eng-GB', 'eng-SC', 'eng-NZ', 'ekk-EE', 'fin-FI', 'fra-FR',
+                        'kat-GE', 'deu-AT', 'deu-CH', 'deu-DE', 'gsw-CH', 'gsw-CH-BE', 'gsw-CH-BS',
+                        'gsw-CH-GR', 'gsw-CH-SG', 'gsw-CH-ZH', 'hun-HU', 'isl-IS', 'ita-IT', 'jpn-JP',
+                        'gup-AU', 'ltz-LU', 'mlt-MT', 'nor-NO', 'fas-IR', 'pol-PL', 'ron-RO', 'rus-RU',
+                            'spa-ES', 'swe-SE', 'tha-TH', 'guf-AU']:
+            headers = {
+                #'content-type': 'multipart/form-data',
+            }
+    
+            files = {
+                'TEXT':open(path_to_txt,'rb'), 
+                'SIGNAL': open(path_to_media, 'rb'),
+            }
+    
+            datas = {
+                'LANGUAGE':language,
+                'OUTFORMAT':'TextGrid',
+            }
+    
+            response = requests.post(
+                'https://clarin.phonetik.uni-muenchen.de/BASWebServices/services/runMAUSBasic',
+                headers=headers,
+                files=files,
+                data=datas
+            )
+    
+    
+            downloadURL = str(response.content)[str(response.content).find('https://'):str(response.content).find('</downloadLink')]
+            req = requests.post(downloadURL)
+            content_string = req.content.decode("utf-8")
+            with open(path_to_save + name_of_file + '.TextGrid', 'w') as f: f.write(content_string)
 
-
-
+        else:
+            raise Exception('Language ' + language + ' is not defined for WebMausBasic. Please read the manual for accepted languages.')
 
 
 
