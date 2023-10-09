@@ -1,7 +1,5 @@
 import sys, os 
 from media_editing import * 
-from study_setup import * 
-from statistical_analysis import * 
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -20,9 +18,9 @@ class MainWindow(QMainWindow):
 		self.setMinimumSize(QSize(600,400))
 
 		# buttons to open separate windows
-		mediaEditButton = MyButton("Media Editing", self.openMediaEditWindow, toSetEnabled=True)
-		studyGenButton = MyButton("Study Generation", self.openStudyGenWindow, toSetEnabled=True)
-		statAnaButton = MyButton("Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
+		mediaEditButton = MyButton("Start Media Editing", self.openMediaEditWindow, toSetEnabled=True)
+		studyGenButton = MyButton("Start Study Generation", self.openStudyGenWindow, toSetEnabled=True)
+		statAnaButton = MyButton("Start Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
 		# layout for area to open corresponding windows
 		bottomlayout = QHBoxLayout()
 		bottomlayout.addWidget(mediaEditButton)
@@ -97,7 +95,7 @@ class MainWindow(QMainWindow):
 		self.w.show()
 
 	def openStudyGenWindow(self):
-		self.w = StudyGenWindow()
+		self.w = StudyGenWindow(self.projectFolder)
 		self.w.show()
 
 	def	openStatAnaWindow(self) : 
@@ -395,13 +393,14 @@ class MediaEditWindow(QMainWindow):
 # window to generate studies
 class StudyGenWindow(QMainWindow):
 
-	def __init__(self):
+	def __init__(self, projectFolder):
 		super(StudyGenWindow, self).__init__()
+		self.projectFolder = projectFolder
 
 		MyMenu(self, "StudyGeneration")
 
 		self.setWindowTitle("Study Generation")
-		self.setMinimumSize(QSize(400,600))
+		self.setMinimumSize(QSize(600,400))
 
 		# current mode of toolkit (important for location temporary files: eg. studySetup = "studySetup/temp/"
 		#self.mode = "mediaEditing" 
@@ -409,12 +408,20 @@ class StudyGenWindow(QMainWindow):
 		#self.mode = "statisticalAnalysis" 
 		# self.tempDir = self.workspaceFolder+self.mode+"/temp/" # anran: this line leads to error!!!
 
+		# reference: https://stackoverflow.com/questions/72155657/mouseclick-event-on-pyqt-folder-tree
+		# tree view of project folder
+		model = QFileSystemModel()
+		tree = QTreeView()
+		tree.setModel(model)
+		tree.setRootIndex(model.setRootPath(self.projectFolder))
+		
+		layout = QHBoxLayout()
+		layout.addWidget(tree)
+
 		studyGenButton = QPushButton(self)
 		studyGenButton.setText("Generate your study")
-
-		layout = QHBoxLayout()
-
 		layout.addWidget(studyGenButton)
+
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -534,6 +541,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    
+	main()
+	
 
