@@ -6,3 +6,4 @@ numpy==1.23.5
 pydub==0.25.1
 TextGrid==1.5
 pyqt6==6.5.2
+requests=2.31.0
