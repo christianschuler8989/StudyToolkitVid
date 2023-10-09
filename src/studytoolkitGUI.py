@@ -1,3 +1,8 @@
+# StudyToolkitVid - Graphical User Interface
+# 
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
+################################################################################
+
 import sys, os 
 from media_editing import * 
 from PyQt6.QtWidgets import *
@@ -415,16 +420,68 @@ class StudyGenWindow(QMainWindow):
 		tree.setModel(model)
 		tree.setRootIndex(model.setRootPath(self.projectFolder))
 		
-		layout = QHBoxLayout()
-		layout.addWidget(tree)
+		fileTreeLayout = QHBoxLayout() # Left side
+		fileTreeLayout.addWidget(tree)
 
-		studyGenButton = QPushButton(self)
-		studyGenButton.setText("Generate your study")
-		layout.addWidget(studyGenButton)
+		userInputLayout = QVBoxLayout() # Middle side
+		self.studyName = QLineEdit(placeholderText="Study Name") # String
+		userInputLayout.addWidget(self.studyName)
+		self.configName = QLineEdit(placeholderText="Config Name") # String
+		userInputLayout.addWidget(self.configName)
+		self.studyUrl = QLineEdit(placeholderText="Study URL") # String (url)
+		userInputLayout.addWidget(self.studyUrl)
+		self.studyLanguage = QLineEdit(placeholderText="Study Language") # String
+		userInputLayout.addWidget(self.studyLanguage)
+		self.beaqleServiceUrl = QLineEdit(placeholderText="Beaqle Service URL") # String (url)
+		userInputLayout.addWidget(self.beaqleServiceUrl)
+		self.supervisorContact = QLineEdit(placeholderText="Supervisor Contact") # String (mail)
+		userInputLayout.addWidget(self.supervisorContact)
+
+		self.testsetSize = QLineEdit(placeholderText="Testset Size") # Integer
+		userInputLayout.addWidget(self.testsetSize)
+		self.trialSize = QLineEdit(placeholderText="Trial Size") # Integer
+		userInputLayout.addWidget(self.trialSize)
+		self.rateMinValue = QLineEdit(placeholderText="Rate Min Value") # Integer
+		userInputLayout.addWidget(self.rateMinValue)
+		self.rateMaxValue = QLineEdit(placeholderText="Rate Max Value") # Integer
+		userInputLayout.addWidget(self.rateMaxValue)
+		self.rateDefaultValue = QLineEdit(placeholderText="Rate Default Value") # Integer
+		userInputLayout.addWidget(self.rateDefaultValue)
+		self.anchorsNumber = QLineEdit(placeholderText="Anchors Number") # Integer
+		userInputLayout.addWidget(self.anchorsNumber)
+		self.maxTestsPerRun = QLineEdit(placeholderText="Max Tests Per Run") # Integer
+		userInputLayout.addWidget(self.maxTestsPerRun)
+
+		userChecksLayout = QVBoxLayout() # Right side
+		self.showFileIds = QLineEdit(placeholderText="Show File ID") # Boolean
+		userChecksLayout.addWidget(self.showFileIds)
+		self.showResults = QLineEdit(placeholderText="Show Results") # Boolean
+		userChecksLayout.addWidget(self.showResults)
+		self.loopByDefault = QLineEdit(placeholderText="Loop By Default") # Boolean
+		userChecksLayout.addWidget(self.loopByDefault)
+		self.enableABLoop = QLineEdit(placeholderText="Enable AB Loop") # Boolean
+		userChecksLayout.addWidget(self.enableABLoop)
+		self.enableOnlineSubmission = QLineEdit(placeholderText="Enable Online Submission") # Boolean
+		userChecksLayout.addWidget(self.enableOnlineSubmission)
+		self.randomizeTestOrder = QLineEdit(placeholderText="Randomize Test Order") # Boolean
+		userChecksLayout.addWidget(self.randomizeTestOrder)
+		self.requireMaxRating = QLineEdit(placeholderText="Require Max Rating") # Boolean
+		userChecksLayout.addWidget(self.requireMaxRating)
+
+		layout = QVBoxLayout() # Outer Window "Layout holder"
+		layoutBox = QHBoxLayout()
+		layout.addLayout(layoutBox)
+		layoutBox.addLayout(fileTreeLayout)
+		layoutBox.addLayout(userInputLayout)
+		layoutBox.addLayout(userChecksLayout)
 
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
+
+		studyGenButton = QPushButton(self)
+		studyGenButton.setText("Generate your study")
+		layout.addWidget(studyGenButton)
 
 
 # window for statistical analysis
