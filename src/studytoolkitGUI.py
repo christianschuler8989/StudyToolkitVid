@@ -22,44 +22,46 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("Study Tool Kit")
 		self.setMinimumSize(QSize(600,400))
 
+		# grid layout so much better! 
+		layout = QGridLayout()
+
 		# buttons to open separate windows
 		mediaEditButton = MyButton("Start Media Editing", self.openMediaEditWindow, toSetEnabled=True)
+		mediaEditButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
 		studyGenButton = MyButton("Start Study Generation", self.openStudyGenWindow, toSetEnabled=True)
+		studyGenButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
 		statAnaButton = MyButton("Start Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
-		# layout for area to open corresponding windows
-		bottomlayout = QHBoxLayout()
-		bottomlayout.addWidget(mediaEditButton)
-		bottomlayout.addWidget(studyGenButton)
-		bottomlayout.addWidget(statAnaButton)
-		
+		statAnaButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
+		# layout for area to open corresponding windows 
+		# usage: addWidget(QWidget *widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = Qt::Alignment())
+		layout.addWidget(mediaEditButton, 3, 1, 1, 2)
+		layout.addWidget(studyGenButton, 3, 3, 1, 2)
+		layout.addWidget(statAnaButton, 3, 5, 1, 2)
+
 		# menu bars
 		MyMenu(self, "StudyToolkit")
 		
-		# layout for area of general functions
-		toplayout = QHBoxLayout()
 		# buttons to do some general functions
-		exampleButton = MyButton("Re-setup Examples", setupWorkplace, toSetEnabled=True)
-		toplayout.addWidget(exampleButton)
+		exampleButton = MyButton("Re-setup Examples", self.setupWorkplace, toSetEnabled=True)
+		exampleButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
+		layout.addWidget(exampleButton,1,2,1,2)
 		testButton = MyButton("Test Toolkit", toSetEnabled=True) # todo: link to implementation of testing
-		toplayout.addWidget(testButton)
-		projectLayout = QHBoxLayout()
+		testButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
+		layout.addWidget(testButton,1,4,1,2)
 		try : 
 			self.projectFolder = os.path.abspath('..')+"/projects/" # current directory then projects
 		except FileNotFoundError : 
 			self.projectFolder = os.getcwd()+"/" # current directory
-		self.projectButton = MyButton("Create Project", self.createProject)
+		self.projectButton = MyButton("Create Project", self.createProject) 
+		self.projectButton.setStyleSheet('QPushButton {background-color: #fffebd;}')
 		self.projectName = QLineEdit(placeholderText="project name")
 		self.projectName.textChanged.connect(self.enableButton)
-		projectLayout.addWidget(self.projectName)
-		projectLayout.addWidget(self.projectButton)
-		toplayout.addLayout(projectLayout)
+		layout.addWidget(self.projectName, 2,1,1,2)
+		layout.addWidget(self.projectButton, 2,3,1,2)
 		selProjectButton = MyButton("Select Project", self.selectProject, toSetEnabled=True)
-		toplayout.addWidget(selProjectButton)
+		selProjectButton.setStyleSheet('QPushButton {background-color: #fffebd;}')
+		layout.addWidget(selProjectButton, 2,5,1,2)
 	
-		# central widget layout
-		layout = QVBoxLayout()
-		layout.addLayout(toplayout)
-		layout.addLayout(bottomlayout)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -92,7 +94,12 @@ class MainWindow(QMainWindow):
 				"Choose Project", 
 				"${PWD}",
 				) + "/" 
-		
+	
+	def setupWorkplace(self) : 
+		setupWorkplace()
+		msg = QMessageBox()
+		msg.setText("Done! ")
+		msg.exec()
 	
 
 	def openMediaEditWindow(self):
