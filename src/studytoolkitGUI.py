@@ -19,49 +19,62 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		super(MainWindow, self).__init__()
 
-		self.setWindowTitle("Study Tool Kit")
+		self.setWindowTitle("Study Toolkit Video")
 		self.setMinimumSize(QSize(600,400))
+		# Display project logo
+		self.image_logo = QPixmap("./../images/logo.png") 
+		self.image_logo = self.image_logo.scaled(330, 100, Qt.AspectRatioMode.KeepAspectRatio)
+		self.label_logo = QLabel()
+		self.label_logo.setPixmap(self.image_logo)
 
 		# grid layout so much better! 
 		layout = QGridLayout()
 
-		# buttons to open separate windows
-		mediaEditButton = MyButton("Start Media Editing", self.openMediaEditWindow, toSetEnabled=True)
-		mediaEditButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
-		studyGenButton = MyButton("Start Study Generation", self.openStudyGenWindow, toSetEnabled=True)
-		studyGenButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
-		statAnaButton = MyButton("Start Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
-		statAnaButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
-		# layout for area to open corresponding windows 
-		# usage: addWidget(QWidget *widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = Qt::Alignment())
-		layout.addWidget(mediaEditButton, 3, 1, 1, 2)
-		layout.addWidget(studyGenButton, 3, 3, 1, 2)
-		layout.addWidget(statAnaButton, 3, 5, 1, 2)
-
 		# menu bars
 		MyMenu(self, "StudyToolkit")
-		
+
+		# Layout - Row 1
+		layout.addWidget(self.label_logo,1,3,2,2)
+
+		# Layout - Row 2
 		# buttons to do some general functions
 		exampleButton = MyButton("Re-setup Examples", self.setupWorkplace, toSetEnabled=True)
-		exampleButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
-		layout.addWidget(exampleButton,1,2,1,2)
+		exampleButton.setStyleSheet('QPushButton {background-color: #737ca1;}')
+		layout.addWidget(exampleButton,2,2,1,2)
 		testButton = MyButton("Test Toolkit", toSetEnabled=True) # todo: link to implementation of testing
-		testButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
-		layout.addWidget(testButton,1,4,1,2)
+		testButton.setStyleSheet('QPushButton {background-color: #737ca1;}')
+		layout.addWidget(testButton,2,4,1,2)
+		
+		# Layout - Row 3
 		try : 
 			self.projectFolder = os.path.abspath('..')+"/projects/" # current directory then projects
 		except FileNotFoundError : 
 			self.projectFolder = os.getcwd()+"/" # current directory
 		self.projectButton = MyButton("Create Project", self.createProject) 
-		self.projectButton.setStyleSheet('QPushButton {background-color: #fffebd;}')
+		self.projectButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
 		self.projectName = QLineEdit(placeholderText="project name")
 		self.projectName.textChanged.connect(self.enableButton)
-		layout.addWidget(self.projectName, 2,1,1,2)
-		layout.addWidget(self.projectButton, 2,3,1,2)
+		layout.addWidget(self.projectName, 3,1,1,2)
+		layout.addWidget(self.projectButton, 3,3,1,2)
 		selProjectButton = MyButton("Select Project", self.selectProject, toSetEnabled=True)
-		selProjectButton.setStyleSheet('QPushButton {background-color: #fffebd;}')
-		layout.addWidget(selProjectButton, 2,5,1,2)
-	
+		selProjectButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
+		layout.addWidget(selProjectButton, 3,5,1,2)
+
+		# Layout - Row 4
+		# buttons to open separate windows
+		mediaEditButton = MyButton("Start Media Editing", self.openMediaEditWindow, toSetEnabled=True)
+		mediaEditButton.setStyleSheet('QPushButton {background-color: #f87217;}')
+		studyGenButton = MyButton("Start Study Generation", self.openStudyGenWindow, toSetEnabled=True)
+		studyGenButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
+		statAnaButton = MyButton("Start Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
+		statAnaButton.setStyleSheet('QPushButton {background-color: #897bff;}')
+		# layout for area to open corresponding windows 
+		# usage: addWidget(QWidget *widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = Qt::Alignment())
+		layout.addWidget(mediaEditButton, 4, 1, 1, 2)
+		layout.addWidget(studyGenButton, 4, 3, 1, 2)
+		layout.addWidget(statAnaButton, 4, 5, 1, 2)
+
+		
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -111,7 +124,7 @@ class MainWindow(QMainWindow):
 		self.w.show()
 
 	def	openStatAnaWindow(self) : 
-		self.w = StatAnaWindow()
+		self.w = StatAnaWindow(self.projectFolder)
 		self.w.show()
 
 
@@ -431,6 +444,7 @@ class StudyGenWindow(QMainWindow):
 		fileTreeLayout.addWidget(tree)
 
 		userInputLayout = QVBoxLayout() # Middle side
+
 		self.studyName = QLineEdit(placeholderText="Study Name") # String
 		userInputLayout.addWidget(self.studyName)
 		self.configName = QLineEdit(placeholderText="Config Name") # String
@@ -494,8 +508,9 @@ class StudyGenWindow(QMainWindow):
 # window for statistical analysis
 class StatAnaWindow(QMainWindow):
 
-	def __init__(self):
+	def __init__(self, projectFolder):
 		super(StatAnaWindow, self).__init__()
+		self.projectFolder = projectFolder
 
 		MyMenu(self, "StatAnalysis")
 
@@ -508,16 +523,61 @@ class StatAnaWindow(QMainWindow):
 		self.mode = "statisticalAnalysis" 
 		# self.tempDir = self.workspaceFolder+self.mode+"/temp/" # anran: this line leads to error!!!
 
-		statAnaButton = QPushButton(self)
-		statAnaButton.setText("Analyse your data")
+		model = QFileSystemModel()
+		tree = QTreeView()
+		tree.setModel(model)
+		tree.setRootIndex(model.setRootPath(self.projectFolder))
+		
+		fileTreeLayout = QHBoxLayout() # Left side
+		fileTreeLayout.addWidget(tree)
+		
+		userInputLayout = QVBoxLayout() # Middle side
 
-		layout = QHBoxLayout()
+		exploreDataButton = QPushButton(self)
+		exploreDataButton.setText("Explore your data")
+		userInputLayout.addWidget(exploreDataButton)
 
-		layout.addWidget(statAnaButton)
+		exploreResultsButton = QPushButton(self)
+		exploreResultsButton.setText("Explore your results")
+		userInputLayout.addWidget(exploreResultsButton)
+
+		listeningpanelQuantitativeButton = QPushButton(self)
+		listeningpanelQuantitativeButton.setText("Quantitative Listeningpanel Analysis")
+		userInputLayout.addWidget(listeningpanelQuantitativeButton)
+
+		listeningpanelQualitativeButton = QPushButton(self)
+		listeningpanelQualitativeButton.setText("Qualitative Listeningpanel Analysis")
+		userInputLayout.addWidget(listeningpanelQualitativeButton)
+
+		checkAnovaButton = QPushButton(self)
+		checkAnovaButton.setText("Check ANOVA requirements")
+		userInputLayout.addWidget(checkAnovaButton)
+
+		runAnovaButton = QPushButton(self)
+		runAnovaButton.setText("Run ANOVA Analysis")
+		userInputLayout.addWidget(runAnovaButton)
+
+		runKruskalwallisButton = QPushButton(self)
+		runKruskalwallisButton.setText("Run Kruskal-Wallis Analysis")
+		userInputLayout.addWidget(runKruskalwallisButton)
+
+		runWilcoxButton = QPushButton(self)
+		runWilcoxButton.setText("Run Wilcox Analysis")
+		userInputLayout.addWidget(runWilcoxButton)
+
+		layout = QVBoxLayout() # Outer Window "Layout holder"
+		layoutBox = QHBoxLayout()
+		layout.addLayout(layoutBox)
+		layoutBox.addLayout(fileTreeLayout)
+		layoutBox.addLayout(userInputLayout)
+
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
 
+		analysisSaveButton = QPushButton(self)
+		analysisSaveButton.setText("Save Statistical Analysis Visualisations")
+		layout.addWidget(analysisSaveButton)
 
 
 # helper class for buttons in the video editing window
