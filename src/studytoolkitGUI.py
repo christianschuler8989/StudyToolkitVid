@@ -1,3 +1,8 @@
+# StudyToolkitVid - Graphical User Interface
+# 
+# Authors: Christian Schuler & Dominik Hauser & Anran Wang
+################################################################################
+
 import sys, os 
 from media_editing import * 
 from PyQt6.QtWidgets import *
@@ -17,44 +22,46 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("Study Tool Kit")
 		self.setMinimumSize(QSize(600,400))
 
+		# grid layout so much better! 
+		layout = QGridLayout()
+
 		# buttons to open separate windows
 		mediaEditButton = MyButton("Start Media Editing", self.openMediaEditWindow, toSetEnabled=True)
+		mediaEditButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
 		studyGenButton = MyButton("Start Study Generation", self.openStudyGenWindow, toSetEnabled=True)
+		studyGenButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
 		statAnaButton = MyButton("Start Statistical Analysis", self.openStatAnaWindow, toSetEnabled=True)
-		# layout for area to open corresponding windows
-		bottomlayout = QHBoxLayout()
-		bottomlayout.addWidget(mediaEditButton)
-		bottomlayout.addWidget(studyGenButton)
-		bottomlayout.addWidget(statAnaButton)
-		
+		statAnaButton.setStyleSheet('QPushButton {background-color: #a4e7f5;}')
+		# layout for area to open corresponding windows 
+		# usage: addWidget(QWidget *widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = Qt::Alignment())
+		layout.addWidget(mediaEditButton, 3, 1, 1, 2)
+		layout.addWidget(studyGenButton, 3, 3, 1, 2)
+		layout.addWidget(statAnaButton, 3, 5, 1, 2)
+
 		# menu bars
 		MyMenu(self, "StudyToolkit")
 		
-		# layout for area of general functions
-		toplayout = QHBoxLayout()
 		# buttons to do some general functions
-		exampleButton = MyButton("Re-setup Examples", setupWorkplace, toSetEnabled=True)
-		toplayout.addWidget(exampleButton)
+		exampleButton = MyButton("Re-setup Examples", self.setupWorkplace, toSetEnabled=True)
+		exampleButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
+		layout.addWidget(exampleButton,1,2,1,2)
 		testButton = MyButton("Test Toolkit", toSetEnabled=True) # todo: link to implementation of testing
-		toplayout.addWidget(testButton)
-		projectLayout = QHBoxLayout()
+		testButton.setStyleSheet('QPushButton {background-color: #82d18b;}')
+		layout.addWidget(testButton,1,4,1,2)
 		try : 
 			self.projectFolder = os.path.abspath('..')+"/projects/" # current directory then projects
 		except FileNotFoundError : 
 			self.projectFolder = os.getcwd()+"/" # current directory
-		self.projectButton = MyButton("Create Project", self.createProject)
+		self.projectButton = MyButton("Create Project", self.createProject) 
+		self.projectButton.setStyleSheet('QPushButton {background-color: #fffebd;}')
 		self.projectName = QLineEdit(placeholderText="project name")
 		self.projectName.textChanged.connect(self.enableButton)
-		projectLayout.addWidget(self.projectName)
-		projectLayout.addWidget(self.projectButton)
-		toplayout.addLayout(projectLayout)
+		layout.addWidget(self.projectName, 2,1,1,2)
+		layout.addWidget(self.projectButton, 2,3,1,2)
 		selProjectButton = MyButton("Select Project", self.selectProject, toSetEnabled=True)
-		toplayout.addWidget(selProjectButton)
+		selProjectButton.setStyleSheet('QPushButton {background-color: #fffebd;}')
+		layout.addWidget(selProjectButton, 2,5,1,2)
 	
-		# central widget layout
-		layout = QVBoxLayout()
-		layout.addLayout(toplayout)
-		layout.addLayout(bottomlayout)
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
@@ -87,7 +94,12 @@ class MainWindow(QMainWindow):
 				"Choose Project", 
 				"${PWD}",
 				) + "/" 
-		
+	
+	def setupWorkplace(self) : 
+		setupWorkplace()
+		msg = QMessageBox()
+		msg.setText("Done! ")
+		msg.exec()
 	
 
 	def openMediaEditWindow(self):
@@ -415,16 +427,68 @@ class StudyGenWindow(QMainWindow):
 		tree.setModel(model)
 		tree.setRootIndex(model.setRootPath(self.projectFolder))
 		
-		layout = QHBoxLayout()
-		layout.addWidget(tree)
+		fileTreeLayout = QHBoxLayout() # Left side
+		fileTreeLayout.addWidget(tree)
 
-		studyGenButton = QPushButton(self)
-		studyGenButton.setText("Generate your study")
-		layout.addWidget(studyGenButton)
+		userInputLayout = QVBoxLayout() # Middle side
+		self.studyName = QLineEdit(placeholderText="Study Name") # String
+		userInputLayout.addWidget(self.studyName)
+		self.configName = QLineEdit(placeholderText="Config Name") # String
+		userInputLayout.addWidget(self.configName)
+		self.studyUrl = QLineEdit(placeholderText="Study URL") # String (url)
+		userInputLayout.addWidget(self.studyUrl)
+		self.studyLanguage = QLineEdit(placeholderText="Study Language") # String
+		userInputLayout.addWidget(self.studyLanguage)
+		self.beaqleServiceUrl = QLineEdit(placeholderText="Beaqle Service URL") # String (url)
+		userInputLayout.addWidget(self.beaqleServiceUrl)
+		self.supervisorContact = QLineEdit(placeholderText="Supervisor Contact") # String (mail)
+		userInputLayout.addWidget(self.supervisorContact)
+
+		self.testsetSize = QLineEdit(placeholderText="Testset Size") # Integer
+		userInputLayout.addWidget(self.testsetSize)
+		self.trialSize = QLineEdit(placeholderText="Trial Size") # Integer
+		userInputLayout.addWidget(self.trialSize)
+		self.rateMinValue = QLineEdit(placeholderText="Rate Min Value") # Integer
+		userInputLayout.addWidget(self.rateMinValue)
+		self.rateMaxValue = QLineEdit(placeholderText="Rate Max Value") # Integer
+		userInputLayout.addWidget(self.rateMaxValue)
+		self.rateDefaultValue = QLineEdit(placeholderText="Rate Default Value") # Integer
+		userInputLayout.addWidget(self.rateDefaultValue)
+		self.anchorsNumber = QLineEdit(placeholderText="Anchors Number") # Integer
+		userInputLayout.addWidget(self.anchorsNumber)
+		self.maxTestsPerRun = QLineEdit(placeholderText="Max Tests Per Run") # Integer
+		userInputLayout.addWidget(self.maxTestsPerRun)
+
+		userChecksLayout = QVBoxLayout() # Right side
+		self.showFileIds = QLineEdit(placeholderText="Show File ID") # Boolean
+		userChecksLayout.addWidget(self.showFileIds)
+		self.showResults = QLineEdit(placeholderText="Show Results") # Boolean
+		userChecksLayout.addWidget(self.showResults)
+		self.loopByDefault = QLineEdit(placeholderText="Loop By Default") # Boolean
+		userChecksLayout.addWidget(self.loopByDefault)
+		self.enableABLoop = QLineEdit(placeholderText="Enable AB Loop") # Boolean
+		userChecksLayout.addWidget(self.enableABLoop)
+		self.enableOnlineSubmission = QLineEdit(placeholderText="Enable Online Submission") # Boolean
+		userChecksLayout.addWidget(self.enableOnlineSubmission)
+		self.randomizeTestOrder = QLineEdit(placeholderText="Randomize Test Order") # Boolean
+		userChecksLayout.addWidget(self.randomizeTestOrder)
+		self.requireMaxRating = QLineEdit(placeholderText="Require Max Rating") # Boolean
+		userChecksLayout.addWidget(self.requireMaxRating)
+
+		layout = QVBoxLayout() # Outer Window "Layout holder"
+		layoutBox = QHBoxLayout()
+		layout.addLayout(layoutBox)
+		layoutBox.addLayout(fileTreeLayout)
+		layoutBox.addLayout(userInputLayout)
+		layoutBox.addLayout(userChecksLayout)
 
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setCentralWidget(widget)
+
+		studyGenButton = QPushButton(self)
+		studyGenButton.setText("Generate your study")
+		layout.addWidget(studyGenButton)
 
 
 # window for statistical analysis
