@@ -411,8 +411,8 @@ class editing():
 
     
     #Requires: Internet
-    def getTextGrid(self, path_to_media, path_to_txt, path_to_save, name_of_file, language):
-        if language in ['aus-AU', 'afr-ZA', 'sqi-AL', 'eus-ES', 'eus-FR', 'cat-ES', 'nld-BE', 'nld-NL',
+    def getTextGrid(self, path_to_media, path_to_txt, path_to_save, name_of_file, language_code):
+        if language_code in ['aus-AU', 'afr-ZA', 'sqi-AL', 'eus-ES', 'eus-FR', 'cat-ES', 'nld-BE', 'nld-NL',
                         'eng-AU', 'eng-US', 'eng-GB', 'eng-SC', 'eng-NZ', 'ekk-EE', 'fin-FI', 'fra-FR',
                         'kat-GE', 'deu-AT', 'deu-CH', 'deu-DE', 'gsw-CH', 'gsw-CH-BE', 'gsw-CH-BS',
                         'gsw-CH-GR', 'gsw-CH-SG', 'gsw-CH-ZH', 'hun-HU', 'isl-IS', 'ita-IT', 'jpn-JP',
@@ -428,7 +428,7 @@ class editing():
             }
     
             datas = {
-                'LANGUAGE':language,
+                'LANGUAGE':language_code,
                 'OUTFORMAT':'TextGrid',
             }
     
@@ -443,10 +443,14 @@ class editing():
             downloadURL = str(response.content)[str(response.content).find('https://'):str(response.content).find('</downloadLink')]
             req = requests.post(downloadURL)
             content_string = req.content.decode("utf-8")
-            with open(path_to_save + name_of_file + '.TextGrid', 'w') as f: f.write(content_string)
+            try:
+                with open(path_to_save + name_of_file + '.TextGrid', 'w') as f: f.write(content_string)
+                print('Success')
+            except:
+                raise Exception('Could not save the textgrid to the given directory: ' + path_to_save + name_of_file + '.TextGrid')
 
         else:
-            raise Exception('Language ' + language + ' is not defined for WebMausBasic. Please read the manual for accepted languages.')
+            raise Exception('Language ' + language_code + ' is not defined for WebMausBasic. Please read the manual for accepted languages.')
 
 
 
