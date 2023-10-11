@@ -443,8 +443,11 @@ class editing():
             downloadURL = str(response.content)[str(response.content).find('https://'):str(response.content).find('</downloadLink')]
             req = requests.post(downloadURL)
             content_string = req.content.decode("utf-8")
-            with open(path_to_save + name_of_file + '.TextGrid', 'w') as f: f.write(content_string)
-            print('Success')
+            try:
+                with open(path_to_save + name_of_file + '.TextGrid', 'w') as f: f.write(content_string)
+                print('Success')
+            except:
+                raise Exception('Could not save the textgrid to the given directory: ' + path_to_save + name_of_file + '.TextGrid')
 
         else:
             raise Exception('Language ' + language_code + ' is not defined for WebMausBasic. Please read the manual for accepted languages.')
